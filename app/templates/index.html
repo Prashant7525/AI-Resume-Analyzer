@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>AI Resume Analyzer</title>
+</head>
+
+<body>
+
+    <main>
+
+        <h1>AI Resume Analyzer</h1>
+
+        <p>
+            Upload your resume PDF to extract and analyze its content.
+        </p>
+
+        <form method="POST" enctype="multipart/form-data">
+
+            <label for="resume">
+                Select your resume:
+            </label>
+
+            <input
+                type="file"
+                id="resume"
+                name="resume"
+                accept=".pdf"
+                required
+            >
+
+            <button type="submit">
+                Analyze Resume
+            </button>
+
+        </form>
+
+        {% if error %}
+            <p>
+                {{ error }}
+            </p>
+        {% endif %}
+
+        {% if extracted_text %}
+
+            <section>
+
+                <h2>Extracted Resume Text</h2>
+
+                <pre>{{ extracted_text }}</pre>
+
+            </section>
+
+        {% endif %}
+
+    </main>
+
+</body>
+</html>
