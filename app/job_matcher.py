@@ -32,6 +32,33 @@ DEFAULT_SKILL_PATTERNS = {
 }
 
 
+# Important job-related keywords that are useful for ATS analysis.
+DEFAULT_KEYWORD_PATTERNS = {
+    "api": r"\bapis?\b",
+    "backend": r"\bbackend\b|\bback-end\b",
+    "frontend": r"\bfrontend\b|\bfront-end\b",
+    "full stack": r"\bfull[\s-]?stack\b",
+    "software development": r"\bsoftware development\b",
+    "web development": r"\bweb development\b",
+    "application development": r"\bapplication development\b",
+    "data structures": r"\bdata structures?\b",
+    "algorithms": r"\balgorithms?\b",
+    "object oriented programming": (
+        r"\bobject[\s-]?oriented programming\b|\boop\b"
+    ),
+    "database": r"\bdatabases?\b|\bdatabase management\b",
+    "testing": r"\btesting\b|\btest automation\b",
+    "debugging": r"\bdebugging\b",
+    "deployment": r"\bdeployment\b|\bdeploying\b",
+    "cloud": r"\bcloud\b|\bcloud computing\b",
+    "agile": r"\bagile\b",
+    "scrum": r"\bscrum\b",
+    "restful": r"\brestful\b",
+    "microservices": r"\bmicroservices?\b",
+    "ci/cd": r"\bci\s*/\s*cd\b|\bcontinuous integration\b",
+}
+
+
 def normalize_text(text: str) -> str:
     """Normalize text for matching."""
 
@@ -52,6 +79,31 @@ def extract_skills(text: str, skill_patterns=None) -> set[str]:
     for skill, pattern in patterns.items():
         if re.search(pattern, normalized, re.IGNORECASE):
             found.add(skill)
+
+    return found
+
+
+def extract_keywords(
+    text: str,
+    keyword_patterns=None,
+) -> set[str]:
+    """
+    Extract important job-related keywords from text.
+
+    Keywords are intentionally separate from technical skills.
+    """
+
+    if not text:
+        return set()
+
+    patterns = keyword_patterns or DEFAULT_KEYWORD_PATTERNS
+    normalized = normalize_text(text)
+
+    found = set()
+
+    for keyword, pattern in patterns.items():
+        if re.search(pattern, normalized, re.IGNORECASE):
+            found.add(keyword)
 
     return found
 
@@ -92,6 +144,24 @@ def calculate_match_score(
     )
 
 
+def calculate_keyword_coverage(
+    resume_keywords: set[str],
+    job_keywords: set[str],
+) -> int:
+    """
+    Calculate percentage of job keywords represented in the resume.
+    """
+
+    if not job_keywords:
+        return 0
+
+    matched = resume_keywords & job_keywords
+
+    return round(
+        len(matched) / len(job_keywords) * 100
+    )
+
+
 def generate_job_suggestions(
     matched_skills: set[str],
     missing_skills: set[str],
@@ -121,6 +191,42 @@ def generate_job_suggestions(
     return suggestions
 
 
+def generate_keyword_suggestions(
+    matched_keywords: set[str],
+    missing_keywords: set[str],
+) -> list[str]:
+    """
+    Generate suggestions based on job-description keywords.
+    """
+
+    suggestions = []
+
+    if missing_keywords:
+        missing = ", ".join(sorted(missing_keywords))
+
+        suggestions.append(
+            "Consider naturally including relevant job keywords "
+            f"such as: {missing}."
+        )
+
+    if matched_keywords:
+        matched = ", ".join(sorted(matched_keywords))
+
+        suggestions.append(
+            "Your resume already includes relevant keywords such as: "
+            f"{matched}."
+        )
+
+    if not matched_keywords and missing_keywords:
+        suggestions.append(
+            "Your resume has limited keyword coverage. "
+            "Tailor your summary, skills, projects, or experience "
+            "to the job description where appropriate."
+        )
+
+    return suggestions
+
+
 def match_resume_to_job(
     resume: dict,
     job_description: str,
@@ -129,6 +235,7 @@ def match_resume_to_job(
 
     resume_text = resume_to_text(resume)
 
+    # Existing skill analysis.
     resume_skills = extract_skills(resume_text)
     job_skills = extract_skills(job_description)
 
@@ -140,16 +247,42 @@ def match_resume_to_job(
         job_skills,
     )
 
-    suggestions = generate_job_suggestions(
+    skill_suggestions = generate_job_suggestions(
         matched_skills,
         missing_skills,
     )
 
+    # New keyword analysis.
+    resume_keywords = extract_keywords(resume_text)
+    job_keywords = extract_keywords(job_description)
+
+    matched_keywords = resume_keywords & job_keywords
+    missing_keywords = job_keywords - resume_keywords
+
+    keyword_coverage = calculate_keyword_coverage(
+        resume_keywords,
+        job_keywords,
+    )
+
+    keyword_suggestions = generate_keyword_suggestions(
+        matched_keywords,
+        missing_keywords,
+    )
+
     return {
+        # Existing v1.3 fields.
         "score": score,
         "resume_skills": sorted(resume_skills),
         "job_skills": sorted(job_skills),
         "matched_skills": sorted(matched_skills),
         "missing_skills": sorted(missing_skills),
-        "suggestions": suggestions,
+        "suggestions": skill_suggestions,
+
+        # New v1.7 keyword fields.
+        "resume_keywords": sorted(resume_keywords),
+        "job_keywords": sorted(job_keywords),
+        "matched_keywords": sorted(matched_keywords),
+        "missing_keywords": sorted(missing_keywords),
+        "keyword_coverage": keyword_coverage,
+        "keyword_suggestions": keyword_suggestions,
     }

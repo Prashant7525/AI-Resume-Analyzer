@@ -34,7 +34,8 @@
             <p class="hero-text">
                 Upload your resume and optionally add a job
                 description to evaluate your resume structure,
-                ATS readiness, and job compatibility.
+                ATS readiness, job compatibility, and keyword
+                coverage.
             </p>
 
         </div>
@@ -379,9 +380,7 @@
                             </strong>
 
                             <span>
-
                                 {{ ats_result.content_quality.breakdown.summary }}/10
-
                             </span>
 
                         </li>
@@ -393,9 +392,7 @@
                             </strong>
 
                             <span>
-
                                 {{ ats_result.content_quality.breakdown.skills }}/10
-
                             </span>
 
                         </li>
@@ -407,9 +404,7 @@
                             </strong>
 
                             <span>
-
                                 {{ ats_result.content_quality.breakdown.experience }}/10
-
                             </span>
 
                         </li>
@@ -421,9 +416,7 @@
                             </strong>
 
                             <span>
-
                                 {{ ats_result.content_quality.breakdown.projects }}/10
-
                             </span>
 
                         </li>
@@ -435,9 +428,7 @@
                             </strong>
 
                             <span>
-
                                 {{ ats_result.content_quality.breakdown.achievements }}/10
-
                             </span>
 
                         </li>
@@ -449,9 +440,7 @@
                             </strong>
 
                             <span>
-
                                 {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
-
                             </span>
 
                         </li>
@@ -550,6 +539,104 @@
                     {% endif %}
 
                 </section>
+
+
+                <!-- Keyword Intelligence -->
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Keyword Intelligence
+                    </h2>
+
+                    <div class="score">
+                        {{ job_result.keyword_coverage }}%
+                    </div>
+
+                    <p class="score-label">
+                        Keyword coverage
+                    </p>
+
+                    <h3>
+                        Matched Keywords
+                    </h3>
+
+                    {% if job_result.matched_keywords %}
+
+                    <ul class="skills">
+
+                        {% for keyword in job_result.matched_keywords %}
+
+                        <li>
+                            {{ keyword }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    {% else %}
+
+                    <p>
+                        No matching keywords detected.
+                    </p>
+
+                    {% endif %}
+
+                    <h3>
+                        Missing Keywords
+                    </h3>
+
+                    {% if job_result.missing_keywords %}
+
+                    <ul class="skills missing">
+
+                        {% for keyword in job_result.missing_keywords %}
+
+                        <li>
+                            {{ keyword }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    {% else %}
+
+                    <p>
+                        No missing keywords detected.
+                    </p>
+
+                    {% endif %}
+
+                </section>
+
+
+                <!-- Keyword Suggestions -->
+
+                {% if job_result.keyword_suggestions %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Keyword Suggestions
+                    </h2>
+
+                    <ul class="suggestions">
+
+                        {% for suggestion in job_result.keyword_suggestions %}
+
+                        <li>
+                            {{ suggestion }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
 
                 {% endif %}
 
