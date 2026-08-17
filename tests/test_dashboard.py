@@ -79,19 +79,19 @@ def test_calculate_overall_score_handles_missing_results():
 
 
 def test_score_is_clamped_to_100():
-    result = {
+    ats_result = {
         "ats_score": {
             "score": 150,
         },
     }
 
-    quality = {
+    quality_result = {
         "score": 150,
     }
 
     score = calculate_overall_score(
-        result,
-        quality,
+        ats_result,
+        quality_result,
     )
 
     assert score == 100
@@ -187,6 +187,7 @@ def test_build_dashboard_result():
     )
 
     assert result["overall_score"] == 72
+
     assert result["breakdown"]["ats"] == 80
     assert result["breakdown"]["quality"] == 70
     assert result["breakdown"]["job_match"] == 60

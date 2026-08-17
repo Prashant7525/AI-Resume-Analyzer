@@ -36,42 +36,53 @@ def calculate_overall_score(
     """
     Calculate a unified resume score.
 
-    ATS and resume quality are always included.
-    Job matching and improvement readiness are included
-    only when their analysis results are available.
+    Without a job description:
+        ATS           = 50%
+        Quality       = 30%
+        Improvements  = 20%
+
+    With a job description:
+        ATS           = 35%
+        Quality       = 25%
+        Job Match     = 20%
+        Improvements  = 20%
     """
 
-    scores = [
-        _get_score(ats_result, "ats_score", "score"),
-        _get_score(quality_result, "score"),
-    ]
+    ats_score = _get_score(
+        ats_result,
+        "ats_score",
+        "score",
+    )
 
-    weights = [0.35, 0.25]
+    quality_score = _get_score(
+        quality_result,
+        "score",
+    )
+
+    improvement_score = _get_score(
+        improvement_result,
+        "score",
+    )
 
     if job_result is not None:
-        scores.append(
-            _get_score(job_result, "score")
+        job_score = _get_score(
+            job_result,
+            "score",
         )
-        weights.append(0.20)
 
-    if improvement_result is not None:
-        scores.append(
-            _get_score(improvement_result, "score")
+        weighted_score = (
+            ats_score * 0.35
+            + quality_score * 0.25
+            + job_score * 0.20
+            + improvement_score * 0.20
         )
-        weights.append(0.20)
 
-    # When no job description is supplied, give the remaining
-    # weight to the core resume analyses.
-    if job_result is None:
-        weights = [0.50, 0.30]
-
-        if improvement_result is not None:
-            weights.append(0.20)
-
-    weighted_score = sum(
-        score * weight
-        for score, weight in zip(scores, weights)
-    )
+    else:
+        weighted_score = (
+            ats_score * 0.50
+            + quality_score * 0.30
+            + improvement_score * 0.20
+        )
 
     return _clamp_score(round(weighted_score))
 
@@ -179,7 +190,7 @@ def build_dashboard_result(
     job_result: dict | None = None,
     improvement_result: dict | None = None,
 ) -> dict:
-    """Build the unified dashboard payload."""
+    """Build the complete unified dashboard payload."""
 
     overall_score = calculate_overall_score(
         ats_result,

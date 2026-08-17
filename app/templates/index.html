@@ -19,6 +19,10 @@
 
 <body>
 
+    <!-- =========================================
+         HEADER
+         ========================================= -->
+
     <header>
 
         <div class="container">
@@ -35,8 +39,7 @@
                 Upload your resume and optionally add a job
                 description to evaluate your resume structure,
                 ATS readiness, job compatibility, keyword
-                coverage, overall quality, and improvement
-                opportunities.
+                coverage, quality, and improvement opportunities.
             </p>
 
         </div>
@@ -46,9 +49,11 @@
 
     <main class="container">
 
-        <!-- Upload Section -->
+        <!-- =========================================
+             UPLOAD SECTION
+             ========================================= -->
 
-        <section class="card">
+        <section class="card upload-card">
 
             <form
                 method="POST"
@@ -90,6 +95,11 @@
                             placeholder="Paste a job description here (optional)..."
                         >{{ job_description }}</textarea>
 
+                        <small>
+                            Adding a job description enables job matching
+                            and keyword intelligence.
+                        </small>
+
                     </div>
 
                 </div>
@@ -108,7 +118,9 @@
         </section>
 
 
-        <!-- Error -->
+        <!-- =========================================
+             ERROR
+             ========================================= -->
 
         {% if error %}
 
@@ -134,7 +146,199 @@
             <div class="results-grid">
 
 
-                <!-- Resume Overview -->
+                <!-- =========================================
+                     UNIFIED V2.0 DASHBOARD
+                     ========================================= -->
+
+                {% if dashboard_result %}
+
+                <section class="card dashboard-card full-width">
+
+                    <div class="dashboard-heading">
+
+                        <div>
+
+                            <span class="dashboard-badge">
+                                V2.0 DASHBOARD
+                            </span>
+
+                            <h2 class="section-title">
+                                Resume Dashboard
+                            </h2>
+
+                            <p class="dashboard-description">
+                                A unified view of your resume's ATS
+                                readiness, quality, improvements,
+                                and job compatibility.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Overall Score -->
+
+                    <div class="dashboard-overall">
+
+                        <div class="overall-score">
+
+                            <span class="overall-score-value">
+                                {{ dashboard_result.overall_score }}
+                            </span>
+
+                            <span class="overall-score-max">
+                                /100
+                            </span>
+
+                        </div>
+
+
+                        <div class="overall-score-content">
+
+                            <h3>
+                                Overall Resume Score
+                            </h3>
+
+                            <p>
+                                Your combined resume analysis score.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Dashboard Score Cards -->
+
+                    <div class="dashboard-grid">
+
+                        <!-- ATS -->
+
+                        <div class="dashboard-score-item">
+
+                            <span class="dashboard-score-label">
+                                ATS Readiness
+                            </span>
+
+                            <strong>
+                                {{ dashboard_result.breakdown.ats }}/100
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Resume Quality -->
+
+                        <div class="dashboard-score-item">
+
+                            <span class="dashboard-score-label">
+                                Resume Quality
+                            </span>
+
+                            <strong>
+                                {{ dashboard_result.breakdown.quality }}/100
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Improvements -->
+
+                        <div class="dashboard-score-item">
+
+                            <span class="dashboard-score-label">
+                                Improvements
+                            </span>
+
+                            <strong>
+
+                                {% if dashboard_result.breakdown.improvements is not none %}
+
+                                    {{ dashboard_result.breakdown.improvements }}/100
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </strong>
+
+                        </div>
+
+
+                        <!-- Job Match -->
+
+                        {% if dashboard_result.has_job_match %}
+
+                        <div class="dashboard-score-item">
+
+                            <span class="dashboard-score-label">
+                                Job Match
+                            </span>
+
+                            <strong>
+                                {{ dashboard_result.breakdown.job_match }}/100
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+                    </div>
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- =========================================
+                     PRIORITY RECOMMENDATIONS
+                     ========================================= -->
+
+                {% if dashboard_result and dashboard_result.recommendations %}
+
+                <section class="card full-width recommendations-card">
+
+                    <div class="recommendations-header">
+
+                        <div>
+
+                            <h2 class="section-title">
+                                Priority Recommendations
+                            </h2>
+
+                            <p class="score-label">
+                                {{ dashboard_result.recommendation_count }}
+                                improvement recommendations identified.
+                            </p>
+
+                        </div>
+
+                    </div>
+
+
+                    <ol class="suggestions priority-list">
+
+                        {% for recommendation in dashboard_result.recommendations %}
+
+                        <li>
+                            {{ recommendation }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ol>
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- =========================================
+                     RESUME OVERVIEW
+                     ========================================= -->
 
                 <section class="card">
 
@@ -145,18 +349,39 @@
                     <ul class="info-list">
 
                         <li>
-                            <strong>Name:</strong>
-                            {{ resume.name or "Not detected" }}
+
+                            <strong>
+                                Name:
+                            </strong>
+
+                            <span>
+                                {{ resume.name or "Not detected" }}
+                            </span>
+
                         </li>
 
                         <li>
-                            <strong>Email:</strong>
-                            {{ resume.email or "Not detected" }}
+
+                            <strong>
+                                Email:
+                            </strong>
+
+                            <span>
+                                {{ resume.email or "Not detected" }}
+                            </span>
+
                         </li>
 
                         <li>
-                            <strong>Phone:</strong>
-                            {{ resume.phone or "Not detected" }}
+
+                            <strong>
+                                Phone:
+                            </strong>
+
+                            <span>
+                                {{ resume.phone or "Not detected" }}
+                            </span>
+
                         </li>
 
                     </ul>
@@ -164,7 +389,9 @@
                 </section>
 
 
-                <!-- ATS Score -->
+                <!-- =========================================
+                     ATS SCORE
+                     ========================================= -->
 
                 {% if ats_result %}
 
@@ -175,7 +402,9 @@
                     </h2>
 
                     <div class="score">
+
                         {{ ats_result.ats_score.score }}/100
+
                     </div>
 
                     <p class="score-label">
@@ -185,30 +414,39 @@
                     <ul class="info-list">
 
                         <li>
-                            <strong>Completeness</strong>
+
+                            <strong>
+                                Completeness
+                            </strong>
 
                             <span>
-                                {{ ats_result.ats_score.completeness.score
-                                }}/{{ ats_result.ats_score.completeness.max_score }}
+                                {{ ats_result.ats_score.completeness.score }}/{{ ats_result.ats_score.completeness.max_score }}
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Weighted Completeness</strong>
+
+                            <strong>
+                                Weighted Completeness
+                            </strong>
 
                             <span>
-                                {{ ats_result.ats_score.completeness.weighted_score
-                                }}/50
+                                {{ ats_result.ats_score.completeness.weighted_score }}/50
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Content Quality</strong>
+
+                            <strong>
+                                Content Quality
+                            </strong>
 
                             <span>
-                                {{ ats_result.ats_score.content_quality.score
-                                }}/{{ ats_result.ats_score.content_quality.max_score }}
+                                {{ ats_result.ats_score.content_quality.score }}/{{ ats_result.ats_score.content_quality.max_score }}
                             </span>
+
                         </li>
 
                     </ul>
@@ -218,7 +456,9 @@
                 {% endif %}
 
 
-                <!-- Resume Sections -->
+                <!-- =========================================
+                     RESUME SECTIONS
+                     ========================================= -->
 
                 {% if ats_result %}
 
@@ -263,7 +503,9 @@
                 {% endif %}
 
 
-                <!-- Contact Information -->
+                <!-- =========================================
+                     CONTACT INFORMATION
+                     ========================================= -->
 
                 {% if ats_result %}
 
@@ -297,6 +539,7 @@
 
                         </li>
 
+
                         <li>
 
                             <strong>
@@ -326,7 +569,9 @@
                 {% endif %}
 
 
-                <!-- Content Quality -->
+                <!-- =========================================
+                     ATS CONTENT QUALITY
+                     ========================================= -->
 
                 {% if ats_result %}
 
@@ -339,51 +584,75 @@
                     <ul class="info-list">
 
                         <li>
-                            <strong>Summary</strong>
+
+                            <strong>
+                                Summary
+                            </strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.summary }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Skills</strong>
+
+                            <strong>
+                                Skills
+                            </strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.skills }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Experience</strong>
+
+                            <strong>
+                                Experience
+                            </strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.experience }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Projects</strong>
+
+                            <strong>
+                                Projects
+                            </strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.projects }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Achievements</strong>
+
+                            <strong>
+                                Achievements
+                            </strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.achievements }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Total</strong>
+
+                            <strong>
+                                Total
+                            </strong>
 
                             <span>
                                 {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
                             </span>
+
                         </li>
 
                     </ul>
@@ -393,7 +662,9 @@
                 {% endif %}
 
 
-                <!-- Resume Quality - v1.8 -->
+                <!-- =========================================
+                     RESUME QUALITY
+                     ========================================= -->
 
                 {% if quality_result %}
 
@@ -414,49 +685,69 @@
                     <ul class="info-list">
 
                         <li>
-                            <strong>Resume Length</strong>
+
+                            <strong>
+                                Resume Length
+                            </strong>
 
                             <span>
                                 {{ quality_result.length.word_count }}
                                 words ·
                                 {{ quality_result.length.rating|title }}
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Bullet Points</strong>
+
+                            <strong>
+                                Bullet Points
+                            </strong>
 
                             <span>
                                 {{ quality_result.bullets.total }}
                                 detected
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Quantifiable Achievements</strong>
+
+                            <strong>
+                                Quantifiable Achievements
+                            </strong>
 
                             <span>
                                 {{ quality_result.achievements.quantifiable }}
                                 detected
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Contact</strong>
+
+                            <strong>
+                                Contact
+                            </strong>
 
                             <span>
                                 {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
                                 complete
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Structure</strong>
+
+                            <strong>
+                                Structure
+                            </strong>
 
                             <span>
                                 {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
                                 sections
                             </span>
+
                         </li>
 
                     </ul>
@@ -475,51 +766,75 @@
                     <ul class="info-list">
 
                         <li>
-                            <strong>Length</strong>
+
+                            <strong>
+                                Length
+                            </strong>
 
                             <span>
                                 {{ quality_result.breakdown.length }}/15
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Sections</strong>
+
+                            <strong>
+                                Sections
+                            </strong>
 
                             <span>
                                 {{ quality_result.breakdown.sections }}/15
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Bullet Usage</strong>
+
+                            <strong>
+                                Bullet Usage
+                            </strong>
 
                             <span>
                                 {{ quality_result.breakdown.bullets }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Achievements</strong>
+
+                            <strong>
+                                Achievements
+                            </strong>
 
                             <span>
                                 {{ quality_result.breakdown.achievements }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Contact</strong>
+
+                            <strong>
+                                Contact
+                            </strong>
 
                             <span>
                                 {{ quality_result.breakdown.contact }}/10
                             </span>
+
                         </li>
 
                         <li>
-                            <strong>Structure</strong>
+
+                            <strong>
+                                Structure
+                            </strong>
 
                             <span>
                                 {{ quality_result.breakdown.structure }}/10
                             </span>
+
                         </li>
 
                     </ul>
@@ -556,93 +871,35 @@
                 {% endif %}
 
 
-                <!-- v1.9 Resume Improvement Analysis -->
+                <!-- =========================================
+                     RESUME IMPROVEMENTS
+                     ========================================= -->
 
                 {% if improvement_result %}
 
-                <section class="card score-card full-width">
+                <section class="card score-card">
 
                     <h2 class="section-title">
-                        Resume Improvement Score
+                        Improvement Readiness
                     </h2>
 
                     <div class="score">
-                        {{ improvement_result.score }}/100
+                        {{ improvement_result.score }}/{{ improvement_result.max_score }}
                     </div>
 
                     <p class="score-label">
-                        Actionable resume improvement readiness
+                        Resume improvement readiness score
                     </p>
 
-                    <ul class="info-list">
-
-                        <li>
-
-                            <strong>
-                                Areas Passing
-                            </strong>
-
-                            <span>
-                                {{ improvement_result.completed }}/{{ improvement_result.total }}
-                            </span>
-
-                        </li>
-
-                    </ul>
-
                 </section>
 
-
-                <!-- Improvement Analysis -->
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Resume Improvement Analysis
-                    </h2>
-
-                    <ul class="info-list">
-
-                        {% for section, result in improvement_result.checks.items() %}
-
-                        <li>
-
-                            <strong>
-                                {{ section|title }}
-                            </strong>
-
-                            {% if result.status == "good"
-                                or result.status == "complete" %}
-
-                            <span class="status-found">
-                                Good
-                            </span>
-
-                            {% else %}
-
-                            <span class="status-missing">
-                                {{ result.status|replace("_", " ")|title }}
-                            </span>
-
-                            {% endif %}
-
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-
-                <!-- Actionable Recommendations -->
 
                 {% if improvement_result.improvements %}
 
                 <section class="card full-width">
 
                     <h2 class="section-title">
-                        Recommended Improvements
+                        Actionable Resume Improvements
                     </h2>
 
                     <ul class="suggestions">
@@ -659,27 +916,14 @@
 
                 </section>
 
-                {% else %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Recommended Improvements
-                    </h2>
-
-                    <p>
-                        Great job! No major resume improvements were
-                        detected by the current analysis rules.
-                    </p>
-
-                </section>
-
                 {% endif %}
 
                 {% endif %}
 
 
-                <!-- Job Match -->
+                <!-- =========================================
+                     JOB MATCH
+                     ========================================= -->
 
                 {% if job_result %}
 
@@ -690,7 +934,9 @@
                     </h2>
 
                     <div class="score">
+
                         {{ job_result.score }}%
+
                     </div>
 
                     <p class="score-label">
@@ -808,6 +1054,7 @@
 
                     {% endif %}
 
+
                     <h3>
                         Missing Keywords
                     </h3>
@@ -863,10 +1110,39 @@
 
                 {% endif %}
 
+
+                <!-- Job Match Suggestions -->
+
+                {% if job_result.suggestions %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Job Match Suggestions
+                    </h2>
+
+                    <ul class="suggestions">
+
+                        {% for suggestion in job_result.suggestions %}
+
+                        <li>
+                            {{ suggestion }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
                 {% endif %}
 
 
-                <!-- ATS Suggestions -->
+                <!-- =========================================
+                     ATS SUGGESTIONS
+                     ========================================= -->
 
                 {% if ats_result and ats_result.suggestions %}
 
@@ -893,34 +1169,9 @@
                 {% endif %}
 
 
-                <!-- Job Match Suggestions -->
-
-                {% if job_result and job_result.suggestions %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Job Match Suggestions
-                    </h2>
-
-                    <ul class="suggestions">
-
-                        {% for suggestion in job_result.suggestions %}
-
-                        <li>
-                            {{ suggestion }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- Extracted Text -->
+                <!-- =========================================
+                     EXTRACTED TEXT
+                     ========================================= -->
 
                 {% if extracted_text %}
 
@@ -950,6 +1201,10 @@
 
     </main>
 
+
+    <!-- =========================================
+         FOOTER
+         ========================================= -->
 
     <footer>
 
