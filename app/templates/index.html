@@ -9,214 +9,469 @@
     >
 
     <title>AI Resume Analyzer</title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
 </head>
 
 <body>
 
-    <main>
+    <header>
+        <div class="container">
 
-        <h1>AI Resume Analyzer</h1>
+            <span class="badge">
+                AI Resume Analyzer
+            </span>
 
-        <p>
-            Upload your resume to analyze its structure and
-            compare it with a job description.
-        </p>
+            <h1>
+                Analyze Your Resume
+            </h1>
 
-        <form
-            method="POST"
-            enctype="multipart/form-data"
-        >
+            <p class="hero-text">
+                Upload your resume and optionally add a job
+                description to evaluate your resume structure,
+                ATS readiness, and job compatibility.
+            </p>
 
-            <label for="resume">
-                Resume PDF
-            </label>
+        </div>
+    </header>
 
-            <input
-                type="file"
-                id="resume"
-                name="resume"
-                accept=".pdf"
-                required
+
+    <main class="container">
+
+        <!-- Upload Section -->
+
+        <section class="card">
+
+            <form
+                method="POST"
+                enctype="multipart/form-data"
             >
 
-            <label for="job_description">
-                Job Description
-            </label>
+                <div class="form-grid">
 
-            <textarea
-                id="job_description"
-                name="job_description"
-                rows="10"
-                placeholder="Paste a job description here (optional)..."
-            >{{ job_description }}</textarea>
+                    <div class="field">
 
-            <button type="submit">
-                Analyze Resume
-            </button>
+                        <label for="resume">
+                            Resume PDF
+                        </label>
 
-        </form>
+                        <input
+                            type="file"
+                            id="resume"
+                            name="resume"
+                            accept=".pdf"
+                            required
+                        >
+
+                        <small>
+                            Upload a PDF resume to begin analysis.
+                        </small>
+
+                    </div>
+
+
+                    <div class="field">
+
+                        <label for="job_description">
+                            Job Description
+                        </label>
+
+                        <textarea
+                            id="job_description"
+                            name="job_description"
+                            placeholder="Paste a job description here (optional)..."
+                        >{{ job_description }}</textarea>
+
+                    </div>
+
+                </div>
+
+
+                <div class="button-row">
+
+                    <button type="submit">
+                        Analyze Resume
+                    </button>
+
+                </div>
+
+            </form>
+
+        </section>
+
+
+        <!-- Error -->
 
         {% if error %}
 
-            <section>
-                <h2>Error</h2>
-                <p>{{ error }}</p>
-            </section>
+        <section class="card error">
+
+            <h2>
+                Unable to Analyze Resume
+            </h2>
+
+            <p>
+                {{ error }}
+            </p>
+
+        </section>
 
         {% endif %}
+
 
         {% if resume %}
 
-            <section>
+        <div class="results">
 
-                <h2>Resume Overview</h2>
+            <div class="results-grid">
 
-                <p>
-                    <strong>Name:</strong>
-                    {{ resume.name }}
-                </p>
 
-                <p>
-                    <strong>Email:</strong>
-                    {{ resume.email or "Not detected" }}
-                </p>
+                <!-- Resume Overview -->
 
-                <p>
-                    <strong>Phone:</strong>
-                    {{ resume.phone or "Not detected" }}
-                </p>
+                <section class="card">
 
-            </section>
+                    <h2 class="section-title">
+                        Resume Overview
+                    </h2>
 
-        {% endif %}
+                    <ul class="info-list">
 
-        {% if ats_result %}
-
-            <section>
-
-                <h2>ATS Score</h2>
-
-                <p>
-                    {{ ats_result.score }}/90
-                </p>
-
-                <h3>Contact Information</h3>
-
-                <ul>
-                    <li>
-                        Email:
-                        {{ "Found" if ats_result.contact.email else "Missing" }}
-                    </li>
-
-                    <li>
-                        Phone:
-                        {{ "Found" if ats_result.contact.phone else "Missing" }}
-                    </li>
-                </ul>
-
-                <h3>Resume Sections</h3>
-
-                <ul>
-                    {% for section, present in ats_result.sections.items() %}
                         <li>
-                            {{ section|title }}:
-                            {{ "Found" if present else "Missing" }}
+                            <strong>Name:</strong>
+                            {{ resume.name or "Not detected" }}
                         </li>
-                    {% endfor %}
-                </ul>
 
-                {% if ats_result.suggestions %}
+                        <li>
+                            <strong>Email:</strong>
+                            {{ resume.email or "Not detected" }}
+                        </li>
 
-                    <h3>Suggestions</h3>
+                        <li>
+                            <strong>Phone:</strong>
+                            {{ resume.phone or "Not detected" }}
+                        </li>
 
-                    <ul>
-                        {% for suggestion in ats_result.suggestions %}
-                            <li>{{ suggestion }}</li>
-                        {% endfor %}
                     </ul>
 
-                {% endif %}
+                </section>
 
-            </section>
 
-        {% endif %}
+                <!-- ATS Score -->
 
-        {% if job_result %}
+                {% if ats_result %}
 
-            <section>
+                <section class="card score-card">
 
-                <h2>Job Match</h2>
+                    <h2 class="section-title">
+                        ATS Score
+                    </h2>
 
-                <p>
-                    <strong>
-                        Match Score:
-                    </strong>
+                    <div class="score">
+                        {{ ats_result.score }}/90
+                    </div>
 
-                    {{ job_result.score }}%
-                </p>
-
-                <h3>Matched Skills</h3>
-
-                {% if job_result.matched_skills %}
-
-                    <ul>
-                        {% for skill in job_result.matched_skills %}
-                            <li>{{ skill }}</li>
-                        {% endfor %}
-                    </ul>
-
-                {% else %}
-
-                    <p>No matching skills detected.</p>
-
-                {% endif %}
-
-                <h3>Missing Skills</h3>
-
-                {% if job_result.missing_skills %}
-
-                    <ul>
-                        {% for skill in job_result.missing_skills %}
-                            <li>{{ skill }}</li>
-                        {% endfor %}
-                    </ul>
-
-                {% else %}
-
-                    <p>
-                        No missing skills detected from the
-                        supported skill list.
+                    <p class="score-label">
+                        Resume completeness score
                     </p>
 
+                </section>
+
                 {% endif %}
 
-                <h3>Suggestions</h3>
 
-                <ul>
-                    {% for suggestion in job_result.suggestions %}
-                        <li>{{ suggestion }}</li>
-                    {% endfor %}
-                </ul>
+                <!-- Resume Sections -->
 
-            </section>
+                {% if ats_result %}
 
-        {% endif %}
+                <section class="card">
 
-        {% if extracted_text %}
+                    <h2 class="section-title">
+                        Resume Sections
+                    </h2>
 
-            <details>
+                    <ul class="info-list">
 
-                <summary>
-                    View Extracted Resume Text
-                </summary>
+                        {% for section, present in ats_result.sections.items() %}
 
-                <pre>{{ extracted_text }}</pre>
+                        <li>
 
-            </details>
+                            <strong>
+                                {{ section|title }}
+                            </strong>
+
+                            {% if present %}
+
+                            <span class="status-found">
+                                Found
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-missing">
+                                Missing
+                            </span>
+
+                            {% endif %}
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- Contact Information -->
+
+                {% if ats_result %}
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Contact Information
+                    </h2>
+
+                    <ul class="info-list">
+
+                        <li>
+
+                            <strong>
+                                Email
+                            </strong>
+
+                            {% if ats_result.contact.email %}
+
+                            <span class="status-found">
+                                Found
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-missing">
+                                Missing
+                            </span>
+
+                            {% endif %}
+
+                        </li>
+
+
+                        <li>
+
+                            <strong>
+                                Phone
+                            </strong>
+
+                            {% if ats_result.contact.phone %}
+
+                            <span class="status-found">
+                                Found
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-missing">
+                                Missing
+                            </span>
+
+                            {% endif %}
+
+                        </li>
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- Job Match -->
+
+                {% if job_result %}
+
+                <section class="card score-card">
+
+                    <h2 class="section-title">
+                        Job Match
+                    </h2>
+
+                    <div class="score">
+                        {{ job_result.score }}%
+                    </div>
+
+                    <p class="score-label">
+                        Resume compatibility with the job description
+                    </p>
+
+                </section>
+
+
+                <!-- Matched Skills -->
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Matched Skills
+                    </h2>
+
+                    {% if job_result.matched_skills %}
+
+                    <ul class="skills">
+
+                        {% for skill in job_result.matched_skills %}
+
+                        <li>
+                            {{ skill }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    {% else %}
+
+                    <p>
+                        No matching skills detected.
+                    </p>
+
+                    {% endif %}
+
+                </section>
+
+
+                <!-- Missing Skills -->
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Missing Skills
+                    </h2>
+
+                    {% if job_result.missing_skills %}
+
+                    <ul class="skills missing">
+
+                        {% for skill in job_result.missing_skills %}
+
+                        <li>
+                            {{ skill }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                    {% else %}
+
+                    <p>
+                        No missing skills detected.
+                    </p>
+
+                    {% endif %}
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- Suggestions -->
+
+                {% if ats_result and ats_result.suggestions %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Resume Improvement Suggestions
+                    </h2>
+
+                    <ul class="suggestions">
+
+                        {% for suggestion in ats_result.suggestions %}
+
+                        <li>
+                            {{ suggestion }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
+
+                {% if job_result and job_result.suggestions %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Job Match Suggestions
+                    </h2>
+
+                    <ul class="suggestions">
+
+                        {% for suggestion in job_result.suggestions %}
+
+                        <li>
+                            {{ suggestion }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- Extracted Text -->
+
+                {% if extracted_text %}
+
+                <section class="card full-width">
+
+                    <details>
+
+                        <summary>
+                            View Extracted Resume Text
+                        </summary>
+
+                        <br>
+
+                        <pre>{{ extracted_text }}</pre>
+
+                    </details>
+
+                </section>
+
+                {% endif %}
+
+            </div>
+
+        </div>
 
         {% endif %}
 
     </main>
+
+
+    <footer>
+
+        <div class="container">
+
+            AI Resume Analyzer · Built with Flask and Python
+
+        </div>
+
+    </footer>
 
 </body>
 
