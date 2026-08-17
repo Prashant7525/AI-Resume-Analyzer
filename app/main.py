@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request
 
+from app.analytics import build_analytics_result
 from app.ats_analyzer import analyze_resume
 from app.dashboard import build_dashboard_result
 from app.job_matcher import match_resume_to_job
@@ -25,12 +26,16 @@ def allowed_file(filename: str) -> bool:
 
 @app.route("/", methods=["GET", "POST"])
 def index():
+    """Render the resume analyzer and process uploaded resumes."""
+
     resume = None
+
     ats_result = None
     quality_result = None
     improvement_result = None
     job_result = None
     dashboard_result = None
+    analytics_result = None
 
     extracted_text = None
     error = None
@@ -44,6 +49,10 @@ def index():
             "",
         ).strip()
 
+        # =========================================
+        # FILE VALIDATION
+        # =========================================
+
         if file is None or file.filename == "":
             error = "Please select a PDF resume."
 
@@ -51,7 +60,13 @@ def index():
             error = "Only PDF files are supported."
 
         else:
+
             try:
+
+                # =========================================
+                # PDF TEXT EXTRACTION
+                # =========================================
+
                 extracted_text = extract_text_from_pdf(file)
 
                 if not extracted_text:
@@ -60,41 +75,79 @@ def index():
                     )
 
                 else:
+
+                    # =========================================
+                    # RESUME PARSING
+                    # =========================================
+
                     resume = parse_resume(
                         extracted_text
                     )
 
-                    # ATS analysis.
+                    # =========================================
+                    # ATS ANALYSIS
+                    # =========================================
+
                     ats_result = analyze_resume(
                         resume
                     )
 
-                    # Resume quality analysis.
-                    quality_result = analyze_resume_quality(
-                        resume
+                    # =========================================
+                    # RESUME QUALITY ANALYSIS
+                    # =========================================
+
+                    quality_result = (
+                        analyze_resume_quality(
+                            resume
+                        )
                     )
 
-                    # Resume improvement analysis.
+                    # =========================================
+                    # RESUME IMPROVEMENT ANALYSIS
+                    # =========================================
+
                     improvement_result = (
                         analyze_resume_improvements(
                             resume
                         )
                     )
 
-                    # Job matching and keyword intelligence.
+                    # =========================================
+                    # JOB MATCHING
+                    # =========================================
+
                     if job_description:
+
                         job_result = match_resume_to_job(
                             resume,
                             job_description,
                         )
 
-                    # Unified v2.0 dashboard.
-                    dashboard_result = build_dashboard_result(
-                        resume,
-                        ats_result,
-                        quality_result,
-                        job_result,
-                        improvement_result,
+                    # =========================================
+                    # V2.0 UNIFIED DASHBOARD
+                    # =========================================
+
+                    dashboard_result = (
+                        build_dashboard_result(
+                            resume,
+                            ats_result,
+                            quality_result,
+                            job_result,
+                            improvement_result,
+                        )
+                    )
+
+                    # =========================================
+                    # V2.1 ANALYTICS
+                    # =========================================
+
+                    analytics_result = (
+                        build_analytics_result(
+                            ats_result,
+                            quality_result,
+                            improvement_result,
+                            job_result,
+                        )
                     )
 
             except Exception:
@@ -110,6 +163,7 @@ def index():
         improvement_result=improvement_result,
         job_result=job_result,
         dashboard_result=dashboard_result,
+        analytics_result=analytics_result,
         extracted_text=extracted_text,
         error=error,
         job_description=job_description,

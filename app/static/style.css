@@ -585,3 +585,205 @@ footer {
         font-size: 42px;
     }
 }
+
+/* =========================================
+   V2.1 ANALYTICS
+   ========================================= */
+
+.analytics-card {
+    overflow: hidden;
+}
+
+
+/* =========================================
+   ANALYTICS HEADER
+   ========================================= */
+
+.analytics-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+
+.analytics-average {
+    min-width: 140px;
+    padding: 18px 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    text-align: center;
+    background: var(--surface-secondary);
+}
+
+
+.analytics-average span {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+}
+
+
+.analytics-average strong {
+    display: block;
+    font-size: 1.8rem;
+    line-height: 1.2;
+}
+
+
+/* =========================================
+   ANALYTICS METRIC GRID
+   ========================================= */
+
+.analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(
+        2,
+        minmax(0, 1fr)
+    );
+    gap: 18px;
+}
+
+
+.analytics-item {
+    padding: 20px;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    background: var(--surface-secondary);
+}
+
+
+.analytics-item-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 12px;
+}
+
+
+.analytics-item-top span {
+    font-weight: 700;
+}
+
+
+.analytics-item-top strong {
+    font-size: 1.1rem;
+}
+
+
+/* =========================================
+   ANALYTICS PROGRESS BAR
+   ========================================= */
+
+.analytics-progress {
+    width: 100%;
+    height: 9px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: var(--border-color);
+}
+
+
+.analytics-progress-bar {
+    height: 100%;
+    border-radius: inherit;
+    transition: width 0.4s ease;
+}
+
+
+.analytics-progress-bar.excellent {
+    background: #16a34a;
+}
+
+
+.analytics-progress-bar.good {
+    background: #2563eb;
+}
+
+
+.analytics-progress-bar.average {
+    background: #f59e0b;
+}
+
+
+.analytics-progress-bar.weak {
+    background: #dc2626;
+}
+
+
+.analytics-item small {
+    display: block;
+    margin-top: 10px;
+    font-weight: 600;
+}
+
+
+/* =========================================
+   ANALYTICS LISTS
+   ========================================= */
+
+.analytics-list {
+    display: grid;
+    gap: 12px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+
+.analytics-list li {
+    position: relative;
+    padding: 14px 16px 14px 42px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    background: var(--surface-secondary);
+    line-height: 1.5;
+}
+
+
+.analytics-list li::before {
+    position: absolute;
+    left: 16px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-weight: 800;
+}
+
+
+.strengths-list li::before {
+    content: "✓";
+}
+
+
+.attention-list li::before {
+    content: "!";
+}
+
+
+/* =========================================
+   ANALYTICS RESPONSIVE DESIGN
+   ========================================= */
+
+@media (max-width: 700px) {
+
+    .analytics-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+
+    .analytics-average {
+        width: 100%;
+    }
+
+
+    .analytics-grid {
+        grid-template-columns: 1fr;
+    }
+
+}
