@@ -39,9 +39,10 @@
 
         <p class="hero-text">
             Upload your resume and optionally add a job
-            description to evaluate your resume structure,
-            ATS readiness, job compatibility, keyword
-            coverage, quality, and improvement opportunities.
+            description to evaluate ATS readiness,
+            resume quality, job compatibility,
+            keyword coverage, analytics, and
+            improvement opportunities.
         </p>
 
     </div>
@@ -53,7 +54,7 @@
 
 
     <!-- =========================================
-         UPLOAD
+         UPLOAD SECTION
          ========================================= -->
 
     <section class="card upload-card">
@@ -65,6 +66,8 @@
 
             <div class="form-grid">
 
+
+                <!-- Resume -->
 
                 <div class="field">
 
@@ -87,6 +90,8 @@
                 </div>
 
 
+                <!-- Job Description -->
+
                 <div class="field">
 
                     <label for="job_description">
@@ -100,12 +105,11 @@
                     >{{ job_description }}</textarea>
 
                     <small>
-                        Adding a job description enables job
-                        matching and keyword intelligence.
+                        Adding a job description enables
+                        job matching and keyword intelligence.
                     </small>
 
                 </div>
-
 
             </div>
 
@@ -121,7 +125,6 @@
         </form>
 
     </section>
-
 
 
     <!-- =========================================
@@ -145,7 +148,6 @@
     {% endif %}
 
 
-
     {% if resume %}
 
 
@@ -155,13 +157,93 @@
 
 
             <!-- =========================================
+                 V2.3 REPORT DOWNLOAD
+                 ========================================= -->
+
+            <section class="card full-width report-card">
+
+                <div class="report-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V2.3 REPORT
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Analysis Report
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Download a professional PDF containing
+                            your complete resume analysis, scores,
+                            analytics, recommendations, and job
+                            compatibility results.
+                        </p>
+
+                    </div>
+
+                    <div class="report-action">
+
+                        <form
+                            method="POST"
+                            action="{{ url_for('download_report') }}"
+                            enctype="multipart/form-data"
+                        >
+
+                            <!--
+                                The browser does not automatically
+                                resend the previously selected file
+                                to another form.
+
+                                Therefore the report form asks the
+                                user to select the same resume again.
+                            -->
+
+                            <label
+                                for="report_resume"
+                                class="report-file-label"
+                            >
+                                Select resume for PDF
+                            </label>
+
+                            <input
+                                type="file"
+                                id="report_resume"
+                                name="resume"
+                                accept=".pdf"
+                                required
+                            >
+
+                            <input
+                                type="hidden"
+                                name="job_description"
+                                value="{{ job_description }}"
+                            >
+
+                            <button
+                                type="submit"
+                                class="secondary-button"
+                            >
+                                Download PDF Report
+                            </button>
+
+                        </form>
+
+                    </div>
+
+                </div>
+
+            </section>
+
+
+            <!-- =========================================
                  V2.2 DASHBOARD
                  ========================================= -->
 
             {% if dashboard_result %}
 
             <section class="card dashboard-card full-width">
-
 
                 <div class="dashboard-heading">
 
@@ -185,9 +267,6 @@
 
                 </div>
 
-
-
-                <!-- Overall Score -->
 
                 <div class="dashboard-overall">
 
@@ -219,11 +298,7 @@
                 </div>
 
 
-
-                <!-- Score Cards -->
-
                 <div class="dashboard-grid">
-
 
                     <div class="dashboard-score-item">
 
@@ -290,13 +365,11 @@
 
                     {% endif %}
 
-
                 </div>
 
             </section>
 
             {% endif %}
-
 
 
             <!-- =========================================
@@ -307,25 +380,15 @@
 
             <section class="card full-width quick-summary-card">
 
-                <div class="summary-header">
+                <span class="dashboard-badge">
+                    QUICK SUMMARY
+                </span>
 
-                    <div>
-
-                        <span class="dashboard-badge">
-                            QUICK SUMMARY
-                        </span>
-
-                        <h2 class="section-title">
-                            Resume Snapshot
-                        </h2>
-
-                    </div>
-
-                </div>
-
+                <h2 class="section-title">
+                    Resume Snapshot
+                </h2>
 
                 <div class="quick-summary-grid">
-
 
                     <div class="summary-item">
 
@@ -377,7 +440,6 @@
 
                     {% endif %}
 
-
                 </div>
 
 
@@ -398,7 +460,6 @@
             {% endif %}
 
 
-
             <!-- =========================================
                  ANALYTICS
                  ========================================= -->
@@ -406,7 +467,6 @@
             {% if analytics_result %}
 
             <section class="card full-width analytics-card">
-
 
                 <div class="analytics-header">
 
@@ -445,7 +505,6 @@
                 </div>
 
 
-
                 <div class="analytics-grid">
 
                     {% for metric in analytics_result.metrics %}
@@ -453,7 +512,6 @@
                     {% if metric.score is not none %}
 
                     <div class="analytics-item">
-
 
                         <div class="analytics-item-top">
 
@@ -471,7 +529,7 @@
                         <div class="analytics-progress">
 
                             <div
-                                class="analytics-progress-bar {{ metric.status }}"
+                                class="analytics-progress-bar {{ metric.status }} score-{{ metric.score }}"
                                 data-score="{{ metric.score }}"
                             ></div>
 
@@ -481,7 +539,6 @@
                         <small>
                             {{ metric.label }}
                         </small>
-
 
                     </div>
 
@@ -493,11 +550,6 @@
 
             </section>
 
-
-
-            <!-- =========================================
-                 STRENGTHS
-                 ========================================= -->
 
             {% if analytics_result.strengths %}
 
@@ -523,11 +575,6 @@
 
             {% endif %}
 
-
-
-            <!-- =========================================
-                 ATTENTION
-                 ========================================= -->
 
             {% if analytics_result.attention_areas %}
 
@@ -556,15 +603,13 @@
             {% endif %}
 
 
-
             <!-- =========================================
-                 UNIFIED ACTION PLAN
+                 ACTION PLAN
                  ========================================= -->
 
             {% if dashboard_result and dashboard_result.recommendations %}
 
             <section class="card full-width action-plan-card">
-
 
                 <div class="action-plan-header">
 
@@ -579,8 +624,8 @@
                         </h2>
 
                         <p class="dashboard-description">
-                            The most important improvements identified
-                            from your resume analysis.
+                            The most important improvements
+                            identified from your resume analysis.
                         </p>
 
                     </div>
@@ -599,7 +644,6 @@
                     </div>
 
                 </div>
-
 
 
                 <ol class="action-plan-list">
@@ -626,11 +670,9 @@
 
                 </ol>
 
-
             </section>
 
             {% endif %}
-
 
 
             <!-- =========================================
@@ -645,50 +687,33 @@
 
                 <ul class="info-list">
 
-
                     <li>
-
-                        <strong>
-                            Name:
-                        </strong>
+                        <strong>Name:</strong>
 
                         <span>
                             {{ resume.name or "Not detected" }}
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Email:
-                        </strong>
+                        <strong>Email:</strong>
 
                         <span>
                             {{ resume.email or "Not detected" }}
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Phone:
-                        </strong>
+                        <strong>Phone:</strong>
 
                         <span>
                             {{ resume.phone or "Not detected" }}
                         </span>
-
                     </li>
-
 
                 </ul>
 
             </section>
-
 
 
             <!-- =========================================
@@ -711,55 +736,37 @@
                     Overall resume ATS score
                 </p>
 
-
                 <ul class="info-list">
 
-
                     <li>
-
-                        <strong>
-                            Completeness
-                        </strong>
+                        <strong>Completeness</strong>
 
                         <span>
                             {{ ats_result.ats_score.completeness.score }}/{{ ats_result.ats_score.completeness.max_score }}
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Weighted Completeness
-                        </strong>
+                        <strong>Weighted Completeness</strong>
 
                         <span>
                             {{ ats_result.ats_score.completeness.weighted_score }}/50
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Content Quality
-                        </strong>
+                        <strong>Content Quality</strong>
 
                         <span>
                             {{ ats_result.ats_score.content_quality.score }}/{{ ats_result.ats_score.content_quality.max_score }}
                         </span>
-
                     </li>
-
 
                 </ul>
 
             </section>
 
             {% endif %}
-
 
 
             <!-- =========================================
@@ -809,7 +816,6 @@
             {% endif %}
 
 
-
             <!-- =========================================
                  CONTACT INFORMATION
                  ========================================= -->
@@ -823,7 +829,6 @@
                 </h2>
 
                 <ul class="info-list">
-
 
                     <li>
 
@@ -870,13 +875,11 @@
 
                     </li>
 
-
                 </ul>
 
             </section>
 
             {% endif %}
-
 
 
             <!-- =========================================
@@ -893,79 +896,59 @@
 
                 <ul class="info-list">
 
-
                     <li>
-                        <strong>
-                            Summary
-                        </strong>
+                        <strong>Summary</strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.summary }}/10
                         </span>
                     </li>
 
-
                     <li>
-                        <strong>
-                            Skills
-                        </strong>
+                        <strong>Skills</strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.skills }}/10
                         </span>
                     </li>
 
-
                     <li>
-                        <strong>
-                            Experience
-                        </strong>
+                        <strong>Experience</strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.experience }}/10
                         </span>
                     </li>
 
-
                     <li>
-                        <strong>
-                            Projects
-                        </strong>
+                        <strong>Projects</strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.projects }}/10
                         </span>
                     </li>
 
-
                     <li>
-                        <strong>
-                            Achievements
-                        </strong>
+                        <strong>Achievements</strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.achievements }}/10
                         </span>
                     </li>
 
-
                     <li>
-                        <strong>
-                            Total
-                        </strong>
+                        <strong>Total</strong>
 
                         <span>
                             {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
                         </span>
                     </li>
 
-
                 </ul>
 
             </section>
 
             {% endif %}
-
 
 
             <!-- =========================================
@@ -988,88 +971,58 @@
                     Resume quality score
                 </p>
 
-
                 <ul class="info-list">
 
-
                     <li>
-
-                        <strong>
-                            Resume Length
-                        </strong>
+                        <strong>Resume Length</strong>
 
                         <span>
                             {{ quality_result.length.word_count }}
                             words ·
                             {{ quality_result.length.rating|title }}
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Bullet Points
-                        </strong>
+                        <strong>Bullet Points</strong>
 
                         <span>
                             {{ quality_result.bullets.total }}
                             detected
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Quantifiable Achievements
-                        </strong>
+                        <strong>Quantifiable Achievements</strong>
 
                         <span>
                             {{ quality_result.achievements.quantifiable }}
                             detected
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Contact
-                        </strong>
+                        <strong>Contact</strong>
 
                         <span>
                             {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
                             complete
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Structure
-                        </strong>
+                        <strong>Structure</strong>
 
                         <span>
                             {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
                             sections
                         </span>
-
                     </li>
-
 
                 </ul>
 
             </section>
 
-
-
-            <!-- Quality Breakdown -->
 
             <section class="card">
 
@@ -1079,91 +1032,59 @@
 
                 <ul class="info-list">
 
-
                     <li>
-
-                        <strong>
-                            Length
-                        </strong>
+                        <strong>Length</strong>
 
                         <span>
                             {{ quality_result.breakdown.length }}/15
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Sections
-                        </strong>
+                        <strong>Sections</strong>
 
                         <span>
                             {{ quality_result.breakdown.sections }}/15
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Bullet Usage
-                        </strong>
+                        <strong>Bullet Usage</strong>
 
                         <span>
                             {{ quality_result.breakdown.bullets }}/10
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Achievements
-                        </strong>
+                        <strong>Achievements</strong>
 
                         <span>
                             {{ quality_result.breakdown.achievements }}/10
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Contact
-                        </strong>
+                        <strong>Contact</strong>
 
                         <span>
                             {{ quality_result.breakdown.contact }}/10
                         </span>
-
                     </li>
 
-
                     <li>
-
-                        <strong>
-                            Structure
-                        </strong>
+                        <strong>Structure</strong>
 
                         <span>
                             {{ quality_result.breakdown.structure }}/10
                         </span>
-
                     </li>
-
 
                 </ul>
 
             </section>
 
             {% endif %}
-
 
 
             <!-- =========================================
@@ -1191,13 +1112,11 @@
             {% endif %}
 
 
-
             <!-- =========================================
                  JOB MATCH
                  ========================================= -->
 
             {% if job_result %}
-
 
             <section class="card score-card">
 
@@ -1215,9 +1134,6 @@
 
             </section>
 
-
-
-            <!-- Matched Skills -->
 
             <section class="card">
 
@@ -1250,9 +1166,6 @@
             </section>
 
 
-
-            <!-- Missing Skills -->
-
             <section class="card">
 
                 <h2 class="section-title">
@@ -1284,9 +1197,6 @@
             </section>
 
 
-
-            <!-- Keyword Intelligence -->
-
             <section class="card">
 
                 <h2 class="section-title">
@@ -1300,7 +1210,6 @@
                 <p class="score-label">
                     Keyword coverage
                 </p>
-
 
                 <h3>
                     Matched Keywords
@@ -1358,9 +1267,6 @@
             </section>
 
 
-
-            <!-- Keyword Suggestions -->
-
             {% if job_result.keyword_suggestions %}
 
             <section class="card full-width">
@@ -1385,9 +1291,7 @@
 
             {% endif %}
 
-
             {% endif %}
-
 
 
             <!-- =========================================
@@ -1425,15 +1329,36 @@
 </main>
 
 
-
 <footer>
 
     <div class="container">
-        AI Resume Analyzer · Built with Flask and Python
+
+        AI Resume Analyzer · Built with Flask and Python · V2.3
+
     </div>
 
 </footer>
 
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const progressBars = document.querySelectorAll(
+            ".analytics-progress-bar"
+        );
+
+        progressBars.forEach(function (bar) {
+            const score = Number(bar.dataset.score);
+
+            if (Number.isFinite(score)) {
+                const safeScore = Math.max(
+                    0,
+                    Math.min(100, score)
+                );
+
+                bar.style.width = safeScore + "%";
+            }
+        });
+    });
+</script>
 
 </body>
 
