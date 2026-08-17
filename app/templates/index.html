@@ -24,1359 +24,1415 @@
 
 <body>
 
+
+<header>
+
+    <div class="container">
+
+        <span class="badge">
+            AI Resume Analyzer
+        </span>
+
+        <h1>
+            Analyze Your Resume
+        </h1>
+
+        <p class="hero-text">
+            Upload your resume and optionally add a job
+            description to evaluate your resume structure,
+            ATS readiness, job compatibility, keyword
+            coverage, quality, and improvement opportunities.
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
     <!-- =========================================
-         HEADER
+         UPLOAD
          ========================================= -->
 
-    <header>
+    <section class="card upload-card">
 
-        <div class="container">
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
 
-            <span class="badge">
-                AI Resume Analyzer
-            </span>
-
-            <h1>
-                Analyze Your Resume
-            </h1>
-
-            <p class="hero-text">
-                Upload your resume and optionally add a job
-                description to evaluate your resume structure,
-                ATS readiness, job compatibility, keyword
-                coverage, quality, and improvement opportunities.
-            </p>
-
-        </div>
-
-    </header>
+            <div class="form-grid">
 
 
-    <main class="container">
+                <div class="field">
 
+                    <label for="resume">
+                        Resume PDF
+                    </label>
 
-        <!-- =========================================
-             UPLOAD SECTION
-             ========================================= -->
+                    <input
+                        type="file"
+                        id="resume"
+                        name="resume"
+                        accept=".pdf"
+                        required
+                    >
 
-        <section class="card upload-card">
-
-            <form
-                method="POST"
-                enctype="multipart/form-data"
-            >
-
-                <div class="form-grid">
-
-
-                    <!-- Resume Upload -->
-
-                    <div class="field">
-
-                        <label for="resume">
-                            Resume PDF
-                        </label>
-
-                        <input
-                            type="file"
-                            id="resume"
-                            name="resume"
-                            accept=".pdf"
-                            required
-                        >
-
-                        <small>
-                            Upload a PDF resume to begin analysis.
-                        </small>
-
-                    </div>
-
-
-                    <!-- Job Description -->
-
-                    <div class="field">
-
-                        <label for="job_description">
-                            Job Description
-                        </label>
-
-                        <textarea
-                            id="job_description"
-                            name="job_description"
-                            placeholder="Paste a job description here (optional)..."
-                        >{{ job_description }}</textarea>
-
-                        <small>
-                            Adding a job description enables job
-                            matching and keyword intelligence.
-                        </small>
-
-                    </div>
+                    <small>
+                        Upload a PDF resume to begin analysis.
+                    </small>
 
                 </div>
 
 
-                <div class="button-row">
+                <div class="field">
 
-                    <button type="submit">
-                        Analyze Resume
-                    </button>
+                    <label for="job_description">
+                        Job Description
+                    </label>
+
+                    <textarea
+                        id="job_description"
+                        name="job_description"
+                        placeholder="Paste a job description here (optional)..."
+                    >{{ job_description }}</textarea>
+
+                    <small>
+                        Adding a job description enables job
+                        matching and keyword intelligence.
+                    </small>
 
                 </div>
-
-            </form>
-
-        </section>
-
-
-        <!-- =========================================
-             ERROR
-             ========================================= -->
-
-        {% if error %}
-
-        <section class="card error">
-
-            <h2>
-                Unable to Analyze Resume
-            </h2>
-
-            <p>
-                {{ error }}
-            </p>
-
-        </section>
-
-        {% endif %}
-
-
-        {% if resume %}
-
-        <div class="results">
-
-            <div class="results-grid">
-
-
-                <!-- =========================================
-                     V2.0 UNIFIED DASHBOARD
-                     ========================================= -->
-
-                {% if dashboard_result %}
-
-                <section class="card dashboard-card full-width">
-
-                    <div class="dashboard-heading">
-
-                        <div>
-
-                            <span class="dashboard-badge">
-                                V2.0 DASHBOARD
-                            </span>
-
-                            <h2 class="section-title">
-                                Resume Dashboard
-                            </h2>
-
-                            <p class="dashboard-description">
-                                A unified view of your resume's ATS
-                                readiness, quality, improvements,
-                                and job compatibility.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Overall Score -->
-
-                    <div class="dashboard-overall">
-
-                        <div class="overall-score">
-
-                            <span class="overall-score-value">
-                                {{ dashboard_result.overall_score }}
-                            </span>
-
-                            <span class="overall-score-max">
-                                /100
-                            </span>
-
-                        </div>
-
-
-                        <div class="overall-score-content">
-
-                            <h3>
-                                Overall Resume Score
-                            </h3>
-
-                            <p>
-                                Your combined resume analysis score.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Dashboard Score Cards -->
-
-                    <div class="dashboard-grid">
-
-
-                        <!-- ATS -->
-
-                        <div class="dashboard-score-item">
-
-                            <span class="dashboard-score-label">
-                                ATS Readiness
-                            </span>
-
-                            <strong>
-                                {{ dashboard_result.breakdown.ats }}/100
-                            </strong>
-
-                        </div>
-
-
-                        <!-- Quality -->
-
-                        <div class="dashboard-score-item">
-
-                            <span class="dashboard-score-label">
-                                Resume Quality
-                            </span>
-
-                            <strong>
-                                {{ dashboard_result.breakdown.quality }}/100
-                            </strong>
-
-                        </div>
-
-
-                        <!-- Improvements -->
-
-                        <div class="dashboard-score-item">
-
-                            <span class="dashboard-score-label">
-                                Improvements
-                            </span>
-
-                            <strong>
-
-                                {% if dashboard_result.breakdown.improvements is not none %}
-
-                                    {{ dashboard_result.breakdown.improvements }}/100
-
-                                {% else %}
-
-                                    —
-
-                                {% endif %}
-
-                            </strong>
-
-                        </div>
-
-
-                        <!-- Job Match -->
-
-                        {% if dashboard_result.has_job_match %}
-
-                        <div class="dashboard-score-item">
-
-                            <span class="dashboard-score-label">
-                                Job Match
-                            </span>
-
-                            <strong>
-                                {{ dashboard_result.breakdown.job_match }}/100
-                            </strong>
-
-                        </div>
-
-                        {% endif %}
-
-                    </div>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     V2.1 ANALYTICS
-                     ========================================= -->
-
-                {% if analytics_result %}
-
-                <section class="card full-width analytics-card">
-
-
-                    <!-- Analytics Header -->
-
-                    <div class="analytics-header">
-
-                        <div>
-
-                            <span class="dashboard-badge">
-                                V2.1 ANALYTICS
-                            </span>
-
-                            <h2 class="section-title">
-                                Resume Analytics
-                            </h2>
-
-                            <p class="dashboard-description">
-                                Visual insights into your resume
-                                performance across ATS readiness,
-                                quality, improvements, and job
-                                compatibility.
-                            </p>
-
-                        </div>
-
-
-                        <!-- Average Score -->
-
-                        <div class="analytics-average">
-
-                            <span>
-                                Average
-                            </span>
-
-                            <strong>
-                                {{ analytics_result.summary.average_score }}/100
-                            </strong>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- Analytics Metrics -->
-
-                    <div class="analytics-grid">
-
-                        {% for metric in analytics_result.metrics %}
-
-                        {% if metric.score is not none %}
-
-                        <div class="analytics-item">
-
-
-                            <div class="analytics-item-top">
-
-                                <span>
-                                    {{ metric.name }}
-                                </span>
-
-                                <strong>
-                                    {{ metric.score }}/100
-                                </strong>
-
-                            </div>
-
-
-                            <!-- Progress Bar -->
-
-                            <div class="analytics-progress">
-
-                                <div
-                                    class="analytics-progress-bar {{ metric.status }}"
-                                    data-score="{{ metric.score }}"
-                                ></div>
-
-                            </div>
-
-
-                            <small>
-                                {{ metric.label }}
-                            </small>
-
-                        </div>
-
-                        {% endif %}
-
-                        {% endfor %}
-
-                    </div>
-
-                </section>
-
-
-                <!-- =========================================
-                     ANALYTICS STRENGTHS
-                     ========================================= -->
-
-                {% if analytics_result.strengths %}
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Resume Strengths
-                    </h2>
-
-                    <ul class="analytics-list strengths-list">
-
-                        {% for strength in analytics_result.strengths %}
-
-                        <li>
-                            {{ strength }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     ANALYTICS ATTENTION AREAS
-                     ========================================= -->
-
-                {% if analytics_result.attention_areas %}
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Areas Needing Attention
-                    </h2>
-
-                    <ul class="analytics-list attention-list">
-
-                        {% for area in analytics_result.attention_areas %}
-
-                        <li>
-                            {{ area }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     PRIORITY RECOMMENDATIONS
-                     ========================================= -->
-
-                {% if dashboard_result and dashboard_result.recommendations %}
-
-                <section class="card full-width recommendations-card">
-
-                    <div class="recommendations-header">
-
-                        <div>
-
-                            <h2 class="section-title">
-                                Priority Recommendations
-                            </h2>
-
-                            <p class="score-label">
-                                {{ dashboard_result.recommendation_count }}
-                                improvement recommendations identified.
-                            </p>
-
-                        </div>
-
-                    </div>
-
-
-                    <ol class="suggestions priority-list">
-
-                        {% for recommendation in dashboard_result.recommendations %}
-
-                        <li>
-                            {{ recommendation }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ol>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     RESUME OVERVIEW
-                     ========================================= -->
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Resume Overview
-                    </h2>
-
-                    <ul class="info-list">
-
-                        <li>
-
-                            <strong>
-                                Name:
-                            </strong>
-
-                            <span>
-                                {{ resume.name or "Not detected" }}
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Email:
-                            </strong>
-
-                            <span>
-                                {{ resume.email or "Not detected" }}
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Phone:
-                            </strong>
-
-                            <span>
-                                {{ resume.phone or "Not detected" }}
-                            </span>
-
-                        </li>
-
-                    </ul>
-
-                </section>
-
-
-                <!-- =========================================
-                     ATS SCORE
-                     ========================================= -->
-
-                {% if ats_result %}
-
-                <section class="card score-card">
-
-                    <h2 class="section-title">
-                        ATS Score
-                    </h2>
-
-                    <div class="score">
-                        {{ ats_result.ats_score.score }}/100
-                    </div>
-
-                    <p class="score-label">
-                        Overall resume ATS score
-                    </p>
-
-
-                    <ul class="info-list">
-
-                        <li>
-
-                            <strong>
-                                Completeness
-                            </strong>
-
-                            <span>
-                                {{ ats_result.ats_score.completeness.score }}/{{ ats_result.ats_score.completeness.max_score }}
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Weighted Completeness
-                            </strong>
-
-                            <span>
-                                {{ ats_result.ats_score.completeness.weighted_score }}/50
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Content Quality
-                            </strong>
-
-                            <span>
-                                {{ ats_result.ats_score.content_quality.score }}/{{ ats_result.ats_score.content_quality.max_score }}
-                            </span>
-
-                        </li>
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     RESUME SECTIONS
-                     ========================================= -->
-
-                {% if ats_result %}
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Resume Sections
-                    </h2>
-
-                    <ul class="info-list">
-
-                        {% for section, present in ats_result.sections.items() %}
-
-                        <li>
-
-                            <strong>
-                                {{ section|title }}
-                            </strong>
-
-                            {% if present %}
-
-                            <span class="status-found">
-                                Found
-                            </span>
-
-                            {% else %}
-
-                            <span class="status-missing">
-                                Missing
-                            </span>
-
-                            {% endif %}
-
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     CONTACT INFORMATION
-                     ========================================= -->
-
-                {% if ats_result %}
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Contact Information
-                    </h2>
-
-                    <ul class="info-list">
-
-                        <li>
-
-                            <strong>
-                                Email
-                            </strong>
-
-                            {% if ats_result.contact.email %}
-
-                            <span class="status-found">
-                                Found
-                            </span>
-
-                            {% else %}
-
-                            <span class="status-missing">
-                                Missing
-                            </span>
-
-                            {% endif %}
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Phone
-                            </strong>
-
-                            {% if ats_result.contact.phone %}
-
-                            <span class="status-found">
-                                Found
-                            </span>
-
-                            {% else %}
-
-                            <span class="status-missing">
-                                Missing
-                            </span>
-
-                            {% endif %}
-
-                        </li>
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     ATS CONTENT QUALITY
-                     ========================================= -->
-
-                {% if ats_result %}
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Content Quality
-                    </h2>
-
-                    <ul class="info-list">
-
-                        <li>
-                            <strong>Summary</strong>
-
-                            <span>
-                                {{ ats_result.content_quality.breakdown.summary }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Skills</strong>
-
-                            <span>
-                                {{ ats_result.content_quality.breakdown.skills }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Experience</strong>
-
-                            <span>
-                                {{ ats_result.content_quality.breakdown.experience }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Projects</strong>
-
-                            <span>
-                                {{ ats_result.content_quality.breakdown.projects }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Achievements</strong>
-
-                            <span>
-                                {{ ats_result.content_quality.breakdown.achievements }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Total</strong>
-
-                            <span>
-                                {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
-                            </span>
-                        </li>
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     RESUME QUALITY
-                     ========================================= -->
-
-                {% if quality_result %}
-
-                <section class="card score-card">
-
-                    <h2 class="section-title">
-                        Resume Quality
-                    </h2>
-
-                    <div class="score">
-                        {{ quality_result.score }}/{{ quality_result.max_score }}
-                    </div>
-
-                    <p class="score-label">
-                        Resume quality score
-                    </p>
-
-
-                    <ul class="info-list">
-
-                        <li>
-
-                            <strong>
-                                Resume Length
-                            </strong>
-
-                            <span>
-                                {{ quality_result.length.word_count }}
-                                words ·
-                                {{ quality_result.length.rating|title }}
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Bullet Points
-                            </strong>
-
-                            <span>
-                                {{ quality_result.bullets.total }}
-                                detected
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Quantifiable Achievements
-                            </strong>
-
-                            <span>
-                                {{ quality_result.achievements.quantifiable }}
-                                detected
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Contact
-                            </strong>
-
-                            <span>
-                                {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
-                                complete
-                            </span>
-
-                        </li>
-
-
-                        <li>
-
-                            <strong>
-                                Structure
-                            </strong>
-
-                            <span>
-                                {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
-                                sections
-                            </span>
-
-                        </li>
-
-                    </ul>
-
-                </section>
-
-
-                <!-- Quality Breakdown -->
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Quality Breakdown
-                    </h2>
-
-                    <ul class="info-list">
-
-                        <li>
-                            <strong>Length</strong>
-
-                            <span>
-                                {{ quality_result.breakdown.length }}/15
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Sections</strong>
-
-                            <span>
-                                {{ quality_result.breakdown.sections }}/15
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Bullet Usage</strong>
-
-                            <span>
-                                {{ quality_result.breakdown.bullets }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Achievements</strong>
-
-                            <span>
-                                {{ quality_result.breakdown.achievements }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Contact</strong>
-
-                            <span>
-                                {{ quality_result.breakdown.contact }}/10
-                            </span>
-                        </li>
-
-                        <li>
-                            <strong>Structure</strong>
-
-                            <span>
-                                {{ quality_result.breakdown.structure }}/10
-                            </span>
-                        </li>
-
-                    </ul>
-
-                </section>
-
-
-                <!-- Quality Suggestions -->
-
-                {% if quality_result.suggestions %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Resume Quality Suggestions
-                    </h2>
-
-                    <ul class="suggestions">
-
-                        {% for suggestion in quality_result.suggestions %}
-
-                        <li>
-                            {{ suggestion }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     RESUME IMPROVEMENTS
-                     ========================================= -->
-
-                {% if improvement_result %}
-
-                <section class="card score-card">
-
-                    <h2 class="section-title">
-                        Improvement Readiness
-                    </h2>
-
-                    <div class="score">
-                        {{ improvement_result.score }}/100
-                    </div>
-
-                    <p class="score-label">
-                        Resume improvement readiness score
-                    </p>
-
-                </section>
-
-
-                {% if improvement_result.improvements %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Actionable Resume Improvements
-                    </h2>
-
-                    <ul class="suggestions">
-
-                        {% for improvement in improvement_result.improvements %}
-
-                        <li>
-                            {{ improvement }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     JOB MATCH
-                     ========================================= -->
-
-                {% if job_result %}
-
-                <section class="card score-card">
-
-                    <h2 class="section-title">
-                        Job Match
-                    </h2>
-
-                    <div class="score">
-                        {{ job_result.score }}%
-                    </div>
-
-                    <p class="score-label">
-                        Resume compatibility with the job description
-                    </p>
-
-                </section>
-
-
-                <!-- Matched Skills -->
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Matched Skills
-                    </h2>
-
-                    {% if job_result.matched_skills %}
-
-                    <ul class="skills">
-
-                        {% for skill in job_result.matched_skills %}
-
-                        <li>
-                            {{ skill }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                    {% else %}
-
-                    <p>
-                        No matching skills detected.
-                    </p>
-
-                    {% endif %}
-
-                </section>
-
-
-                <!-- Missing Skills -->
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Missing Skills
-                    </h2>
-
-                    {% if job_result.missing_skills %}
-
-                    <ul class="skills missing">
-
-                        {% for skill in job_result.missing_skills %}
-
-                        <li>
-                            {{ skill }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                    {% else %}
-
-                    <p>
-                        No missing skills detected.
-                    </p>
-
-                    {% endif %}
-
-                </section>
-
-
-                <!-- Keyword Intelligence -->
-
-                <section class="card">
-
-                    <h2 class="section-title">
-                        Keyword Intelligence
-                    </h2>
-
-                    <div class="score">
-                        {{ job_result.keyword_coverage }}%
-                    </div>
-
-                    <p class="score-label">
-                        Keyword coverage
-                    </p>
-
-
-                    <h3>
-                        Matched Keywords
-                    </h3>
-
-                    {% if job_result.matched_keywords %}
-
-                    <ul class="skills">
-
-                        {% for keyword in job_result.matched_keywords %}
-
-                        <li>
-                            {{ keyword }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                    {% else %}
-
-                    <p>
-                        No matching keywords detected.
-                    </p>
-
-                    {% endif %}
-
-
-                    <h3>
-                        Missing Keywords
-                    </h3>
-
-                    {% if job_result.missing_keywords %}
-
-                    <ul class="skills missing">
-
-                        {% for keyword in job_result.missing_keywords %}
-
-                        <li>
-                            {{ keyword }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                    {% else %}
-
-                    <p>
-                        No missing keywords detected.
-                    </p>
-
-                    {% endif %}
-
-                </section>
-
-
-                <!-- Keyword Suggestions -->
-
-                {% if job_result.keyword_suggestions %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Keyword Suggestions
-                    </h2>
-
-                    <ul class="suggestions">
-
-                        {% for suggestion in job_result.keyword_suggestions %}
-
-                        <li>
-                            {{ suggestion }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- Job Match Suggestions -->
-
-                {% if job_result.suggestions %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Job Match Suggestions
-                    </h2>
-
-                    <ul class="suggestions">
-
-                        {% for suggestion in job_result.suggestions %}
-
-                        <li>
-                            {{ suggestion }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     ATS SUGGESTIONS
-                     ========================================= -->
-
-                {% if ats_result and ats_result.suggestions %}
-
-                <section class="card full-width">
-
-                    <h2 class="section-title">
-                        Resume Improvement Suggestions
-                    </h2>
-
-                    <ul class="suggestions">
-
-                        {% for suggestion in ats_result.suggestions %}
-
-                        <li>
-                            {{ suggestion }}
-                        </li>
-
-                        {% endfor %}
-
-                    </ul>
-
-                </section>
-
-                {% endif %}
-
-
-                <!-- =========================================
-                     EXTRACTED TEXT
-                     ========================================= -->
-
-                {% if extracted_text %}
-
-                <section class="card full-width">
-
-                    <details>
-
-                        <summary>
-                            View Extracted Resume Text
-                        </summary>
-
-                        <br>
-
-                        <pre>{{ extracted_text }}</pre>
-
-                    </details>
-
-                </section>
-
-                {% endif %}
 
 
             </div>
 
-        </div>
 
-        {% endif %}
+            <div class="button-row">
 
-    </main>
+                <button type="submit">
+                    Analyze Resume
+                </button>
 
+            </div>
 
-    <!-- =========================================
-         FOOTER
-         ========================================= -->
+        </form>
 
-    <footer>
+    </section>
 
-        <div class="container">
-
-            AI Resume Analyzer · Built with Flask and Python
-
-        </div>
-
-    </footer>
 
 
     <!-- =========================================
-         V2.1 ANALYTICS PROGRESS BARS
+         ERROR
          ========================================= -->
 
-    <script>
+    {% if error %}
 
-        document
-            .querySelectorAll(".analytics-progress-bar")
-            .forEach(function (bar) {
+    <section class="card error">
 
-                const score = Number(
-                    bar.dataset.score
-                );
+        <h2>
+            Unable to Analyze Resume
+        </h2>
 
-                if (
-                    Number.isFinite(score)
-                    && score >= 0
-                    && score <= 100
-                ) {
+        <p>
+            {{ error }}
+        </p>
 
-                    bar.style.width = score + "%";
+    </section>
 
-                }
+    {% endif %}
 
-            });
 
-    </script>
+
+    {% if resume %}
+
+
+    <div class="results">
+
+        <div class="results-grid">
+
+
+            <!-- =========================================
+                 V2.2 DASHBOARD
+                 ========================================= -->
+
+            {% if dashboard_result %}
+
+            <section class="card dashboard-card full-width">
+
+
+                <div class="dashboard-heading">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V2.2 DASHBOARD
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Dashboard
+                        </h2>
+
+                        <p class="dashboard-description">
+                            A unified view of your resume's ATS
+                            readiness, quality, improvements,
+                            and job compatibility.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Overall Score -->
+
+                <div class="dashboard-overall">
+
+                    <div class="overall-score">
+
+                        <span class="overall-score-value">
+                            {{ dashboard_result.overall_score }}
+                        </span>
+
+                        <span class="overall-score-max">
+                            /100
+                        </span>
+
+                    </div>
+
+
+                    <div class="overall-score-content">
+
+                        <h3>
+                            Overall Resume Score
+                        </h3>
+
+                        <p>
+                            Your combined resume analysis score.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+
+                <!-- Score Cards -->
+
+                <div class="dashboard-grid">
+
+
+                    <div class="dashboard-score-item">
+
+                        <span class="dashboard-score-label">
+                            ATS Readiness
+                        </span>
+
+                        <strong>
+                            {{ dashboard_result.breakdown.ats }}/100
+                        </strong>
+
+                    </div>
+
+
+                    <div class="dashboard-score-item">
+
+                        <span class="dashboard-score-label">
+                            Resume Quality
+                        </span>
+
+                        <strong>
+                            {{ dashboard_result.breakdown.quality }}/100
+                        </strong>
+
+                    </div>
+
+
+                    <div class="dashboard-score-item">
+
+                        <span class="dashboard-score-label">
+                            Improvements
+                        </span>
+
+                        <strong>
+
+                            {% if dashboard_result.breakdown.improvements is not none %}
+
+                                {{ dashboard_result.breakdown.improvements }}/100
+
+                            {% else %}
+
+                                —
+
+                            {% endif %}
+
+                        </strong>
+
+                    </div>
+
+
+                    {% if dashboard_result.has_job_match %}
+
+                    <div class="dashboard-score-item">
+
+                        <span class="dashboard-score-label">
+                            Job Match
+                        </span>
+
+                        <strong>
+                            {{ dashboard_result.breakdown.job_match }}/100
+                        </strong>
+
+                    </div>
+
+                    {% endif %}
+
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 QUICK SUMMARY
+                 ========================================= -->
+
+            {% if dashboard_result %}
+
+            <section class="card full-width quick-summary-card">
+
+                <div class="summary-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            QUICK SUMMARY
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Snapshot
+                        </h2>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-summary-grid">
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Overall Score
+                        </span>
+
+                        <strong>
+                            {{ dashboard_result.overall_score }}/100
+                        </strong>
+
+                    </div>
+
+
+                    {% if dashboard_result.quick_summary.strongest_area %}
+
+                    <div class="summary-item">
+
+                        <span>
+                            Strongest Area
+                        </span>
+
+                        <strong>
+                            {{ dashboard_result.quick_summary.strongest_area.name }}
+                            ·
+                            {{ dashboard_result.quick_summary.strongest_area.score }}/100
+                        </strong>
+
+                    </div>
+
+                    {% endif %}
+
+
+                    {% if dashboard_result.quick_summary.weakest_area %}
+
+                    <div class="summary-item">
+
+                        <span>
+                            Needs Attention
+                        </span>
+
+                        <strong>
+                            {{ dashboard_result.quick_summary.weakest_area.name }}
+                            ·
+                            {{ dashboard_result.quick_summary.weakest_area.score }}/100
+                        </strong>
+
+                    </div>
+
+                    {% endif %}
+
+
+                </div>
+
+
+                <div class="summary-recommendation">
+
+                    <strong>
+                        Main recommendation
+                    </strong>
+
+                    <p>
+                        {{ dashboard_result.quick_summary.recommendation }}
+                    </p>
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 ANALYTICS
+                 ========================================= -->
+
+            {% if analytics_result %}
+
+            <section class="card full-width analytics-card">
+
+
+                <div class="analytics-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V2.2 ANALYTICS
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Analytics
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Visual insights into your resume
+                            performance across ATS readiness,
+                            quality, improvements, and job
+                            compatibility.
+                        </p>
+
+                    </div>
+
+
+                    <div class="analytics-average">
+
+                        <span>
+                            Average
+                        </span>
+
+                        <strong>
+                            {{ analytics_result.summary.average_score }}/100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+
+                <div class="analytics-grid">
+
+                    {% for metric in analytics_result.metrics %}
+
+                    {% if metric.score is not none %}
+
+                    <div class="analytics-item">
+
+
+                        <div class="analytics-item-top">
+
+                            <span>
+                                {{ metric.name }}
+                            </span>
+
+                            <strong>
+                                {{ metric.score }}/100
+                            </strong>
+
+                        </div>
+
+
+                        <div class="analytics-progress">
+
+                            <div
+                                class="analytics-progress-bar {{ metric.status }}"
+                                data-score="{{ metric.score }}"
+                            ></div>
+
+                        </div>
+
+
+                        <small>
+                            {{ metric.label }}
+                        </small>
+
+
+                    </div>
+
+                    {% endif %}
+
+                    {% endfor %}
+
+                </div>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 STRENGTHS
+                 ========================================= -->
+
+            {% if analytics_result.strengths %}
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Resume Strengths
+                </h2>
+
+                <ul class="analytics-list strengths-list">
+
+                    {% for strength in analytics_result.strengths %}
+
+                    <li>
+                        {{ strength }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 ATTENTION
+                 ========================================= -->
+
+            {% if analytics_result.attention_areas %}
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Areas Needing Attention
+                </h2>
+
+                <ul class="analytics-list attention-list">
+
+                    {% for area in analytics_result.attention_areas %}
+
+                    <li>
+                        {{ area }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 UNIFIED ACTION PLAN
+                 ========================================= -->
+
+            {% if dashboard_result and dashboard_result.recommendations %}
+
+            <section class="card full-width action-plan-card">
+
+
+                <div class="action-plan-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            ACTION PLAN
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Action Plan
+                        </h2>
+
+                        <p class="dashboard-description">
+                            The most important improvements identified
+                            from your resume analysis.
+                        </p>
+
+                    </div>
+
+
+                    <div class="action-plan-count">
+
+                        <strong>
+                            {{ dashboard_result.recommendation_count }}
+                        </strong>
+
+                        <span>
+                            priorities
+                        </span>
+
+                    </div>
+
+                </div>
+
+
+
+                <ol class="action-plan-list">
+
+                    {% for recommendation in dashboard_result.recommendations %}
+
+                    <li>
+
+                        <div class="action-plan-number">
+                            {{ loop.index }}
+                        </div>
+
+                        <div class="action-plan-content">
+
+                            <strong>
+                                {{ recommendation }}
+                            </strong>
+
+                        </div>
+
+                    </li>
+
+                    {% endfor %}
+
+                </ol>
+
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 RESUME OVERVIEW
+                 ========================================= -->
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Resume Overview
+                </h2>
+
+                <ul class="info-list">
+
+
+                    <li>
+
+                        <strong>
+                            Name:
+                        </strong>
+
+                        <span>
+                            {{ resume.name or "Not detected" }}
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Email:
+                        </strong>
+
+                        <span>
+                            {{ resume.email or "Not detected" }}
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Phone:
+                        </strong>
+
+                        <span>
+                            {{ resume.phone or "Not detected" }}
+                        </span>
+
+                    </li>
+
+
+                </ul>
+
+            </section>
+
+
+
+            <!-- =========================================
+                 ATS SCORE
+                 ========================================= -->
+
+            {% if ats_result %}
+
+            <section class="card score-card">
+
+                <h2 class="section-title">
+                    ATS Score
+                </h2>
+
+                <div class="score">
+                    {{ ats_result.ats_score.score }}/100
+                </div>
+
+                <p class="score-label">
+                    Overall resume ATS score
+                </p>
+
+
+                <ul class="info-list">
+
+
+                    <li>
+
+                        <strong>
+                            Completeness
+                        </strong>
+
+                        <span>
+                            {{ ats_result.ats_score.completeness.score }}/{{ ats_result.ats_score.completeness.max_score }}
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Weighted Completeness
+                        </strong>
+
+                        <span>
+                            {{ ats_result.ats_score.completeness.weighted_score }}/50
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Content Quality
+                        </strong>
+
+                        <span>
+                            {{ ats_result.ats_score.content_quality.score }}/{{ ats_result.ats_score.content_quality.max_score }}
+                        </span>
+
+                    </li>
+
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 RESUME SECTIONS
+                 ========================================= -->
+
+            {% if ats_result %}
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Resume Sections
+                </h2>
+
+                <ul class="info-list">
+
+                    {% for section, present in ats_result.sections.items() %}
+
+                    <li>
+
+                        <strong>
+                            {{ section|title }}
+                        </strong>
+
+                        {% if present %}
+
+                        <span class="status-found">
+                            Found
+                        </span>
+
+                        {% else %}
+
+                        <span class="status-missing">
+                            Missing
+                        </span>
+
+                        {% endif %}
+
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 CONTACT INFORMATION
+                 ========================================= -->
+
+            {% if ats_result %}
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Contact Information
+                </h2>
+
+                <ul class="info-list">
+
+
+                    <li>
+
+                        <strong>
+                            Email
+                        </strong>
+
+                        {% if ats_result.contact.email %}
+
+                        <span class="status-found">
+                            Found
+                        </span>
+
+                        {% else %}
+
+                        <span class="status-missing">
+                            Missing
+                        </span>
+
+                        {% endif %}
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Phone
+                        </strong>
+
+                        {% if ats_result.contact.phone %}
+
+                        <span class="status-found">
+                            Found
+                        </span>
+
+                        {% else %}
+
+                        <span class="status-missing">
+                            Missing
+                        </span>
+
+                        {% endif %}
+
+                    </li>
+
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 ATS CONTENT QUALITY
+                 ========================================= -->
+
+            {% if ats_result %}
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Content Quality
+                </h2>
+
+                <ul class="info-list">
+
+
+                    <li>
+                        <strong>
+                            Summary
+                        </strong>
+
+                        <span>
+                            {{ ats_result.content_quality.breakdown.summary }}/10
+                        </span>
+                    </li>
+
+
+                    <li>
+                        <strong>
+                            Skills
+                        </strong>
+
+                        <span>
+                            {{ ats_result.content_quality.breakdown.skills }}/10
+                        </span>
+                    </li>
+
+
+                    <li>
+                        <strong>
+                            Experience
+                        </strong>
+
+                        <span>
+                            {{ ats_result.content_quality.breakdown.experience }}/10
+                        </span>
+                    </li>
+
+
+                    <li>
+                        <strong>
+                            Projects
+                        </strong>
+
+                        <span>
+                            {{ ats_result.content_quality.breakdown.projects }}/10
+                        </span>
+                    </li>
+
+
+                    <li>
+                        <strong>
+                            Achievements
+                        </strong>
+
+                        <span>
+                            {{ ats_result.content_quality.breakdown.achievements }}/10
+                        </span>
+                    </li>
+
+
+                    <li>
+                        <strong>
+                            Total
+                        </strong>
+
+                        <span>
+                            {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
+                        </span>
+                    </li>
+
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 RESUME QUALITY
+                 ========================================= -->
+
+            {% if quality_result %}
+
+            <section class="card score-card">
+
+                <h2 class="section-title">
+                    Resume Quality
+                </h2>
+
+                <div class="score">
+                    {{ quality_result.score }}/{{ quality_result.max_score }}
+                </div>
+
+                <p class="score-label">
+                    Resume quality score
+                </p>
+
+
+                <ul class="info-list">
+
+
+                    <li>
+
+                        <strong>
+                            Resume Length
+                        </strong>
+
+                        <span>
+                            {{ quality_result.length.word_count }}
+                            words ·
+                            {{ quality_result.length.rating|title }}
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Bullet Points
+                        </strong>
+
+                        <span>
+                            {{ quality_result.bullets.total }}
+                            detected
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Quantifiable Achievements
+                        </strong>
+
+                        <span>
+                            {{ quality_result.achievements.quantifiable }}
+                            detected
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Contact
+                        </strong>
+
+                        <span>
+                            {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
+                            complete
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Structure
+                        </strong>
+
+                        <span>
+                            {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
+                            sections
+                        </span>
+
+                    </li>
+
+
+                </ul>
+
+            </section>
+
+
+
+            <!-- Quality Breakdown -->
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Quality Breakdown
+                </h2>
+
+                <ul class="info-list">
+
+
+                    <li>
+
+                        <strong>
+                            Length
+                        </strong>
+
+                        <span>
+                            {{ quality_result.breakdown.length }}/15
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Sections
+                        </strong>
+
+                        <span>
+                            {{ quality_result.breakdown.sections }}/15
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Bullet Usage
+                        </strong>
+
+                        <span>
+                            {{ quality_result.breakdown.bullets }}/10
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Achievements
+                        </strong>
+
+                        <span>
+                            {{ quality_result.breakdown.achievements }}/10
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Contact
+                        </strong>
+
+                        <span>
+                            {{ quality_result.breakdown.contact }}/10
+                        </span>
+
+                    </li>
+
+
+                    <li>
+
+                        <strong>
+                            Structure
+                        </strong>
+
+                        <span>
+                            {{ quality_result.breakdown.structure }}/10
+                        </span>
+
+                    </li>
+
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 IMPROVEMENT READINESS
+                 ========================================= -->
+
+            {% if improvement_result %}
+
+            <section class="card score-card">
+
+                <h2 class="section-title">
+                    Improvement Readiness
+                </h2>
+
+                <div class="score">
+                    {{ improvement_result.score }}/100
+                </div>
+
+                <p class="score-label">
+                    Resume improvement readiness score
+                </p>
+
+            </section>
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 JOB MATCH
+                 ========================================= -->
+
+            {% if job_result %}
+
+
+            <section class="card score-card">
+
+                <h2 class="section-title">
+                    Job Match
+                </h2>
+
+                <div class="score">
+                    {{ job_result.score }}%
+                </div>
+
+                <p class="score-label">
+                    Resume compatibility with the job description
+                </p>
+
+            </section>
+
+
+
+            <!-- Matched Skills -->
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Matched Skills
+                </h2>
+
+                {% if job_result.matched_skills %}
+
+                <ul class="skills">
+
+                    {% for skill in job_result.matched_skills %}
+
+                    <li>
+                        {{ skill }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+                {% else %}
+
+                <p>
+                    No matching skills detected.
+                </p>
+
+                {% endif %}
+
+            </section>
+
+
+
+            <!-- Missing Skills -->
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Missing Skills
+                </h2>
+
+                {% if job_result.missing_skills %}
+
+                <ul class="skills missing">
+
+                    {% for skill in job_result.missing_skills %}
+
+                    <li>
+                        {{ skill }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+                {% else %}
+
+                <p>
+                    No missing skills detected.
+                </p>
+
+                {% endif %}
+
+            </section>
+
+
+
+            <!-- Keyword Intelligence -->
+
+            <section class="card">
+
+                <h2 class="section-title">
+                    Keyword Intelligence
+                </h2>
+
+                <div class="score">
+                    {{ job_result.keyword_coverage }}%
+                </div>
+
+                <p class="score-label">
+                    Keyword coverage
+                </p>
+
+
+                <h3>
+                    Matched Keywords
+                </h3>
+
+                {% if job_result.matched_keywords %}
+
+                <ul class="skills">
+
+                    {% for keyword in job_result.matched_keywords %}
+
+                    <li>
+                        {{ keyword }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+                {% else %}
+
+                <p>
+                    No matching keywords detected.
+                </p>
+
+                {% endif %}
+
+
+                <h3>
+                    Missing Keywords
+                </h3>
+
+                {% if job_result.missing_keywords %}
+
+                <ul class="skills missing">
+
+                    {% for keyword in job_result.missing_keywords %}
+
+                    <li>
+                        {{ keyword }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+                {% else %}
+
+                <p>
+                    No missing keywords detected.
+                </p>
+
+                {% endif %}
+
+            </section>
+
+
+
+            <!-- Keyword Suggestions -->
+
+            {% if job_result.keyword_suggestions %}
+
+            <section class="card full-width">
+
+                <h2 class="section-title">
+                    Keyword Suggestions
+                </h2>
+
+                <ul class="suggestions">
+
+                    {% for suggestion in job_result.keyword_suggestions %}
+
+                    <li>
+                        {{ suggestion }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </section>
+
+            {% endif %}
+
+
+            {% endif %}
+
+
+
+            <!-- =========================================
+                 EXTRACTED TEXT
+                 ========================================= -->
+
+            {% if extracted_text %}
+
+            <section class="card full-width">
+
+                <details>
+
+                    <summary>
+                        View Extracted Resume Text
+                    </summary>
+
+                    <br>
+
+                    <pre>{{ extracted_text }}</pre>
+
+                </details>
+
+            </section>
+
+            {% endif %}
+
+
+        </div>
+
+    </div>
+
+    {% endif %}
+
+
+</main>
+
+
+
+<footer>
+
+    <div class="container">
+        AI Resume Analyzer · Built with Flask and Python
+    </div>
+
+</footer>
 
 
 </body>

@@ -1,164 +1,136 @@
 from app.analytics import (
-    build_analytics_result,
-    build_attention_areas,
-    build_score_metrics,
-    build_score_summary,
-    build_strengths,
+    build_analytics,
 )
 
 
-ATS_RESULT = {
-    "ats_score": {
-        "score": 90,
-    },
-}
+def ats(score):
 
-QUALITY_RESULT = {
-    "score": 80,
-}
-
-IMPROVEMENT_RESULT = {
-    "score": 70,
-}
-
-JOB_RESULT = {
-    "score": 60,
-}
+    return {
+        "ats_score": {
+            "score": score,
+        }
+    }
 
 
-def test_build_score_metrics_without_job():
-    metrics = build_score_metrics(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
+def quality(score):
+
+    return {
+        "score": score,
+    }
+
+
+def improvement(score):
+
+    return {
+        "score": score,
+    }
+
+
+def job(score):
+
+    return {
+        "score": score,
+    }
+
+
+def test_excellent_score():
+
+    result = build_analytics(
+        ats(90),
+        quality(88),
+        improvement(92),
     )
 
-    assert len(metrics) == 4
+    statuses = [
+        metric["status"]
+        for metric in result["metrics"]
+    ]
 
-    assert metrics[0]["name"] == "ATS Readiness"
-    assert metrics[0]["score"] == 90
-    assert metrics[0]["label"] == "Excellent"
-
-    assert metrics[1]["name"] == "Resume Quality"
-    assert metrics[1]["score"] == 80
-    assert metrics[1]["status"] == "good"
-
-    assert metrics[2]["name"] == "Improvement Readiness"
-    assert metrics[2]["score"] == 70
-
-    assert metrics[3]["name"] == "Job Match"
-    assert metrics[3]["score"] is None
+    assert statuses == [
+        "excellent",
+        "excellent",
+        "excellent",
+    ]
 
 
-def test_build_score_metrics_with_job():
-    metrics = build_score_metrics(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
-        JOB_RESULT,
+def test_good_score():
+
+    result = build_analytics(
+        ats(79),
+        quality(72),
+        improvement(83),
     )
 
-    assert metrics[3]["name"] == "Job Match"
-    assert metrics[3]["score"] == 60
-    assert metrics[3]["label"] == "Needs Improvement"
+    statuses = [
+        metric["status"]
+        for metric in result["metrics"]
+    ]
+
+    assert statuses == [
+        "good",
+        "good",
+        "good",
+    ]
 
 
-def test_build_score_metrics_handles_missing_results():
-    metrics = build_score_metrics(
-        None,
-        None,
-        None,
-        None,
+def test_attention_score():
+
+    result = build_analytics(
+        ats(79),
+        quality(68),
+        improvement(83),
     )
 
-    assert len(metrics) == 4
+    statuses = [
+        metric["status"]
+        for metric in result["metrics"]
+    ]
 
-    for metric in metrics:
-        assert metric["score"] is None
-        assert metric["label"] == "Not available"
-        assert metric["status"] == "unavailable"
+    assert statuses == [
+        "good",
+        "attention",
+        "good",
+    ]
 
 
-def test_build_score_summary():
-    result = build_score_summary(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
+def test_attention_area_is_generated():
+
+    result = build_analytics(
+        ats(79),
+        quality(68),
+        improvement(83),
     )
 
-    assert result["average_score"] == 80
-    assert result["available_metrics"] == 3
-    assert result["total_metrics"] == 4
-
-
-def test_build_score_summary_with_job():
-    result = build_score_summary(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
-        JOB_RESULT,
+    assert (
+        "Resume Quality needs attention at 68/100."
+        in result["attention_areas"]
     )
 
-    assert result["average_score"] == 75
-    assert result["available_metrics"] == 4
 
+def test_average_score():
 
-def test_build_strengths():
-    strengths = build_strengths(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
+    result = build_analytics(
+        ats(79),
+        quality(68),
+        improvement(83),
     )
 
-    assert len(strengths) == 3
-    assert "ATS Readiness is excellent" in strengths[0]
-    assert "Resume Quality is performing well" in strengths[1]
+    assert result["summary"]["average_score"] == 77
 
 
-def test_build_attention_areas():
-    areas = build_attention_areas(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
-        JOB_RESULT,
+def test_job_match_is_included():
+
+    result = build_analytics(
+        ats(79),
+        quality(68),
+        improvement(83),
+        job(74),
     )
 
-    assert len(areas) == 1
-    assert "Job Match needs attention" in areas[0]
-
-
-def test_build_attention_areas_without_problems():
-    result = build_attention_areas(
-        {
-            "ats_score": {
-                "score": 90,
-            },
-        },
-        {
-            "score": 85,
-        },
-        {
-            "score": 95,
-        },
-    )
-
-    assert result == []
-
-
-def test_build_analytics_result():
-    result = build_analytics_result(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        IMPROVEMENT_RESULT,
-        JOB_RESULT,
-    )
-
-    assert "summary" in result
-    assert "metrics" in result
-    assert "strengths" in result
-    assert "attention_areas" in result
-
-    assert result["summary"]["average_score"] == 75
     assert len(result["metrics"]) == 4
-    assert len(result["strengths"]) == 3
-    assert len(result["attention_areas"]) == 1
+
+    assert result["metrics"][-1]["name"] == (
+        "Job Match"
+    )
+
+    assert result["metrics"][-1]["score"] == 74

@@ -787,3 +787,544 @@ footer {
     }
 
 }
+
+/* =========================================
+   V2.2 PDF REPORT
+   ========================================= */
+
+.report-download-card {
+    margin-top: 28px;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 18px;
+    background: #f8fafc;
+
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.report-download-card h3 {
+    margin: 10px 0 6px;
+    font-size: 20px;
+}
+
+.report-download-card p {
+    margin: 0;
+    color: #64748b;
+    line-height: 1.6;
+}
+
+.download-report-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 13px 22px;
+
+    border-radius: 10px;
+
+    background: #4f46e5;
+    color: #ffffff;
+
+    text-decoration: none;
+    font-weight: 700;
+
+    white-space: nowrap;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.download-report-button:hover {
+    background: #4338ca;
+    transform: translateY(-2px);
+    box-shadow: 0 10px 24px rgba(79, 70, 229, 0.22);
+}
+
+.download-report-button:active {
+    transform: translateY(0);
+}
+
+
+@media (max-width: 700px) {
+
+    .report-download-card {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .download-report-button {
+        width: 100%;
+    }
+
+}
+
+/* =========================================================
+   V2.2 RESUME ANALYZER UPDATES
+   ========================================================= */
+
+
+/* =========================================================
+   QUICK SUMMARY
+   ========================================================= */
+
+.quick-summary-card {
+    position: relative;
+    overflow: hidden;
+}
+
+.summary-header {
+    margin-bottom: 24px;
+}
+
+.quick-summary-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(3, minmax(0, 1fr));
+
+    gap: 16px;
+
+    margin-top: 20px;
+}
+
+.summary-item {
+    padding: 20px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+}
+
+.summary-item span {
+    display: block;
+
+    margin-bottom: 8px;
+
+    font-size: 13px;
+
+    font-weight: 600;
+
+    color: #64748b;
+}
+
+.summary-item strong {
+    display: block;
+
+    color: #172554;
+
+    font-size: 18px;
+
+    line-height: 1.4;
+}
+
+.summary-recommendation {
+    margin-top: 20px;
+
+    padding: 20px 22px;
+
+    border-radius: 14px;
+
+    border: 1px solid #e0e7ff;
+
+    background: #f8faff;
+}
+
+.summary-recommendation strong {
+    display: block;
+
+    color: #4338ca;
+
+    font-size: 14px;
+
+    margin-bottom: 6px;
+}
+
+.summary-recommendation p {
+    margin: 0;
+
+    color: #334155;
+
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   ACTION PLAN
+   ========================================================= */
+
+.action-plan-card {
+    position: relative;
+
+    overflow: hidden;
+}
+
+.action-plan-header {
+    display: flex;
+
+    align-items: flex-start;
+
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 30px;
+}
+
+.action-plan-count {
+    min-width: 100px;
+
+    padding: 16px 20px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    text-align: center;
+
+    background: #f8fafc;
+}
+
+.action-plan-count strong {
+    display: block;
+
+    font-size: 28px;
+
+    line-height: 1;
+
+    color: #4f46e5;
+}
+
+.action-plan-count span {
+    display: block;
+
+    margin-top: 6px;
+
+    font-size: 12px;
+
+    font-weight: 600;
+
+    color: #64748b;
+}
+
+.action-plan-list {
+    display: flex;
+
+    flex-direction: column;
+
+    gap: 14px;
+
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+.action-plan-list li {
+    display: flex;
+
+    align-items: flex-start;
+
+    gap: 16px;
+
+    padding: 18px 20px;
+
+    border: 1px solid #e2e8f0;
+
+    border-radius: 14px;
+
+    background: #ffffff;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.action-plan-list li:hover {
+    transform: translateY(-2px);
+
+    border-color: #c7d2fe;
+
+    box-shadow:
+        0 10px 25px rgba(
+            15,
+            23,
+            42,
+            0.07
+        );
+}
+
+.action-plan-number {
+    flex: 0 0 34px;
+
+    width: 34px;
+
+    height: 34px;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    border-radius: 50%;
+
+    background: #eef2ff;
+
+    color: #4f46e5;
+
+    font-weight: 800;
+
+    font-size: 14px;
+}
+
+.action-plan-content {
+    flex: 1;
+
+    padding-top: 5px;
+
+    line-height: 1.55;
+
+    color: #172554;
+}
+
+
+/* =========================================================
+   ANALYTICS
+   ========================================================= */
+
+.analytics-card {
+    overflow: hidden;
+}
+
+.analytics-progress {
+    width: 100%;
+
+    height: 10px;
+
+    overflow: hidden;
+
+    border-radius: 999px;
+
+    background: #e2e8f0;
+
+    margin-top: 12px;
+
+    margin-bottom: 10px;
+}
+
+.analytics-progress-bar {
+    height: 100%;
+
+    min-width: 4px;
+
+    border-radius: 999px;
+
+    transition:
+        width 0.6s ease;
+}
+
+
+/* Status styling */
+
+.analytics-progress-bar.excellent {
+    background: #16a34a;
+}
+
+.analytics-progress-bar.good {
+    background: #2563eb;
+}
+
+.analytics-progress-bar.attention {
+    background: #f59e0b;
+}
+
+.analytics-progress-bar.unavailable {
+    background: #94a3b8;
+}
+
+
+/* =========================================================
+   ANALYTICS LISTS
+   ========================================================= */
+
+.analytics-list {
+    margin: 0;
+
+    padding: 0;
+
+    list-style: none;
+}
+
+.analytics-list li {
+    position: relative;
+
+    padding: 16px 18px 16px 44px;
+
+    margin-bottom: 10px;
+
+    border-radius: 12px;
+
+    border: 1px solid #e2e8f0;
+
+    background: #ffffff;
+
+    line-height: 1.55;
+}
+
+.analytics-list li::before {
+    position: absolute;
+
+    left: 18px;
+
+    top: 16px;
+
+    font-weight: 800;
+}
+
+.strengths-list li::before {
+    content: "✓";
+
+    color: #16a34a;
+}
+
+.attention-list li::before {
+    content: "!";
+
+    color: #f59e0b;
+}
+
+
+/* =========================================================
+   DASHBOARD IMPROVEMENTS
+   ========================================================= */
+
+.dashboard-card {
+    overflow: hidden;
+}
+
+.dashboard-overall {
+    border-radius: 20px;
+}
+
+.dashboard-score-item {
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.dashboard-score-item:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(
+            15,
+            23,
+            42,
+            0.06
+        );
+}
+
+
+/* =========================================================
+   RECOMMENDATIONS
+   ========================================================= */
+
+.recommendations-card {
+    overflow: hidden;
+}
+
+.priority-list {
+    counter-reset: priority;
+}
+
+.priority-list li {
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 900px) {
+
+    .quick-summary-grid {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .action-plan-header {
+        flex-direction: column;
+    }
+
+    .action-plan-count {
+        width: 100%;
+    }
+
+}
+
+
+@media (max-width: 650px) {
+
+    .quick-summary-grid {
+        grid-template-columns:
+            1fr;
+    }
+
+    .action-plan-list li {
+        padding: 16px;
+    }
+
+    .action-plan-number {
+        flex-basis: 30px;
+
+        width: 30px;
+
+        height: 30px;
+
+        font-size: 13px;
+    }
+
+    .summary-item strong {
+        font-size: 16px;
+    }
+
+}
+
+
+/* =========================================================
+   PRINT
+   ========================================================= */
+
+@media print {
+
+    body {
+        background: #ffffff !important;
+    }
+
+    .upload-card {
+        display: none !important;
+    }
+
+    .badge {
+        border: 1px solid #ddd;
+    }
+
+    .card {
+        break-inside: avoid;
+    }
+
+    footer {
+        display: none !important;
+    }
+
+}

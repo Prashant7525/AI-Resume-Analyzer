@@ -1,52 +1,35 @@
-from typing import Any
+"""
+Resume analytics for the AI Resume Analyzer.
+
+V2.2 scoring:
+
+85-100 -> Excellent
+70-84  -> Good
+0-69   -> Needs attention
+"""
+
+from __future__ import annotations
 
 
-def _get_score(
-    result: dict | None,
-    *keys: str,
-) -> int | None:
-    """Safely retrieve a numeric score from a nested result."""
+def _clamp_score(score) -> int:
+    """Safely clamp a score to 0-100."""
 
-    if not result:
-        return None
+    try:
+        value = int(round(float(score)))
+    except (TypeError, ValueError):
+        return 0
 
-    value: Any = result
-
-    for key in keys:
-        if not isinstance(value, dict):
-            return None
-
-        value = value.get(key)
-
-    if isinstance(value, bool):
-        return None
-
-    if isinstance(value, (int, float)):
-        return max(0, min(100, round(value)))
-
-    return None
-
-
-def _score_label(score: int | None) -> str:
-    """Return a human-readable label for a score."""
-
-    if score is None:
-        return "Not available"
-
-    if score >= 85:
-        return "Excellent"
-
-    if score >= 70:
-        return "Good"
-
-    if score >= 50:
-        return "Needs Improvement"
-
-    return "Needs Attention"
+    return max(0, min(100, value))
 
 
 def _score_status(score: int | None) -> str:
-    """Return a simple status category for a score."""
+    """
+    Convert a score into an analytics status.
+
+    85-100 -> excellent
+    70-84  -> good
+    0-69   -> attention
+    """
 
     if score is None:
         return "unavailable"
@@ -57,169 +40,170 @@ def _score_status(score: int | None) -> str:
     if score >= 70:
         return "good"
 
-    if score >= 50:
-        return "average"
-
-    return "weak"
+    return "attention"
 
 
-def build_score_metrics(
-    ats_result: dict | None,
-    quality_result: dict | None,
-    improvement_result: dict | None,
-    job_result: dict | None = None,
-) -> list[dict]:
-    """Build dashboard-ready score metrics."""
+def _score_label(score: int | None) -> str:
+    """Return a descriptive label for a score."""
 
-    definitions = [
-        ("ATS Readiness", ats_result, ("ats_score", "score")),
-        ("Resume Quality", quality_result, ("score",)),
-        ("Improvement Readiness", improvement_result, ("score",)),
-        ("Job Match", job_result, ("score",)),
-    ]
+    if score is None:
+        return "Score unavailable."
 
-    metrics = []
+    if score >= 85:
+        return "Excellent performance."
 
-    for name, result, keys in definitions:
-        score = _get_score(result, *keys)
+    if score >= 70:
+        return "Performing well."
 
-        metrics.append(
-            {
-                "name": name,
-                "score": score,
-                "label": _score_label(score),
-                "status": _score_status(score),
-            }
-        )
-
-    return metrics
+    return "Needs attention."
 
 
-def build_strengths(
-    ats_result: dict | None,
-    quality_result: dict | None,
-    improvement_result: dict | None,
-    job_result: dict | None = None,
-) -> list[str]:
-    """Identify strong areas from available analysis results."""
+def _get_score(result: dict | None, *paths):
+    """Safely retrieve a nested score."""
 
-    metrics = build_score_metrics(
-        ats_result,
-        quality_result,
-        improvement_result,
-        job_result,
-    )
+    if not isinstance(result, dict):
+        return None
 
-    strengths = []
+    current = result
 
-    for metric in metrics:
-        score = metric["score"]
+    for key in paths:
 
-        if score is not None and score >= 85:
-            strengths.append(
-                f"{metric['name']} is excellent at {score}/100."
-            )
+        if not isinstance(current, dict):
+            return None
 
-        elif score is not None and score >= 70:
-            strengths.append(
-                f"{metric['name']} is performing well at {score}/100."
-            )
+        current = current.get(key)
 
-    return strengths
+    if current is None:
+        return None
+
+    try:
+        return _clamp_score(current)
+    except (TypeError, ValueError):
+        return None
 
 
-def build_attention_areas(
-    ats_result: dict | None,
-    quality_result: dict | None,
-    improvement_result: dict | None,
-    job_result: dict | None = None,
-) -> list[str]:
-    """Identify areas that should receive attention."""
-
-    metrics = build_score_metrics(
-        ats_result,
-        quality_result,
-        improvement_result,
-        job_result,
-    )
-
-    areas = []
-
-    for metric in metrics:
-        score = metric["score"]
-
-        if score is not None and score < 70:
-            areas.append(
-                f"{metric['name']} needs attention at {score}/100."
-            )
-
-    return areas
-
-
-def build_score_summary(
+def build_analytics(
     ats_result: dict | None,
     quality_result: dict | None,
     improvement_result: dict | None,
     job_result: dict | None = None,
 ) -> dict:
-    """Build a compact score summary for the dashboard."""
+    """
+    Build analytics data for the dashboard.
+    """
 
-    metrics = build_score_metrics(
-        ats_result,
-        quality_result,
-        improvement_result,
-        job_result,
-    )
+    metrics = [
+        {
+            "name": "ATS Readiness",
+            "score": _get_score(
+                ats_result,
+                "ats_score",
+                "score",
+            ),
+            "label": "ATS compatibility and resume structure.",
+        },
+        {
+            "name": "Resume Quality",
+            "score": _get_score(
+                quality_result,
+                "score",
+            ),
+            "label": "Overall resume quality and presentation.",
+        },
+        {
+            "name": "Improvements",
+            "score": _get_score(
+                improvement_result,
+                "score",
+            ),
+            "label": "Readiness for targeted resume improvements.",
+        },
+    ]
 
-    available_scores = [
+    if job_result is not None:
+
+        metrics.append(
+            {
+                "name": "Job Match",
+                "score": _get_score(
+                    job_result,
+                    "score",
+                ),
+                "label": "Compatibility with the supplied job description.",
+            }
+        )
+
+    valid_scores = [
         metric["score"]
         for metric in metrics
         if metric["score"] is not None
     ]
 
-    if available_scores:
-        average_score = round(
-            sum(available_scores) / len(available_scores)
+    average_score = (
+        round(
+            sum(valid_scores) / len(valid_scores)
         )
-    else:
-        average_score = 0
-
-    return {
-        "average_score": average_score,
-        "available_metrics": len(available_scores),
-        "total_metrics": len(metrics),
-        "metrics": metrics,
-    }
-
-
-def build_analytics_result(
-    ats_result: dict | None,
-    quality_result: dict | None,
-    improvement_result: dict | None,
-    job_result: dict | None = None,
-) -> dict:
-    """Build the complete v2.1 analytics payload."""
-
-    summary = build_score_summary(
-        ats_result,
-        quality_result,
-        improvement_result,
-        job_result,
+        if valid_scores
+        else 0
     )
 
+    for metric in metrics:
+
+        score = metric["score"]
+
+        metric["status"] = _score_status(
+            score
+        )
+
+        metric["rating"] = _score_label(
+            score
+        )
+
+    strengths = []
+    attention_areas = []
+
+    for metric in metrics:
+
+        score = metric["score"]
+
+        if score is None:
+            continue
+
+        if score >= 85:
+
+            strengths.append(
+                f"{metric['name']} is excellent at {score}/100."
+            )
+
+        elif score >= 70:
+
+            strengths.append(
+                f"{metric['name']} is performing well at {score}/100."
+            )
+
+        else:
+
+            attention_areas.append(
+                f"{metric['name']} needs attention at {score}/100."
+            )
+
+    # If everything is at least 70, do not display
+    # a misleading empty attention section.
+    if not attention_areas:
+
+        attention_areas = [
+            "No major score area requires immediate attention."
+        ]
+
     return {
-        "summary": summary,
-        "metrics": summary["metrics"],
-        "strengths": build_strengths(
-            ats_result,
-            quality_result,
-            improvement_result,
-            job_result,
-        ),
-        "attention_areas": build_attention_areas(
-            ats_result,
-            quality_result,
-            improvement_result,
-            job_result,
-        ),
+        "metrics": metrics,
+
+        "summary": {
+            "average_score": average_score,
+            "metric_count": len(valid_scores),
+        },
+
+        "strengths": strengths,
+
+        "attention_areas": attention_areas,
     }

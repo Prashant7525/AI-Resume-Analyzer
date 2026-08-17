@@ -1,200 +1,290 @@
+import pytest
+
 from app.dashboard import (
     build_dashboard_result,
+    build_quick_summary,
     build_score_breakdown,
     calculate_overall_score,
     collect_recommendations,
 )
 
 
-ATS_RESULT = {
-    "ats_score": {
-        "score": 80,
-    },
-    "suggestions": [
-        "Add a professional summary.",
-    ],
-}
+def make_ats(score=80):
+    return {
+        "ats_score": {
+            "score": score,
+        },
+        "suggestions": [],
+    }
 
 
-QUALITY_RESULT = {
-    "score": 70,
-    "suggestions": [
-        "Add more measurable achievements.",
-    ],
-}
+def make_quality(score=70):
+    return {
+        "score": score,
+        "suggestions": [],
+    }
 
 
-JOB_RESULT = {
-    "score": 60,
-    "suggestions": [
-        "Review missing job skills.",
-    ],
-    "keyword_suggestions": [
-        "Add relevant job keywords.",
-    ],
-}
+def make_improvement(score=80):
+    return {
+        "score": score,
+        "improvements": [],
+    }
 
 
-IMPROVEMENT_RESULT = {
-    "score": 75,
-    "improvements": [
-        "Strengthen the professional summary.",
-    ],
-}
-
-
-RESUME = {
-    "name": "Alex Johnson",
-}
+def make_job(score=60):
+    return {
+        "score": score,
+        "suggestions": [],
+        "keyword_suggestions": [],
+    }
 
 
 def test_calculate_overall_score_without_job():
-    score = calculate_overall_score(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        improvement_result=IMPROVEMENT_RESULT,
+
+    result = calculate_overall_score(
+        make_ats(80),
+        make_quality(70),
+        None,
+        make_improvement(90),
     )
 
-    assert score == 76
+    expected = round(
+        80 * 0.50
+        + 70 * 0.30
+        + 90 * 0.20
+    )
+
+    assert result == expected
 
 
 def test_calculate_overall_score_with_job():
-    score = calculate_overall_score(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        JOB_RESULT,
-        IMPROVEMENT_RESULT,
+
+    result = calculate_overall_score(
+        make_ats(80),
+        make_quality(70),
+        make_job(60),
+        make_improvement(90),
     )
 
-    assert score == 72
+    expected = round(
+        80 * 0.35
+        + 70 * 0.25
+        + 60 * 0.20
+        + 90 * 0.20
+    )
+
+    assert result == expected
 
 
 def test_calculate_overall_score_handles_missing_results():
-    score = calculate_overall_score(
+
+    result = calculate_overall_score(
+        None,
+        None,
         None,
         None,
     )
 
-    assert score == 0
+    assert result == 0
 
 
 def test_score_is_clamped_to_100():
-    ats_result = {
-        "ats_score": {
-            "score": 150,
-        },
-    }
 
-    quality_result = {
-        "score": 150,
-    }
-
-    score = calculate_overall_score(
-        ats_result,
-        quality_result,
+    result = calculate_overall_score(
+        make_ats(150),
+        make_quality(150),
+        None,
+        make_improvement(150),
     )
 
-    assert score == 100
+    assert result == 100
 
 
 def test_build_score_breakdown_without_job():
-    breakdown = build_score_breakdown(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        improvement_result=IMPROVEMENT_RESULT,
+
+    result = build_score_breakdown(
+        make_ats(80),
+        make_quality(70),
+        None,
+        make_improvement(90),
     )
 
-    assert breakdown["ats"] == 80
-    assert breakdown["quality"] == 70
-    assert breakdown["job_match"] is None
-    assert breakdown["improvements"] == 75
+    assert result["ats"] == 80
+    assert result["quality"] == 70
+    assert result["improvements"] == 90
+    assert result["job_match"] is None
 
 
 def test_build_score_breakdown_with_job():
-    breakdown = build_score_breakdown(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        JOB_RESULT,
-        IMPROVEMENT_RESULT,
+
+    result = build_score_breakdown(
+        make_ats(80),
+        make_quality(70),
+        make_job(60),
+        make_improvement(90),
     )
 
-    assert breakdown["ats"] == 80
-    assert breakdown["quality"] == 70
-    assert breakdown["job_match"] == 60
-    assert breakdown["improvements"] == 75
+    assert result["ats"] == 80
+    assert result["quality"] == 70
+    assert result["job_match"] == 60
+    assert result["improvements"] == 90
 
 
 def test_collect_recommendations():
-    recommendations = collect_recommendations(
-        ATS_RESULT,
-        QUALITY_RESULT,
-        JOB_RESULT,
-        IMPROVEMENT_RESULT,
-    )
 
-    assert len(recommendations) == 5
+    ats = make_ats()
 
-    assert (
-        "Strengthen the professional summary."
-        in recommendations
-    )
+    ats["suggestions"] = [
+        "Add experience."
+    ]
 
-    assert (
-        "Add more measurable achievements."
-        in recommendations
-    )
+    quality = make_quality()
 
+    quality["suggestions"] = [
+        "Improve formatting."
+    ]
 
-def test_collect_recommendations_removes_duplicates():
-    ats = {
-        "suggestions": [
-            "Add a professional summary.",
-        ],
-    }
+    improvement = make_improvement()
 
-    quality = {
-        "suggestions": [
-            "Add a professional summary.",
-        ],
-    }
+    improvement["improvements"] = [
+        "Add measurable achievements."
+    ]
 
-    recommendations = collect_recommendations(
+    result = collect_recommendations(
         ats,
         quality,
+        None,
+        improvement,
     )
 
-    assert recommendations == [
-        "Add a professional summary.",
+    assert result == [
+        "Add experience.",
+        "Improve formatting.",
+        "Add measurable achievements.",
     ]
 
 
-def test_collect_recommendations_without_optional_results():
-    recommendations = collect_recommendations(
-        ATS_RESULT,
-        QUALITY_RESULT,
+def test_collect_recommendations_removes_duplicates():
+
+    ats = make_ats()
+
+    ats["suggestions"] = [
+        "Add relevant work experience or internships."
+    ]
+
+    quality = make_quality()
+
+    quality["suggestions"] = [
+        "Add relevant work experience or internships."
+    ]
+
+    improvement = make_improvement()
+
+    improvement["improvements"] = [
+        "Add relevant work experience, internships, or practical experience."
+    ]
+
+    result = collect_recommendations(
+        ats,
+        quality,
+        None,
+        improvement,
     )
 
-    assert len(recommendations) == 2
+    assert len(result) == 1
+
+
+def test_collect_recommendations_without_optional_results():
+
+    result = collect_recommendations(
+        make_ats(),
+        make_quality(),
+        None,
+        make_improvement(),
+    )
+
+    assert isinstance(result, list)
+
+
+def test_quick_summary():
+
+    breakdown = {
+        "ats": 79,
+        "quality": 68,
+        "job_match": None,
+        "improvements": 83,
+    }
+
+    recommendations = [
+        "Add relevant experience."
+    ]
+
+    result = build_quick_summary(
+        breakdown,
+        recommendations,
+    )
+
+    assert result["strongest_area"]["name"] == (
+        "Improvement Readiness"
+    )
+
+    assert result["weakest_area"]["name"] == (
+        "Resume Quality"
+    )
+
+    assert result["recommendation"] == (
+        "Add relevant experience."
+    )
 
 
 def test_build_dashboard_result():
+
+    resume = {
+        "name": "Test User",
+        "email": "test@example.com",
+        "phone": "1234567890",
+    }
+
+    ats = make_ats(79)
+    quality = make_quality(68)
+    improvement = make_improvement(83)
+
+    ats["suggestions"] = [
+        "Add experience."
+    ]
+
+    quality["suggestions"] = [
+        "Improve formatting."
+    ]
+
+    improvement["improvements"] = [
+        "Add experience."
+    ]
+
     result = build_dashboard_result(
-        RESUME,
-        ATS_RESULT,
-        QUALITY_RESULT,
-        JOB_RESULT,
-        IMPROVEMENT_RESULT,
+        resume,
+        ats,
+        quality,
+        None,
+        improvement,
     )
 
-    assert result["overall_score"] == 72
+    assert result["overall_score"] == 76
 
-    assert result["breakdown"]["ats"] == 80
-    assert result["breakdown"]["quality"] == 70
-    assert result["breakdown"]["job_match"] == 60
-    assert result["breakdown"]["improvements"] == 75
+    assert result["breakdown"]["ats"] == 79
+    assert result["breakdown"]["quality"] == 68
+    assert result["breakdown"]["improvements"] == 83
+    assert result["breakdown"]["job_match"] is None
 
-    assert result["has_job_match"] is True
-    assert result["resume_name"] == "Alex Johnson"
+    assert result["has_job_match"] is False
 
-    assert result["recommendation_count"] == 5
-    assert len(result["recommendations"]) == 5
+    assert result["recommendation_count"] == 2
+
+    assert result["quick_summary"]["strongest_area"][
+        "name"
+    ] == "Improvement Readiness"
+
+    assert result["quick_summary"]["weakest_area"][
+        "name"
+    ] == "Resume Quality"
