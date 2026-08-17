@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+
     <meta charset="UTF-8">
 
     <meta
@@ -9,13 +10,17 @@
         content="width=device-width, initial-scale=1.0"
     >
 
-    <title>AI Resume Analyzer</title>
+    <title>
+        AI Resume Analyzer
+    </title>
 
     <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
+
 </head>
+
 
 <body>
 
@@ -49,6 +54,7 @@
 
     <main class="container">
 
+
         <!-- =========================================
              UPLOAD SECTION
              ========================================= -->
@@ -61,6 +67,9 @@
             >
 
                 <div class="form-grid">
+
+
+                    <!-- Resume Upload -->
 
                     <div class="field">
 
@@ -83,6 +92,8 @@
                     </div>
 
 
+                    <!-- Job Description -->
+
                     <div class="field">
 
                         <label for="job_description">
@@ -96,8 +107,8 @@
                         >{{ job_description }}</textarea>
 
                         <small>
-                            Adding a job description enables job matching
-                            and keyword intelligence.
+                            Adding a job description enables job
+                            matching and keyword intelligence.
                         </small>
 
                     </div>
@@ -147,7 +158,7 @@
 
 
                 <!-- =========================================
-                     UNIFIED V2.0 DASHBOARD
+                     V2.0 UNIFIED DASHBOARD
                      ========================================= -->
 
                 {% if dashboard_result %}
@@ -213,6 +224,7 @@
 
                     <div class="dashboard-grid">
 
+
                         <!-- ATS -->
 
                         <div class="dashboard-score-item">
@@ -228,7 +240,7 @@
                         </div>
 
 
-                        <!-- Resume Quality -->
+                        <!-- Quality -->
 
                         <div class="dashboard-score-item">
 
@@ -289,6 +301,167 @@
                     </div>
 
                 </section>
+
+                {% endif %}
+
+
+                <!-- =========================================
+                     V2.1 ANALYTICS
+                     ========================================= -->
+
+                {% if analytics_result %}
+
+                <section class="card full-width analytics-card">
+
+
+                    <!-- Analytics Header -->
+
+                    <div class="analytics-header">
+
+                        <div>
+
+                            <span class="dashboard-badge">
+                                V2.1 ANALYTICS
+                            </span>
+
+                            <h2 class="section-title">
+                                Resume Analytics
+                            </h2>
+
+                            <p class="dashboard-description">
+                                Visual insights into your resume
+                                performance across ATS readiness,
+                                quality, improvements, and job
+                                compatibility.
+                            </p>
+
+                        </div>
+
+
+                        <!-- Average Score -->
+
+                        <div class="analytics-average">
+
+                            <span>
+                                Average
+                            </span>
+
+                            <strong>
+                                {{ analytics_result.summary.average_score }}/100
+                            </strong>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- Analytics Metrics -->
+
+                    <div class="analytics-grid">
+
+                        {% for metric in analytics_result.metrics %}
+
+                        {% if metric.score is not none %}
+
+                        <div class="analytics-item">
+
+
+                            <div class="analytics-item-top">
+
+                                <span>
+                                    {{ metric.name }}
+                                </span>
+
+                                <strong>
+                                    {{ metric.score }}/100
+                                </strong>
+
+                            </div>
+
+
+                            <!-- Progress Bar -->
+
+                            <div class="analytics-progress">
+
+                                <div
+                                    class="analytics-progress-bar {{ metric.status }}"
+                                    data-score="{{ metric.score }}"
+                                ></div>
+
+                            </div>
+
+
+                            <small>
+                                {{ metric.label }}
+                            </small>
+
+                        </div>
+
+                        {% endif %}
+
+                        {% endfor %}
+
+                    </div>
+
+                </section>
+
+
+                <!-- =========================================
+                     ANALYTICS STRENGTHS
+                     ========================================= -->
+
+                {% if analytics_result.strengths %}
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Resume Strengths
+                    </h2>
+
+                    <ul class="analytics-list strengths-list">
+
+                        {% for strength in analytics_result.strengths %}
+
+                        <li>
+                            {{ strength }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
+
+                <!-- =========================================
+                     ANALYTICS ATTENTION AREAS
+                     ========================================= -->
+
+                {% if analytics_result.attention_areas %}
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Areas Needing Attention
+                    </h2>
+
+                    <ul class="analytics-list attention-list">
+
+                        {% for area in analytics_result.attention_areas %}
+
+                        <li>
+                            {{ area }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
 
                 {% endif %}
 
@@ -360,6 +533,7 @@
 
                         </li>
 
+
                         <li>
 
                             <strong>
@@ -371,6 +545,7 @@
                             </span>
 
                         </li>
+
 
                         <li>
 
@@ -402,14 +577,13 @@
                     </h2>
 
                     <div class="score">
-
                         {{ ats_result.ats_score.score }}/100
-
                     </div>
 
                     <p class="score-label">
                         Overall resume ATS score
                     </p>
+
 
                     <ul class="info-list">
 
@@ -425,6 +599,7 @@
 
                         </li>
 
+
                         <li>
 
                             <strong>
@@ -436,6 +611,7 @@
                             </span>
 
                         </li>
+
 
                         <li>
 
@@ -584,75 +760,51 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Summary
-                            </strong>
+                            <strong>Summary</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.summary }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Skills
-                            </strong>
+                            <strong>Skills</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.skills }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Experience
-                            </strong>
+                            <strong>Experience</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.experience }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Projects
-                            </strong>
+                            <strong>Projects</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.projects }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Achievements
-                            </strong>
+                            <strong>Achievements</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.achievements }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Total
-                            </strong>
+                            <strong>Total</strong>
 
                             <span>
                                 {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
                             </span>
-
                         </li>
 
                     </ul>
@@ -682,6 +834,7 @@
                         Resume quality score
                     </p>
 
+
                     <ul class="info-list">
 
                         <li>
@@ -698,6 +851,7 @@
 
                         </li>
 
+
                         <li>
 
                             <strong>
@@ -710,6 +864,7 @@
                             </span>
 
                         </li>
+
 
                         <li>
 
@@ -724,6 +879,7 @@
 
                         </li>
 
+
                         <li>
 
                             <strong>
@@ -736,6 +892,7 @@
                             </span>
 
                         </li>
+
 
                         <li>
 
@@ -766,75 +923,51 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Length
-                            </strong>
+                            <strong>Length</strong>
 
                             <span>
                                 {{ quality_result.breakdown.length }}/15
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Sections
-                            </strong>
+                            <strong>Sections</strong>
 
                             <span>
                                 {{ quality_result.breakdown.sections }}/15
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Bullet Usage
-                            </strong>
+                            <strong>Bullet Usage</strong>
 
                             <span>
                                 {{ quality_result.breakdown.bullets }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Achievements
-                            </strong>
+                            <strong>Achievements</strong>
 
                             <span>
                                 {{ quality_result.breakdown.achievements }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Contact
-                            </strong>
+                            <strong>Contact</strong>
 
                             <span>
                                 {{ quality_result.breakdown.contact }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Structure
-                            </strong>
+                            <strong>Structure</strong>
 
                             <span>
                                 {{ quality_result.breakdown.structure }}/10
                             </span>
-
                         </li>
 
                     </ul>
@@ -934,9 +1067,7 @@
                     </h2>
 
                     <div class="score">
-
                         {{ job_result.score }}%
-
                     </div>
 
                     <p class="score-label">
@@ -1027,6 +1158,7 @@
                     <p class="score-label">
                         Keyword coverage
                     </p>
+
 
                     <h3>
                         Matched Keywords
@@ -1193,6 +1325,7 @@
 
                 {% endif %}
 
+
             </div>
 
         </div>
@@ -1215,6 +1348,36 @@
         </div>
 
     </footer>
+
+
+    <!-- =========================================
+         V2.1 ANALYTICS PROGRESS BARS
+         ========================================= -->
+
+    <script>
+
+        document
+            .querySelectorAll(".analytics-progress-bar")
+            .forEach(function (bar) {
+
+                const score = Number(
+                    bar.dataset.score
+                );
+
+                if (
+                    Number.isFinite(score)
+                    && score >= 0
+                    && score <= 100
+                ) {
+
+                    bar.style.width = score + "%";
+
+                }
+
+            });
+
+    </script>
+
 
 </body>
 
