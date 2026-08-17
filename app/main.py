@@ -3,6 +3,7 @@ from flask import Flask, render_template, request
 from app.ats_analyzer import analyze_resume
 from app.job_matcher import match_resume_to_job
 from app.resume_parser import extract_text_from_pdf, parse_resume
+from app.resume_quality import analyze_resume_quality
 
 
 app = Flask(__name__)
@@ -21,6 +22,7 @@ def allowed_file(filename: str) -> bool:
 def index():
     resume = None
     ats_result = None
+    quality_result = None
     job_result = None
     extracted_text = None
     error = None
@@ -28,7 +30,10 @@ def index():
 
     if request.method == "POST":
         file = request.files.get("resume")
-        job_description = request.form.get("job_description", "").strip()
+        job_description = request.form.get(
+            "job_description",
+            "",
+        ).strip()
 
         if file is None or file.filename == "":
             error = "Please select a PDF resume."
@@ -42,10 +47,17 @@ def index():
 
                 if not extracted_text:
                     error = "The PDF does not contain readable text."
+
                 else:
                     resume = parse_resume(extracted_text)
+
+                    # Existing ATS analysis.
                     ats_result = analyze_resume(resume)
 
+                    # New v1.8 resume quality analysis.
+                    quality_result = analyze_resume_quality(resume)
+
+                    # Existing job matching + keyword intelligence.
                     if job_description:
                         job_result = match_resume_to_job(
                             resume,
@@ -59,6 +71,7 @@ def index():
         "index.html",
         resume=resume,
         ats_result=ats_result,
+        quality_result=quality_result,
         job_result=job_result,
         extracted_text=extracted_text,
         error=error,

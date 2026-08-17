@@ -34,8 +34,8 @@
             <p class="hero-text">
                 Upload your resume and optionally add a job
                 description to evaluate your resume structure,
-                ATS readiness, job compatibility, and keyword
-                coverage.
+                ATS readiness, job compatibility, keyword
+                coverage, and overall quality.
             </p>
 
         </div>
@@ -448,6 +448,213 @@
                     </ul>
 
                 </section>
+
+                {% endif %}
+
+
+                <!-- Resume Quality - v1.8 -->
+
+                {% if quality_result %}
+
+                <section class="card score-card">
+
+                    <h2 class="section-title">
+                        Resume Quality
+                    </h2>
+
+                    <div class="score">
+                        {{ quality_result.score }}/{{ quality_result.max_score }}
+                    </div>
+
+                    <p class="score-label">
+                        Resume quality score
+                    </p>
+
+                    <ul class="info-list">
+
+                        <li>
+
+                            <strong>
+                                Resume Length
+                            </strong>
+
+                            <span>
+                                {{ quality_result.length.word_count }}
+                                words ·
+                                {{ quality_result.length.rating|title }}
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Bullet Points
+                            </strong>
+
+                            <span>
+                                {{ quality_result.bullets.total }}
+                                detected
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Quantifiable Achievements
+                            </strong>
+
+                            <span>
+                                {{ quality_result.achievements.quantifiable }}
+                                detected
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Contact
+                            </strong>
+
+                            <span>
+                                {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
+                                complete
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Structure
+                            </strong>
+
+                            <span>
+                                {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
+                                sections
+                            </span>
+
+                        </li>
+
+                    </ul>
+
+                </section>
+
+
+                <!-- Quality Breakdown -->
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Quality Breakdown
+                    </h2>
+
+                    <ul class="info-list">
+
+                        <li>
+
+                            <strong>
+                                Length
+                            </strong>
+
+                            <span>
+                                {{ quality_result.breakdown.length }}/15
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Sections
+                            </strong>
+
+                            <span>
+                                {{ quality_result.breakdown.sections }}/15
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Bullet Usage
+                            </strong>
+
+                            <span>
+                                {{ quality_result.breakdown.bullets }}/10
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Achievements
+                            </strong>
+
+                            <span>
+                                {{ quality_result.breakdown.achievements }}/10
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Contact
+                            </strong>
+
+                            <span>
+                                {{ quality_result.breakdown.contact }}/10
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Structure
+                            </strong>
+
+                            <span>
+                                {{ quality_result.breakdown.structure }}/10
+                            </span>
+
+                        </li>
+
+                    </ul>
+
+                </section>
+
+
+                <!-- Quality Suggestions -->
+
+                {% if quality_result.suggestions %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Resume Quality Suggestions
+                    </h2>
+
+                    <ul class="suggestions">
+
+                        {% for suggestion in quality_result.suggestions %}
+
+                        <li>
+                            {{ suggestion }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
 
                 {% endif %}
 
