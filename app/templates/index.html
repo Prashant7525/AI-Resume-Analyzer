@@ -1,8 +1,12 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
     <title>AI Resume Analyzer</title>
 </head>
@@ -14,13 +18,17 @@
         <h1>AI Resume Analyzer</h1>
 
         <p>
-            Upload your resume PDF to extract and analyze its content.
+            Upload your resume to analyze its structure and
+            compare it with a job description.
         </p>
 
-        <form method="POST" enctype="multipart/form-data">
+        <form
+            method="POST"
+            enctype="multipart/form-data"
+        >
 
             <label for="resume">
-                Select your resume:
+                Resume PDF
             </label>
 
             <input
@@ -31,6 +39,17 @@
                 required
             >
 
+            <label for="job_description">
+                Job Description
+            </label>
+
+            <textarea
+                id="job_description"
+                name="job_description"
+                rows="10"
+                placeholder="Paste a job description here (optional)..."
+            >{{ job_description }}</textarea>
+
             <button type="submit">
                 Analyze Resume
             </button>
@@ -38,24 +57,167 @@
         </form>
 
         {% if error %}
-            <p>
-                {{ error }}
-            </p>
+
+            <section>
+                <h2>Error</h2>
+                <p>{{ error }}</p>
+            </section>
+
+        {% endif %}
+
+        {% if resume %}
+
+            <section>
+
+                <h2>Resume Overview</h2>
+
+                <p>
+                    <strong>Name:</strong>
+                    {{ resume.name }}
+                </p>
+
+                <p>
+                    <strong>Email:</strong>
+                    {{ resume.email or "Not detected" }}
+                </p>
+
+                <p>
+                    <strong>Phone:</strong>
+                    {{ resume.phone or "Not detected" }}
+                </p>
+
+            </section>
+
+        {% endif %}
+
+        {% if ats_result %}
+
+            <section>
+
+                <h2>ATS Score</h2>
+
+                <p>
+                    {{ ats_result.score }}/90
+                </p>
+
+                <h3>Contact Information</h3>
+
+                <ul>
+                    <li>
+                        Email:
+                        {{ "Found" if ats_result.contact.email else "Missing" }}
+                    </li>
+
+                    <li>
+                        Phone:
+                        {{ "Found" if ats_result.contact.phone else "Missing" }}
+                    </li>
+                </ul>
+
+                <h3>Resume Sections</h3>
+
+                <ul>
+                    {% for section, present in ats_result.sections.items() %}
+                        <li>
+                            {{ section|title }}:
+                            {{ "Found" if present else "Missing" }}
+                        </li>
+                    {% endfor %}
+                </ul>
+
+                {% if ats_result.suggestions %}
+
+                    <h3>Suggestions</h3>
+
+                    <ul>
+                        {% for suggestion in ats_result.suggestions %}
+                            <li>{{ suggestion }}</li>
+                        {% endfor %}
+                    </ul>
+
+                {% endif %}
+
+            </section>
+
+        {% endif %}
+
+        {% if job_result %}
+
+            <section>
+
+                <h2>Job Match</h2>
+
+                <p>
+                    <strong>
+                        Match Score:
+                    </strong>
+
+                    {{ job_result.score }}%
+                </p>
+
+                <h3>Matched Skills</h3>
+
+                {% if job_result.matched_skills %}
+
+                    <ul>
+                        {% for skill in job_result.matched_skills %}
+                            <li>{{ skill }}</li>
+                        {% endfor %}
+                    </ul>
+
+                {% else %}
+
+                    <p>No matching skills detected.</p>
+
+                {% endif %}
+
+                <h3>Missing Skills</h3>
+
+                {% if job_result.missing_skills %}
+
+                    <ul>
+                        {% for skill in job_result.missing_skills %}
+                            <li>{{ skill }}</li>
+                        {% endfor %}
+                    </ul>
+
+                {% else %}
+
+                    <p>
+                        No missing skills detected from the
+                        supported skill list.
+                    </p>
+
+                {% endif %}
+
+                <h3>Suggestions</h3>
+
+                <ul>
+                    {% for suggestion in job_result.suggestions %}
+                        <li>{{ suggestion }}</li>
+                    {% endfor %}
+                </ul>
+
+            </section>
+
         {% endif %}
 
         {% if extracted_text %}
 
-            <section>
+            <details>
 
-                <h2>Extracted Resume Text</h2>
+                <summary>
+                    View Extracted Resume Text
+                </summary>
 
                 <pre>{{ extracted_text }}</pre>
 
-            </section>
+            </details>
 
         {% endif %}
 
     </main>
 
 </body>
+
 </html>
