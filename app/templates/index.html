@@ -3,6 +3,7 @@
 
 <head>
     <meta charset="UTF-8">
+
     <meta
         name="viewport"
         content="width=device-width, initial-scale=1.0"
@@ -19,6 +20,7 @@
 <body>
 
     <header>
+
         <div class="container">
 
             <span class="badge">
@@ -36,6 +38,7 @@
             </p>
 
         </div>
+
     </header>
 
 
@@ -140,18 +143,33 @@
                     <ul class="info-list">
 
                         <li>
-                            <strong>Name:</strong>
+
+                            <strong>
+                                Name:
+                            </strong>
+
                             {{ resume.name or "Not detected" }}
+
                         </li>
 
                         <li>
-                            <strong>Email:</strong>
+
+                            <strong>
+                                Email:
+                            </strong>
+
                             {{ resume.email or "Not detected" }}
+
                         </li>
 
                         <li>
-                            <strong>Phone:</strong>
+
+                            <strong>
+                                Phone:
+                            </strong>
+
                             {{ resume.phone or "Not detected" }}
+
                         </li>
 
                     </ul>
@@ -170,12 +188,63 @@
                     </h2>
 
                     <div class="score">
-                        {{ ats_result.score }}/90
+
+                        {{ ats_result.ats_score.score }}/100
+
                     </div>
 
                     <p class="score-label">
-                        Resume completeness score
+                        Overall resume ATS score
                     </p>
+
+                    <ul class="info-list">
+
+                        <li>
+
+                            <strong>
+                                Completeness
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.ats_score.completeness.score
+                                }}/{{ ats_result.ats_score.completeness.max_score }}
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Weighted Completeness
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.ats_score.completeness.weighted_score
+                                }}/50
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Content Quality
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.ats_score.content_quality.score
+                                }}/{{ ats_result.ats_score.content_quality.max_score }}
+
+                            </span>
+
+                        </li>
+
+                    </ul>
 
                 </section>
 
@@ -291,6 +360,109 @@
                 {% endif %}
 
 
+                <!-- Content Quality -->
+
+                {% if ats_result %}
+
+                <section class="card">
+
+                    <h2 class="section-title">
+                        Content Quality
+                    </h2>
+
+                    <ul class="info-list">
+
+                        <li>
+
+                            <strong>
+                                Summary
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.content_quality.breakdown.summary }}/10
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Skills
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.content_quality.breakdown.skills }}/10
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Experience
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.content_quality.breakdown.experience }}/10
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Projects
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.content_quality.breakdown.projects }}/10
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Achievements
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.content_quality.breakdown.achievements }}/10
+
+                            </span>
+
+                        </li>
+
+                        <li>
+
+                            <strong>
+                                Total
+                            </strong>
+
+                            <span>
+
+                                {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
+
+                            </span>
+
+                        </li>
+
+                    </ul>
+
+                </section>
+
+                {% endif %}
+
+
                 <!-- Job Match -->
 
                 {% if job_result %}
@@ -302,7 +474,9 @@
                     </h2>
 
                     <div class="score">
+
                         {{ job_result.score }}%
+
                     </div>
 
                     <p class="score-label">
@@ -380,7 +554,7 @@
                 {% endif %}
 
 
-                <!-- Suggestions -->
+                <!-- Resume Improvement Suggestions -->
 
                 {% if ats_result and ats_result.suggestions %}
 
@@ -406,6 +580,8 @@
 
                 {% endif %}
 
+
+                <!-- Job Match Suggestions -->
 
                 {% if job_result and job_result.suggestions %}
 
