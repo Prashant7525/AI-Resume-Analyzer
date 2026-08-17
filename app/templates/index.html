@@ -35,7 +35,8 @@
                 Upload your resume and optionally add a job
                 description to evaluate your resume structure,
                 ATS readiness, job compatibility, keyword
-                coverage, and overall quality.
+                coverage, overall quality, and improvement
+                opportunities.
             </p>
 
         </div>
@@ -144,33 +145,18 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Name:
-                            </strong>
-
+                            <strong>Name:</strong>
                             {{ resume.name or "Not detected" }}
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Email:
-                            </strong>
-
+                            <strong>Email:</strong>
                             {{ resume.email or "Not detected" }}
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Phone:
-                            </strong>
-
+                            <strong>Phone:</strong>
                             {{ resume.phone or "Not detected" }}
-
                         </li>
 
                     </ul>
@@ -189,9 +175,7 @@
                     </h2>
 
                     <div class="score">
-
                         {{ ats_result.ats_score.score }}/100
-
                     </div>
 
                     <p class="score-label">
@@ -201,48 +185,30 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Completeness
-                            </strong>
+                            <strong>Completeness</strong>
 
                             <span>
-
                                 {{ ats_result.ats_score.completeness.score
                                 }}/{{ ats_result.ats_score.completeness.max_score }}
-
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Weighted Completeness
-                            </strong>
+                            <strong>Weighted Completeness</strong>
 
                             <span>
-
                                 {{ ats_result.ats_score.completeness.weighted_score
                                 }}/50
-
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Content Quality
-                            </strong>
+                            <strong>Content Quality</strong>
 
                             <span>
-
                                 {{ ats_result.ats_score.content_quality.score
                                 }}/{{ ats_result.ats_score.content_quality.max_score }}
-
                             </span>
-
                         </li>
 
                     </ul>
@@ -331,7 +297,6 @@
 
                         </li>
 
-
                         <li>
 
                             <strong>
@@ -374,75 +339,51 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Summary
-                            </strong>
+                            <strong>Summary</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.summary }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Skills
-                            </strong>
+                            <strong>Skills</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.skills }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Experience
-                            </strong>
+                            <strong>Experience</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.experience }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Projects
-                            </strong>
+                            <strong>Projects</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.projects }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Achievements
-                            </strong>
+                            <strong>Achievements</strong>
 
                             <span>
                                 {{ ats_result.content_quality.breakdown.achievements }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Total
-                            </strong>
+                            <strong>Total</strong>
 
                             <span>
                                 {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
                             </span>
-
                         </li>
 
                     </ul>
@@ -473,69 +414,49 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Resume Length
-                            </strong>
+                            <strong>Resume Length</strong>
 
                             <span>
                                 {{ quality_result.length.word_count }}
                                 words ·
                                 {{ quality_result.length.rating|title }}
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Bullet Points
-                            </strong>
+                            <strong>Bullet Points</strong>
 
                             <span>
                                 {{ quality_result.bullets.total }}
                                 detected
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Quantifiable Achievements
-                            </strong>
+                            <strong>Quantifiable Achievements</strong>
 
                             <span>
                                 {{ quality_result.achievements.quantifiable }}
                                 detected
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Contact
-                            </strong>
+                            <strong>Contact</strong>
 
                             <span>
                                 {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
                                 complete
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Structure
-                            </strong>
+                            <strong>Structure</strong>
 
                             <span>
                                 {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
                                 sections
                             </span>
-
                         </li>
 
                     </ul>
@@ -554,75 +475,51 @@
                     <ul class="info-list">
 
                         <li>
-
-                            <strong>
-                                Length
-                            </strong>
+                            <strong>Length</strong>
 
                             <span>
                                 {{ quality_result.breakdown.length }}/15
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Sections
-                            </strong>
+                            <strong>Sections</strong>
 
                             <span>
                                 {{ quality_result.breakdown.sections }}/15
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Bullet Usage
-                            </strong>
+                            <strong>Bullet Usage</strong>
 
                             <span>
                                 {{ quality_result.breakdown.bullets }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Achievements
-                            </strong>
+                            <strong>Achievements</strong>
 
                             <span>
                                 {{ quality_result.breakdown.achievements }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Contact
-                            </strong>
+                            <strong>Contact</strong>
 
                             <span>
                                 {{ quality_result.breakdown.contact }}/10
                             </span>
-
                         </li>
 
                         <li>
-
-                            <strong>
-                                Structure
-                            </strong>
+                            <strong>Structure</strong>
 
                             <span>
                                 {{ quality_result.breakdown.structure }}/10
                             </span>
-
                         </li>
 
                     </ul>
@@ -659,6 +556,129 @@
                 {% endif %}
 
 
+                <!-- v1.9 Resume Improvement Analysis -->
+
+                {% if improvement_result %}
+
+                <section class="card score-card full-width">
+
+                    <h2 class="section-title">
+                        Resume Improvement Score
+                    </h2>
+
+                    <div class="score">
+                        {{ improvement_result.score }}/100
+                    </div>
+
+                    <p class="score-label">
+                        Actionable resume improvement readiness
+                    </p>
+
+                    <ul class="info-list">
+
+                        <li>
+
+                            <strong>
+                                Areas Passing
+                            </strong>
+
+                            <span>
+                                {{ improvement_result.completed }}/{{ improvement_result.total }}
+                            </span>
+
+                        </li>
+
+                    </ul>
+
+                </section>
+
+
+                <!-- Improvement Analysis -->
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Resume Improvement Analysis
+                    </h2>
+
+                    <ul class="info-list">
+
+                        {% for section, result in improvement_result.checks.items() %}
+
+                        <li>
+
+                            <strong>
+                                {{ section|title }}
+                            </strong>
+
+                            {% if result.status == "good"
+                                or result.status == "complete" %}
+
+                            <span class="status-found">
+                                Good
+                            </span>
+
+                            {% else %}
+
+                            <span class="status-missing">
+                                {{ result.status|replace("_", " ")|title }}
+                            </span>
+
+                            {% endif %}
+
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+
+                <!-- Actionable Recommendations -->
+
+                {% if improvement_result.improvements %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Recommended Improvements
+                    </h2>
+
+                    <ul class="suggestions">
+
+                        {% for improvement in improvement_result.improvements %}
+
+                        <li>
+                            {{ improvement }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </section>
+
+                {% else %}
+
+                <section class="card full-width">
+
+                    <h2 class="section-title">
+                        Recommended Improvements
+                    </h2>
+
+                    <p>
+                        Great job! No major resume improvements were
+                        detected by the current analysis rules.
+                    </p>
+
+                </section>
+
+                {% endif %}
+
+                {% endif %}
+
+
                 <!-- Job Match -->
 
                 {% if job_result %}
@@ -670,9 +690,7 @@
                     </h2>
 
                     <div class="score">
-
                         {{ job_result.score }}%
-
                     </div>
 
                     <p class="score-label">
@@ -848,7 +866,7 @@
                 {% endif %}
 
 
-                <!-- Resume Improvement Suggestions -->
+                <!-- ATS Suggestions -->
 
                 {% if ats_result and ats_result.suggestions %}
 

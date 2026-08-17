@@ -2,6 +2,7 @@ from flask import Flask, render_template, request
 
 from app.ats_analyzer import analyze_resume
 from app.job_matcher import match_resume_to_job
+from app.resume_improvements import analyze_resume_improvements
 from app.resume_parser import extract_text_from_pdf, parse_resume
 from app.resume_quality import analyze_resume_quality
 
@@ -23,6 +24,7 @@ def index():
     resume = None
     ats_result = None
     quality_result = None
+    improvement_result = None
     job_result = None
     extracted_text = None
     error = None
@@ -51,13 +53,18 @@ def index():
                 else:
                     resume = parse_resume(extracted_text)
 
-                    # Existing ATS analysis.
+                    # ATS analysis.
                     ats_result = analyze_resume(resume)
 
-                    # New v1.8 resume quality analysis.
+                    # Resume quality analysis.
                     quality_result = analyze_resume_quality(resume)
 
-                    # Existing job matching + keyword intelligence.
+                    # v1.9 actionable improvement analysis.
+                    improvement_result = analyze_resume_improvements(
+                        resume
+                    )
+
+                    # Job matching + keyword intelligence.
                     if job_description:
                         job_result = match_resume_to_job(
                             resume,
@@ -72,6 +79,7 @@ def index():
         resume=resume,
         ats_result=ats_result,
         quality_result=quality_result,
+        improvement_result=improvement_result,
         job_result=job_result,
         extracted_text=extracted_text,
         error=error,
