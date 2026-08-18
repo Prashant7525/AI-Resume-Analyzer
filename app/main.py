@@ -13,6 +13,8 @@ V2.4
 
 from __future__ import annotations
 
+import os
+
 from datetime import datetime
 from io import BytesIO
 
@@ -52,6 +54,11 @@ from app.resume_quality import analyze_resume_quality
 # ============================================================
 
 app = Flask(__name__)
+
+app.config["SECRET_KEY"] = os.getenv(
+    "SECRET_KEY",
+    "development-secret-key",
+)
 
 ALLOWED_EXTENSIONS = {"pdf"}
 
@@ -673,6 +680,33 @@ def download_report():
 
 if __name__ == "__main__":
 
+    debug = (
+        os.getenv(
+            "FLASK_DEBUG",
+            "0",
+        ).lower()
+        in {
+            "1",
+            "true",
+            "yes",
+            "on",
+        }
+    )
+
+    host = os.getenv(
+        "FLASK_HOST",
+        "127.0.0.1",
+    )
+
+    port = int(
+        os.getenv(
+            "PORT",
+            "5000",
+        )
+    )
+
     app.run(
-        debug=True
+        host=host,
+        port=port,
+        debug=debug,
     )

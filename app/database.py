@@ -8,11 +8,13 @@ V2.4
 - Retrieve analysis history
 - Retrieve individual analyses
 - Delete analyses
+- Configurable database location
 """
 
 from __future__ import annotations
 
 import json
+import os
 import sqlite3
 from datetime import datetime, timezone
 from pathlib import Path
@@ -27,7 +29,36 @@ APP_DIR = Path(__file__).resolve().parent
 
 INSTANCE_DIR = APP_DIR / "instance"
 
-DATABASE_PATH = INSTANCE_DIR / "resume_analyzer.db"
+DEFAULT_DATABASE_PATH = (
+    INSTANCE_DIR / "resume_analyzer.db"
+)
+
+
+def _get_database_path() -> Path:
+    """
+    Return the configured SQLite database path.
+
+    DATABASE_PATH can be supplied through an environment
+    variable for production deployments.
+
+    When DATABASE_PATH is not configured, the application
+    continues to use the local app/instance directory.
+    """
+
+    configured_path = os.getenv(
+        "DATABASE_PATH"
+    )
+
+    if configured_path:
+
+        return Path(
+            configured_path
+        ).expanduser()
+
+    return DEFAULT_DATABASE_PATH
+
+
+DATABASE_PATH = _get_database_path()
 
 
 # ============================================================
@@ -39,11 +70,18 @@ def get_connection() -> sqlite3.Connection:
     """
     Create and return a SQLite database connection.
 
-    The row factory allows database rows to be accessed using
-    column names.
+    The parent directory is created automatically when
+    necessary.
+
+    The row factory allows database rows to be accessed
+    using column names.
     """
 
-    INSTANCE_DIR.mkdir(
+    database_directory = (
+        DATABASE_PATH.parent
+    )
+
+    database_directory.mkdir(
         parents=True,
         exist_ok=True,
     )
@@ -133,7 +171,9 @@ def _nested_score(
 
         value = value.get(key)
 
-    return _numeric_value(value)
+    return _numeric_value(
+        value
+    )
 
 
 # ============================================================
@@ -366,13 +406,16 @@ def get_analysis(
     result = dict(row)
 
     try:
+
         saved_results = json.loads(
             result["results_json"]
         )
+
     except (
         TypeError,
         json.JSONDecodeError,
     ):
+
         saved_results = {}
 
     result.update(
