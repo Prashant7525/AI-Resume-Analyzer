@@ -48,7 +48,6 @@ def _safe_score(
     value = result
 
     for key in keys:
-
         if not isinstance(value, dict):
             return None
 
@@ -70,7 +69,7 @@ def _safe_list(value):
 
 
 def _safe_text(value) -> str:
-    """Convert a value into safe PDF-compatible text."""
+    """Convert a value into XML-safe PDF text."""
 
     if value is None:
         return ""
@@ -98,7 +97,6 @@ def _build_styles():
             textColor=colors.HexColor("#172554"),
             spaceAfter=6,
         ),
-
         "subtitle": ParagraphStyle(
             "ReportSubtitle",
             parent=styles["Normal"],
@@ -108,7 +106,6 @@ def _build_styles():
             textColor=colors.HexColor("#64748b"),
             spaceAfter=18,
         ),
-
         "heading": ParagraphStyle(
             "ReportHeading",
             parent=styles["Heading2"],
@@ -118,7 +115,6 @@ def _build_styles():
             spaceAfter=8,
             textColor=colors.HexColor("#172554"),
         ),
-
         "subheading": ParagraphStyle(
             "ReportSubheading",
             parent=styles["Heading3"],
@@ -128,7 +124,6 @@ def _build_styles():
             spaceAfter=5,
             textColor=colors.HexColor("#334155"),
         ),
-
         "body": ParagraphStyle(
             "ReportBody",
             parent=styles["BodyText"],
@@ -137,7 +132,6 @@ def _build_styles():
             spaceAfter=5,
             textColor=colors.HexColor("#1e293b"),
         ),
-
         "small": ParagraphStyle(
             "ReportSmall",
             parent=styles["BodyText"],
@@ -145,7 +139,6 @@ def _build_styles():
             leading=11,
             textColor=colors.HexColor("#64748b"),
         ),
-
         "score": ParagraphStyle(
             "ReportScore",
             parent=styles["BodyText"],
@@ -161,23 +154,8 @@ def _build_styles():
 # ============================================================
 
 
-def _score_table(rows):
+def _score_table(rows, styles):
     """Create a formatted score table."""
-
-    table_data = [
-        [
-            Paragraph(
-                "<b>Metric</b>",
-                _build_styles()["body"],
-            ),
-            Paragraph(
-                "<b>Score</b>",
-                _build_styles()["body"],
-            ),
-        ]
-    ]
-
-    styles = _build_styles()
 
     table_data = [
         [
@@ -193,7 +171,6 @@ def _score_table(rows):
     ]
 
     for metric, score in rows:
-
         display_score = (
             "—"
             if score is None
@@ -281,7 +258,111 @@ def _score_table(rows):
     return table
 
 
-def _overview_table(resume: dict, styles: dict):
+def _percentage_table(rows, styles):
+    """Create a score table for percentage-based metrics."""
+
+    table_data = [
+        [
+            Paragraph(
+                "<b>Metric</b>",
+                styles["body"],
+            ),
+            Paragraph(
+                "<b>Percentage</b>",
+                styles["body"],
+            ),
+        ]
+    ]
+
+    for metric, value in rows:
+        display_value = (
+            "—"
+            if value is None
+            else f"{value}%"
+        )
+
+        table_data.append(
+            [
+                Paragraph(
+                    _safe_text(metric),
+                    styles["body"],
+                ),
+                Paragraph(
+                    display_value,
+                    styles["score"],
+                ),
+            ]
+        )
+
+    table = Table(
+        table_data,
+        colWidths=[
+            125 * mm,
+            35 * mm,
+        ],
+        repeatRows=1,
+    )
+
+    table.setStyle(
+        TableStyle(
+            [
+                (
+                    "BACKGROUND",
+                    (0, 0),
+                    (-1, 0),
+                    colors.HexColor("#eef2ff"),
+                ),
+                (
+                    "TEXTCOLOR",
+                    (0, 0),
+                    (-1, 0),
+                    colors.HexColor("#3730a3"),
+                ),
+                (
+                    "FONTNAME",
+                    (0, 0),
+                    (-1, 0),
+                    "Helvetica-Bold",
+                ),
+                (
+                    "ALIGN",
+                    (1, 0),
+                    (1, -1),
+                    "RIGHT",
+                ),
+                (
+                    "GRID",
+                    (0, 0),
+                    (-1, -1),
+                    0.5,
+                    colors.HexColor("#e2e8f0"),
+                ),
+                (
+                    "VALIGN",
+                    (0, 0),
+                    (-1, -1),
+                    "MIDDLE",
+                ),
+                (
+                    "TOPPADDING",
+                    (0, 0),
+                    (-1, -1),
+                    7,
+                ),
+                (
+                    "BOTTOMPADDING",
+                    (0, 0),
+                    (-1, -1),
+                    7,
+                ),
+            ]
+        )
+    )
+
+    return table
+
+
+def _overview_table(resume: dict, styles):
     """Create the resume contact overview table."""
 
     rows = [
@@ -380,16 +461,12 @@ def _overview_table(resume: dict, styles: dict):
 # ============================================================
 
 
-def _bullet_paragraphs(
-    items,
-    styles,
-):
-    """Convert recommendation strings into PDF bullets."""
+def _bullet_paragraphs(items, styles):
+    """Convert strings into PDF bullet paragraphs."""
 
     elements = []
 
     for item in _safe_list(items):
-
         text = _safe_text(item)
 
         if not text:
@@ -419,12 +496,7 @@ def generate_resume_report(
     dashboard_result: dict | None = None,
     analytics_result: dict | None = None,
 ) -> bytes:
-    """
-    Generate a complete V2.3 PDF resume analysis report.
-
-    Returns:
-        PDF document contents as bytes.
-    """
+    """Generate the complete V2.3 PDF report."""
 
     buffer = BytesIO()
 
@@ -440,13 +512,12 @@ def generate_resume_report(
     )
 
     styles = _build_styles()
-
     story = []
 
     resume = resume or {}
 
     # ========================================================
-    # REPORT HEADER
+    # HEADER
     # ========================================================
 
     story.append(
@@ -481,12 +552,10 @@ def generate_resume_report(
         )
     )
 
-    story.append(
-        Spacer(1, 8)
-    )
+    story.append(Spacer(1, 8))
 
     # ========================================================
-    # UNIFIED DASHBOARD
+    # DASHBOARD
     # ========================================================
 
     if dashboard_result:
@@ -535,7 +604,6 @@ def generate_resume_report(
         if dashboard_result.get(
             "has_job_match"
         ):
-
             dashboard_rows.append(
                 (
                     "Job Match",
@@ -549,7 +617,8 @@ def generate_resume_report(
 
         story.append(
             _score_table(
-                dashboard_rows
+                dashboard_rows,
+                styles,
             )
         )
 
@@ -562,13 +631,11 @@ def generate_resume_report(
             quick_summary,
             dict,
         ):
-
             recommendation = quick_summary.get(
                 "recommendation"
             )
 
             if recommendation:
-
                 story.append(
                     Paragraph(
                         "Quick Recommendation",
@@ -585,12 +652,10 @@ def generate_resume_report(
                     )
                 )
 
-        story.append(
-            Spacer(1, 8)
-        )
+        story.append(Spacer(1, 8))
 
     # ========================================================
-    # ATS ANALYSIS
+    # ATS
     # ========================================================
 
     if ats_result:
@@ -602,48 +667,41 @@ def generate_resume_report(
             )
         )
 
-        ats_score = _safe_score(
-            ats_result,
-            "ats_score",
-            "score",
-        )
-
-        completeness = _safe_score(
-            ats_result,
-            "ats_score",
-            "completeness",
-            "score",
-        )
-
-        content_quality = _safe_score(
-            ats_result,
-            "ats_score",
-            "content_quality",
-            "score",
-        )
-
         story.append(
             _score_table(
                 [
                     (
                         "ATS Score",
-                        ats_score,
+                        _safe_score(
+                            ats_result,
+                            "ats_score",
+                            "score",
+                        ),
                     ),
                     (
                         "Completeness",
-                        completeness,
+                        _safe_score(
+                            ats_result,
+                            "ats_score",
+                            "completeness",
+                            "score",
+                        ),
                     ),
                     (
                         "Content Quality",
-                        content_quality,
+                        _safe_score(
+                            ats_result,
+                            "ats_score",
+                            "content_quality",
+                            "score",
+                        ),
                     ),
-                ]
+                ],
+                styles,
             )
         )
 
-        story.append(
-            Spacer(1, 8)
-        )
+        story.append(Spacer(1, 8))
 
     # ========================================================
     # RESUME QUALITY
@@ -658,28 +716,25 @@ def generate_resume_report(
             )
         )
 
-        quality_score = _safe_score(
-            quality_result,
-            "score",
-        )
-
         story.append(
             _score_table(
                 [
                     (
                         "Resume Quality",
-                        quality_score,
+                        _safe_score(
+                            quality_result,
+                            "score",
+                        ),
                     ),
-                ]
+                ],
+                styles,
             )
         )
 
-        story.append(
-            Spacer(1, 8)
-        )
+        story.append(Spacer(1, 8))
 
     # ========================================================
-    # IMPROVEMENT READINESS
+    # IMPROVEMENTS
     # ========================================================
 
     if improvement_result:
@@ -691,19 +746,18 @@ def generate_resume_report(
             )
         )
 
-        improvement_score = _safe_score(
-            improvement_result,
-            "score",
-        )
-
         story.append(
             _score_table(
                 [
                     (
                         "Improvement Readiness",
-                        improvement_score,
+                        _safe_score(
+                            improvement_result,
+                            "score",
+                        ),
                     ),
-                ]
+                ],
+                styles,
             )
         )
 
@@ -729,7 +783,7 @@ def generate_resume_report(
             )
 
     # ========================================================
-    # JOB MATCHING
+    # JOB MATCH
     # ========================================================
 
     if job_result:
@@ -741,9 +795,19 @@ def generate_resume_report(
             )
         )
 
-        job_score = _safe_score(
-            job_result,
-            "score",
+        story.append(
+            _score_table(
+                [
+                    (
+                        "Job Match",
+                        _safe_score(
+                            job_result,
+                            "score",
+                        ),
+                    ),
+                ],
+                styles,
+            )
         )
 
         keyword_coverage = _safe_score(
@@ -752,27 +816,19 @@ def generate_resume_report(
         )
 
         story.append(
-            _score_table(
+            _percentage_table(
                 [
-                    (
-                        "Job Match",
-                        job_score,
-                    ),
                     (
                         "Keyword Coverage",
                         keyword_coverage,
                     ),
-                ]
+                ],
+                styles,
             )
         )
 
         matched_skills = job_result.get(
             "matched_skills",
-            [],
-        )
-
-        missing_skills = job_result.get(
-            "missing_skills",
             [],
         )
 
@@ -791,6 +847,11 @@ def generate_resume_report(
                     styles,
                 )
             )
+
+        missing_skills = job_result.get(
+            "missing_skills",
+            [],
+        )
 
         if missing_skills:
 
@@ -830,7 +891,7 @@ def generate_resume_report(
             )
 
     # ========================================================
-    # PRIORITY RECOMMENDATIONS
+    # RECOMMENDATIONS
     # ========================================================
 
     if dashboard_result:
@@ -869,20 +930,19 @@ def generate_resume_report(
             )
         )
 
-        average_score = _safe_score(
-            analytics_result,
-            "summary",
-            "average_score",
-        )
-
         story.append(
             _score_table(
                 [
                     (
                         "Average Analysis Score",
-                        average_score,
+                        _safe_score(
+                            analytics_result,
+                            "summary",
+                            "average_score",
+                        ),
                     ),
-                ]
+                ],
+                styles,
             )
         )
 
@@ -891,7 +951,27 @@ def generate_resume_report(
             [],
         )
 
-        if metrics:
+        metric_rows = []
+
+        for metric in _safe_list(metrics):
+
+            if not isinstance(
+                metric,
+                dict,
+            ):
+                continue
+
+            metric_rows.append(
+                (
+                    metric.get(
+                        "name",
+                        "Metric",
+                    ),
+                    metric.get("score"),
+                )
+            )
+
+        if metric_rows:
 
             story.append(
                 Paragraph(
@@ -900,39 +980,12 @@ def generate_resume_report(
                 )
             )
 
-            metric_rows = []
-
-            for metric in _safe_list(metrics):
-
-                if not isinstance(
-                    metric,
-                    dict,
-                ):
-                    continue
-
-                name = metric.get(
-                    "name",
-                    "Metric",
+            story.append(
+                _score_table(
+                    metric_rows,
+                    styles,
                 )
-
-                score = metric.get(
-                    "score"
-                )
-
-                metric_rows.append(
-                    (
-                        name,
-                        score,
-                    )
-                )
-
-            if metric_rows:
-
-                story.append(
-                    _score_table(
-                        metric_rows
-                    )
-                )
+            )
 
         strengths = analytics_result.get(
             "strengths",
@@ -980,9 +1033,7 @@ def generate_resume_report(
     # FOOTER
     # ========================================================
 
-    story.append(
-        Spacer(1, 18)
-    )
+    story.append(Spacer(1, 18))
 
     story.append(
         Paragraph(

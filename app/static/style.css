@@ -1128,3 +1128,114 @@ footer {
         display: none !important;
     }
 }
+
+/* =========================================================
+   V2.3 PDF REPORT
+   ========================================================= */
+
+.report-card {
+    overflow: hidden;
+}
+
+.report-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 28px;
+}
+
+.report-header .section-title {
+    margin-bottom: 10px;
+}
+
+.report-action {
+    flex-shrink: 0;
+}
+
+.report-action form {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.report-file-label {
+    font-size: 13px;
+    font-weight: 700;
+    color: #475569;
+}
+
+.report-action input[type="file"] {
+    max-width: 260px;
+    padding: 9px;
+    border: 1px solid #dce1ea;
+    border-radius: 10px;
+    background: #ffffff;
+}
+
+.secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 12px;
+
+    padding: 13px 22px;
+
+    background: #4f46e5;
+    color: #ffffff;
+
+    font-size: 15px;
+    font-weight: 700;
+
+    cursor: pointer;
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        background 0.2s ease;
+}
+
+.secondary-button:hover {
+    background: #4338ca;
+
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 10px 24px rgba(
+            79,
+            70,
+            229,
+            0.22
+        );
+}
+
+.secondary-button:active {
+    transform: translateY(0);
+}
+
+
+/* =========================================================
+   V2.3 REPORT RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .report-header {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .report-action {
+        width: 100%;
+    }
+
+    .report-action input[type="file"] {
+        max-width: none;
+        width: 100%;
+    }
+
+    .secondary-button {
+        width: 100%;
+    }
+}

@@ -78,10 +78,13 @@ def _analyze_uploaded_resume(
     )
 
     if not extracted_text:
-
         raise ValueError(
             "The PDF does not contain readable text."
         )
+
+    # --------------------------------------------------------
+    # Resume parsing
+    # --------------------------------------------------------
 
     resume = parse_resume(
         extracted_text
@@ -120,7 +123,6 @@ def _analyze_uploaded_resume(
     job_result = None
 
     if job_description:
-
         job_result = match_resume_to_job(
             resume,
             job_description,
@@ -171,6 +173,7 @@ def _analyze_uploaded_resume(
     methods=["GET", "POST"],
 )
 def index():
+    """Render the main resume analyzer page."""
 
     resume = None
 
@@ -198,6 +201,10 @@ def index():
             "",
         ).strip()
 
+        # ----------------------------------------------------
+        # Validate uploaded file
+        # ----------------------------------------------------
+
         if (
             file is None
             or file.filename == ""
@@ -224,7 +231,9 @@ def index():
                     job_description,
                 )
 
-                resume = results["resume"]
+                resume = results[
+                    "resume"
+                ]
 
                 ats_result = results[
                     "ats_result"
@@ -303,10 +312,10 @@ def index():
 )
 def download_report():
     """
-    Generate and download a PDF report.
+    Generate and download a PDF resume analysis report.
 
-    The resume is analyzed again using the uploaded PDF so
-    the download route does not depend on temporary server state.
+    The resume PDF is uploaded again because browsers do not
+    automatically reuse files selected in another form.
     """
 
     file = request.files.get(
@@ -317,6 +326,10 @@ def download_report():
         "job_description",
         "",
     ).strip()
+
+    # --------------------------------------------------------
+    # Validate uploaded file
+    # --------------------------------------------------------
 
     if (
         file is None
@@ -339,6 +352,10 @@ def download_report():
             job_description=job_description,
         )
 
+    # --------------------------------------------------------
+    # Analyze resume
+    # --------------------------------------------------------
+
     try:
 
         results = _analyze_uploaded_resume(
@@ -346,20 +363,18 @@ def download_report():
             job_description,
         )
 
+        # ----------------------------------------------------
+        # Generate PDF report
+        # ----------------------------------------------------
+
         pdf_bytes = generate_resume_report(
             resume=results["resume"],
-            ats_result=results[
-                "ats_result"
-            ],
-            quality_result=results[
-                "quality_result"
-            ],
+            ats_result=results["ats_result"],
+            quality_result=results["quality_result"],
             improvement_result=results[
                 "improvement_result"
             ],
-            job_result=results[
-                "job_result"
-            ],
+            job_result=results["job_result"],
             dashboard_result=results[
                 "dashboard_result"
             ],
@@ -367,6 +382,10 @@ def download_report():
                 "analytics_result"
             ],
         )
+
+        # ----------------------------------------------------
+        # Send PDF to browser
+        # ----------------------------------------------------
 
         return send_file(
             BytesIO(pdf_bytes),

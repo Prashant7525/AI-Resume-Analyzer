@@ -26,3 +26,5 @@ Thumbs.db
 build/
 dist/
 *.egg-info/
+# Flask runtime files
+app/instance/
