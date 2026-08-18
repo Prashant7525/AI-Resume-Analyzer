@@ -1,15 +1,19 @@
 """
 Main Flask application for the AI Resume Analyzer.
 
-V2.3
+V2.4
 - Resume analysis
 - Dashboard
 - Analytics
 - PDF report download
+- Analysis history
+- Saved analysis viewing
+- Analysis deletion
 """
 
 from __future__ import annotations
 
+from datetime import datetime
 from io import BytesIO
 
 from flask import (
@@ -17,11 +21,20 @@ from flask import (
     render_template,
     request,
     send_file,
+    redirect,
+    url_for,
 )
 
 from app.analytics import build_analytics
 from app.ats_analyzer import analyze_resume
 from app.dashboard import build_dashboard_result
+from app.database import (
+    delete_analysis,
+    get_analysis,
+    get_analysis_history,
+    init_database,
+    save_analysis,
+)
 from app.job_matcher import match_resume_to_job
 from app.report_generator import generate_resume_report
 from app.resume_improvements import (
@@ -34,9 +47,45 @@ from app.resume_parser import (
 from app.resume_quality import analyze_resume_quality
 
 
+# ============================================================
+# APPLICATION
+# ============================================================
+
 app = Flask(__name__)
 
 ALLOWED_EXTENSIONS = {"pdf"}
+
+
+# Initialize database when application starts.
+init_database()
+
+
+# ============================================================
+# TEMPLATE FILTERS
+# ============================================================
+
+
+@app.template_filter("format_history_date")
+def format_history_date(value):
+    """Format an ISO timestamp for the analysis history page."""
+
+    if not value:
+        return "Unknown date"
+
+    try:
+        timestamp = datetime.fromisoformat(
+            str(value).replace("Z", "+00:00")
+        )
+
+        return timestamp.strftime(
+            "%d %b %Y · %I:%M %p"
+        )
+
+    except (
+        ValueError,
+        TypeError,
+    ):
+        return str(value)
 
 
 # ============================================================
@@ -164,6 +213,48 @@ def _analyze_uploaded_resume(
 
 
 # ============================================================
+# SAVE ANALYSIS
+# ============================================================
+
+
+def _save_analysis_results(
+    results: dict,
+    job_description: str,
+) -> int:
+    """
+    Save completed analysis results to SQLite.
+
+    Returns:
+        Newly created analysis ID.
+    """
+
+    return save_analysis(
+        resume=results.get(
+            "resume"
+        ),
+        ats_result=results.get(
+            "ats_result"
+        ),
+        quality_result=results.get(
+            "quality_result"
+        ),
+        improvement_result=results.get(
+            "improvement_result"
+        ),
+        job_result=results.get(
+            "job_result"
+        ),
+        dashboard_result=results.get(
+            "dashboard_result"
+        ),
+        analytics_result=results.get(
+            "analytics_result"
+        ),
+        job_description=job_description,
+    )
+
+
+# ============================================================
 # MAIN PAGE
 # ============================================================
 
@@ -226,6 +317,10 @@ def index():
 
             try:
 
+                # ------------------------------------------------
+                # Analyze resume
+                # ------------------------------------------------
+
                 results = _analyze_uploaded_resume(
                     file,
                     job_description,
@@ -263,6 +358,15 @@ def index():
                     "extracted_text"
                 ]
 
+                # ------------------------------------------------
+                # Save analysis to history
+                # ------------------------------------------------
+
+                _save_analysis_results(
+                    results,
+                    job_description,
+                )
+
             except ValueError as exc:
 
                 error = str(exc)
@@ -298,6 +402,131 @@ def index():
         error=error,
 
         job_description=job_description,
+
+        history_view=False,
+
+        analysis_id=None,
+    )
+
+
+# ============================================================
+# HISTORY PAGE
+# ============================================================
+
+
+@app.route(
+    "/history",
+    methods=["GET"],
+)
+def history():
+    """Display saved resume analyses."""
+
+    analyses = get_analysis_history(
+        limit=50
+    )
+
+    return render_template(
+        "history.html",
+        analyses=analyses,
+    )
+
+
+# ============================================================
+# VIEW SAVED ANALYSIS
+# ============================================================
+
+
+@app.route(
+    "/history/<int:analysis_id>",
+    methods=["GET"],
+)
+def view_history(
+    analysis_id: int,
+):
+    """
+    Display one saved analysis.
+    """
+
+    analysis = get_analysis(
+        analysis_id
+    )
+
+    if analysis is None:
+
+        return render_template(
+            "history.html",
+            analyses=get_analysis_history(
+                limit=50
+            ),
+            error="Analysis not found.",
+        ), 404
+
+    return render_template(
+        "index.html",
+
+        resume=analysis.get(
+            "resume"
+        ),
+
+        ats_result=analysis.get(
+            "ats_result"
+        ),
+
+        quality_result=analysis.get(
+            "quality_result"
+        ),
+
+        improvement_result=analysis.get(
+            "improvement_result"
+        ),
+
+        job_result=analysis.get(
+            "job_result"
+        ),
+
+        dashboard_result=analysis.get(
+            "dashboard_result"
+        ),
+
+        analytics_result=analysis.get(
+            "analytics_result"
+        ),
+
+        extracted_text=None,
+
+        error=None,
+
+        job_description=analysis.get(
+            "job_description",
+            "",
+        ),
+
+        history_view=True,
+
+        analysis_id=analysis_id,
+    )
+
+
+# ============================================================
+# DELETE SAVED ANALYSIS
+# ============================================================
+
+
+@app.route(
+    "/history/<int:analysis_id>/delete",
+    methods=["POST"],
+)
+def delete_history(
+    analysis_id: int,
+):
+    """Delete a saved analysis and return to history."""
+
+    delete_analysis(
+        analysis_id
+    )
+
+    return redirect(
+        url_for("history")
     )
 
 
@@ -340,6 +569,8 @@ def download_report():
             "index.html",
             error="Please upload a PDF resume.",
             job_description=job_description,
+            history_view=False,
+            analysis_id=None,
         )
 
     if not allowed_file(
@@ -350,6 +581,8 @@ def download_report():
             "index.html",
             error="Only PDF resume files are supported.",
             job_description=job_description,
+            history_view=False,
+            analysis_id=None,
         )
 
     # --------------------------------------------------------
@@ -368,13 +601,21 @@ def download_report():
         # ----------------------------------------------------
 
         pdf_bytes = generate_resume_report(
-            resume=results["resume"],
-            ats_result=results["ats_result"],
-            quality_result=results["quality_result"],
+            resume=results[
+                "resume"
+            ],
+            ats_result=results[
+                "ats_result"
+            ],
+            quality_result=results[
+                "quality_result"
+            ],
             improvement_result=results[
                 "improvement_result"
             ],
-            job_result=results["job_result"],
+            job_result=results[
+                "job_result"
+            ],
             dashboard_result=results[
                 "dashboard_result"
             ],
@@ -392,7 +633,7 @@ def download_report():
             mimetype="application/pdf",
             as_attachment=True,
             download_name=(
-                "AI_Resume_Analyzer_V2.3_Report.pdf"
+                "AI_Resume_Analyzer_V2.4_Report.pdf"
             ),
         )
 
@@ -402,6 +643,8 @@ def download_report():
             "index.html",
             error=str(exc),
             job_description=job_description,
+            history_view=False,
+            analysis_id=None,
         )
 
     except Exception as exc:
@@ -418,6 +661,8 @@ def download_report():
                 "Please try again."
             ),
             job_description=job_description,
+            history_view=False,
+            analysis_id=None,
         )
 
 

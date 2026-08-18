@@ -1,0 +1,498 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>
+        Analysis History · AI Resume Analyzer
+    </title>
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="container">
+
+        <div class="history-top-navigation">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="brand-link"
+            >
+                AI Resume Analyzer
+            </a>
+
+            <span class="history-nav-divider">
+                /
+            </span>
+
+            <span class="history-current-page">
+                Analysis History
+            </span>
+
+        </div>
+
+
+        <span class="badge">
+            V2.4
+        </span>
+
+
+        <h1>
+            Analysis History
+        </h1>
+
+
+        <p class="hero-text">
+            View your previous resume analyses,
+            scores, and saved results.
+        </p>
+
+
+        <div class="history-navigation">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="history-nav-button"
+            >
+                ← Analyze New Resume
+            </a>
+
+        </div>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+
+    <!-- =========================================
+         ERROR
+         ========================================= -->
+
+    {% if error %}
+
+    <section class="card history-error">
+
+        <strong>
+            Unable to open analysis
+        </strong>
+
+        <p>
+            {{ error }}
+        </p>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =========================================
+         HISTORY SUMMARY
+         ========================================= -->
+
+    <section class="card history-header-card">
+
+        <div class="history-header-content">
+
+            <span class="dashboard-badge">
+                V2.4 HISTORY
+            </span>
+
+            <h2 class="section-title">
+                Saved Analyses
+            </h2>
+
+            <p class="dashboard-description">
+                Your recent resume analysis results are
+                stored locally in the application's
+                SQLite database.
+            </p>
+
+        </div>
+
+
+        <div class="history-count">
+
+            <strong>
+                {{ analyses|length }}
+            </strong>
+
+            <span>
+
+                {% if analyses|length == 1 %}
+
+                    analysis
+
+                {% else %}
+
+                    analyses
+
+                {% endif %}
+
+            </span>
+
+        </div>
+
+    </section>
+
+
+    <!-- =========================================
+         EMPTY STATE
+         ========================================= -->
+
+    {% if not analyses %}
+
+    <section class="card history-empty-card">
+
+        <div class="history-empty-icon">
+            📄
+        </div>
+
+        <h2>
+            No Analysis History Yet
+        </h2>
+
+        <p>
+            Analyze a resume to create your first
+            saved analysis.
+        </p>
+
+        <a
+            href="{{ url_for('index') }}"
+            class="history-primary-button"
+        >
+            Analyze Resume
+        </a>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =========================================
+         HISTORY LIST
+         ========================================= -->
+
+    {% if analyses %}
+
+    <section class="history-list">
+
+        {% for analysis in analyses %}
+
+        <article class="card history-item">
+
+
+            <!-- =====================================
+                 TOP SECTION
+                 ===================================== -->
+
+            <div class="history-item-main">
+
+
+                <div class="history-item-title">
+
+                    <span class="dashboard-badge">
+                        ANALYSIS #{{ analysis.id }}
+                    </span>
+
+
+                    <h2>
+                        {{ analysis.resume_name or "Unnamed Resume" }}
+                    </h2>
+
+
+                    <p class="history-date">
+
+                        <span class="history-date-icon">
+                            🕒
+                        </span>
+
+                        {{ analysis.created_at|format_history_date }}
+
+                    </p>
+
+
+                    {% if analysis.resume_email %}
+
+                    <p class="history-email">
+                        {{ analysis.resume_email }}
+                    </p>
+
+                    {% endif %}
+
+                </div>
+
+
+                <!-- Overall score -->
+
+                <div class="history-score">
+
+                    <span>
+                        Overall Score
+                    </span>
+
+
+                    <strong>
+
+                        {% if analysis.overall_score is not none %}
+
+                            {{ analysis.overall_score|round|int }}
+
+                            <small>
+                                /100
+                            </small>
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================
+                 SCORE SUMMARY
+                 ===================================== -->
+
+            <div class="history-metrics">
+
+
+                <div class="history-metric">
+
+                    <span>
+                        ATS Readiness
+                    </span>
+
+                    <strong
+                        class="history-score-value"
+                    >
+
+                        {% if analysis.ats_score is not none %}
+
+                            {{ analysis.ats_score|round|int }}/100
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="history-metric">
+
+                    <span>
+                        Resume Quality
+                    </span>
+
+                    <strong
+                        class="history-score-value"
+                    >
+
+                        {% if analysis.quality_score is not none %}
+
+                            {{ analysis.quality_score|round|int }}/100
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="history-metric">
+
+                    <span>
+                        Improvements
+                    </span>
+
+                    <strong
+                        class="history-score-value"
+                    >
+
+                        {% if analysis.improvement_score is not none %}
+
+                            {{ analysis.improvement_score|round|int }}/100
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="history-metric">
+
+                    <span>
+                        Job Match
+                    </span>
+
+                    <strong
+                        class="history-score-value"
+                    >
+
+                        {% if analysis.job_match_score is not none %}
+
+                            {{ analysis.job_match_score|round|int }}/100
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                <div class="history-metric">
+
+                    <span>
+                        Keywords
+                    </span>
+
+                    <strong
+                        class="history-score-value"
+                    >
+
+                        {% if analysis.keyword_coverage is not none %}
+
+                            {{ analysis.keyword_coverage|round|int }}%
+
+                        {% else %}
+
+                            —
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+            </div>
+
+
+            <!-- =====================================
+                 JOB MATCH STATUS
+                 ===================================== -->
+
+            <div class="history-status-row">
+
+                {% if analysis.has_job_match %}
+
+                    <span class="history-status job-enabled">
+                        ✓ Job description analyzed
+                    </span>
+
+                {% else %}
+
+                    <span class="history-status job-disabled">
+                        No job description
+                    </span>
+
+                {% endif %}
+
+            </div>
+
+
+            <!-- =====================================
+                 ACTIONS
+                 ===================================== -->
+
+            <div class="history-actions">
+
+                <a
+                    href="{{ url_for(
+                        'view_history',
+                        analysis_id=analysis.id
+                    ) }}"
+                    class="history-primary-button"
+                >
+                    View Analysis
+                </a>
+
+
+                <form
+                    method="POST"
+                    action="{{ url_for(
+                        'delete_history',
+                        analysis_id=analysis.id
+                    ) }}"
+                    onsubmit="return confirm(
+                        'Delete this saved analysis? This action cannot be undone.'
+                    );"
+                >
+
+                    <button
+                        type="submit"
+                        class="history-delete-button"
+                    >
+                        Delete
+                    </button>
+
+                </form>
+
+            </div>
+
+        </article>
+
+        {% endfor %}
+
+    </section>
+
+    {% endif %}
+
+
+</main>
+
+
+<footer>
+
+    <div class="container">
+
+        AI Resume Analyzer · Built with Flask and Python · V2.4
+
+    </div>
+
+</footer>
+
+
+</body>
+
+</html>

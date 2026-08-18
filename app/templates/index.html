@@ -29,9 +29,45 @@
 
     <div class="container">
 
-        <span class="badge">
-            AI Resume Analyzer
-        </span>
+        <div class="top-navigation">
+
+            <span class="badge">
+                AI Resume Analyzer
+            </span>
+
+            <a
+                href="{{ url_for('history') }}"
+                class="history-nav-button"
+            >
+                📋 Analysis History
+            </a>
+
+        </div>
+
+
+        {% if history_view %}
+
+        <div class="history-view-banner">
+
+            <span class="dashboard-badge">
+                SAVED ANALYSIS
+            </span>
+
+            <span>
+                Viewing analysis #{{ analysis_id }}
+            </span>
+
+            <a
+                href="{{ url_for('history') }}"
+                class="history-back-link"
+            >
+                ← Back to History
+            </a>
+
+        </div>
+
+        {% endif %}
+
 
         <h1>
             Analyze Your Resume
@@ -54,8 +90,49 @@
 
 
     <!-- =========================================
+         HISTORY VIEW NOTICE
+         ========================================= -->
+
+    {% if history_view %}
+
+    <section class="card history-view-card">
+
+        <div>
+
+            <span class="dashboard-badge">
+                V2.4 HISTORY
+            </span>
+
+            <h2 class="section-title">
+                Saved Resume Analysis
+            </h2>
+
+            <p class="dashboard-description">
+                You are viewing a previously saved analysis.
+                The results below are read from your analysis
+                history.
+            </p>
+
+        </div>
+
+
+        <a
+            href="{{ url_for('history') }}"
+            class="history-primary-button"
+        >
+            ← Back to History
+        </a>
+
+    </section>
+
+    {% endif %}
+
+
+    <!-- =========================================
          UPLOAD SECTION
          ========================================= -->
+
+    {% if not history_view %}
 
     <section class="card upload-card">
 
@@ -126,6 +203,8 @@
 
     </section>
 
+    {% endif %}
+
 
     <!-- =========================================
          ERROR
@@ -157,8 +236,10 @@
 
 
             <!-- =========================================
-                 V2.3 REPORT DOWNLOAD
+                 V2.4 REPORT DOWNLOAD
                  ========================================= -->
+
+            {% if not history_view %}
 
             <section class="card full-width report-card">
 
@@ -167,7 +248,7 @@
                     <div>
 
                         <span class="dashboard-badge">
-                            V2.3 REPORT
+                            V2.4 REPORT
                         </span>
 
                         <h2 class="section-title">
@@ -183,6 +264,7 @@
 
                     </div>
 
+
                     <div class="report-action">
 
                         <form
@@ -190,15 +272,6 @@
                             action="{{ url_for('download_report') }}"
                             enctype="multipart/form-data"
                         >
-
-                            <!--
-                                The browser does not automatically
-                                resend the previously selected file
-                                to another form.
-
-                                Therefore the report form asks the
-                                user to select the same resume again.
-                            -->
 
                             <label
                                 for="report_resume"
@@ -236,9 +309,11 @@
 
             </section>
 
+            {% endif %}
+
 
             <!-- =========================================
-                 V2.2 DASHBOARD
+                 V2.4 DASHBOARD
                  ========================================= -->
 
             {% if dashboard_result %}
@@ -250,7 +325,7 @@
                     <div>
 
                         <span class="dashboard-badge">
-                            V2.2 DASHBOARD
+                            V2.4 DASHBOARD
                         </span>
 
                         <h2 class="section-title">
@@ -267,6 +342,8 @@
 
                 </div>
 
+
+                <!-- Overall score -->
 
                 <div class="dashboard-overall">
 
@@ -298,7 +375,10 @@
                 </div>
 
 
+                <!-- Dashboard metrics -->
+
                 <div class="dashboard-grid">
+
 
                     <div class="dashboard-score-item">
 
@@ -365,6 +445,7 @@
 
                     {% endif %}
 
+
                 </div>
 
             </section>
@@ -388,7 +469,11 @@
                     Resume Snapshot
                 </h2>
 
+
                 <div class="quick-summary-grid">
+
+
+                    <!-- Overall -->
 
                     <div class="summary-item">
 
@@ -402,6 +487,8 @@
 
                     </div>
 
+
+                    <!-- Strongest -->
 
                     {% if dashboard_result.quick_summary.strongest_area %}
 
@@ -422,6 +509,8 @@
                     {% endif %}
 
 
+                    <!-- Weakest -->
+
                     {% if dashboard_result.quick_summary.weakest_area %}
 
                     <div class="summary-item">
@@ -439,6 +528,7 @@
                     </div>
 
                     {% endif %}
+
 
                 </div>
 
@@ -470,10 +560,11 @@
 
                 <div class="analytics-header">
 
+
                     <div>
 
                         <span class="dashboard-badge">
-                            V2.2 ANALYTICS
+                            V2.4 ANALYTICS
                         </span>
 
                         <h2 class="section-title">
@@ -502,16 +593,19 @@
 
                     </div>
 
+
                 </div>
 
 
                 <div class="analytics-grid">
+
 
                     {% for metric in analytics_result.metrics %}
 
                     {% if metric.score is not none %}
 
                     <div class="analytics-item">
+
 
                         <div class="analytics-item-top">
 
@@ -540,16 +634,20 @@
                             {{ metric.label }}
                         </small>
 
+
                     </div>
 
                     {% endif %}
 
                     {% endfor %}
 
+
                 </div>
 
             </section>
 
+
+            <!-- Strengths -->
 
             {% if analytics_result.strengths %}
 
@@ -576,6 +674,8 @@
             {% endif %}
 
 
+            <!-- Attention areas -->
+
             {% if analytics_result.attention_areas %}
 
             <section class="card">
@@ -600,6 +700,7 @@
 
             {% endif %}
 
+
             {% endif %}
 
 
@@ -612,6 +713,7 @@
             <section class="card full-width action-plan-card">
 
                 <div class="action-plan-header">
+
 
                     <div>
 
@@ -643,10 +745,12 @@
 
                     </div>
 
+
                 </div>
 
 
                 <ol class="action-plan-list">
+
 
                     {% for recommendation in dashboard_result.recommendations %}
 
@@ -668,6 +772,7 @@
 
                     {% endfor %}
 
+
                 </ol>
 
             </section>
@@ -687,29 +792,45 @@
 
                 <ul class="info-list">
 
+
                     <li>
-                        <strong>Name:</strong>
+
+                        <strong>
+                            Name:
+                        </strong>
 
                         <span>
                             {{ resume.name or "Not detected" }}
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Email:</strong>
+
+                        <strong>
+                            Email:
+                        </strong>
 
                         <span>
                             {{ resume.email or "Not detected" }}
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Phone:</strong>
+
+                        <strong>
+                            Phone:
+                        </strong>
 
                         <span>
                             {{ resume.phone or "Not detected" }}
                         </span>
+
                     </li>
+
 
                 </ul>
 
@@ -736,31 +857,48 @@
                     Overall resume ATS score
                 </p>
 
+
                 <ul class="info-list">
 
+
                     <li>
-                        <strong>Completeness</strong>
+
+                        <strong>
+                            Completeness
+                        </strong>
 
                         <span>
                             {{ ats_result.ats_score.completeness.score }}/{{ ats_result.ats_score.completeness.max_score }}
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Weighted Completeness</strong>
+
+                        <strong>
+                            Weighted Completeness
+                        </strong>
 
                         <span>
                             {{ ats_result.ats_score.completeness.weighted_score }}/50
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Content Quality</strong>
+
+                        <strong>
+                            Content Quality
+                        </strong>
 
                         <span>
                             {{ ats_result.ats_score.content_quality.score }}/{{ ats_result.ats_score.content_quality.max_score }}
                         </span>
+
                     </li>
+
 
                 </ul>
 
@@ -783,6 +921,7 @@
 
                 <ul class="info-list">
 
+
                     {% for section, present in ats_result.sections.items() %}
 
                     <li>
@@ -790,6 +929,7 @@
                         <strong>
                             {{ section|title }}
                         </strong>
+
 
                         {% if present %}
 
@@ -808,6 +948,7 @@
                     </li>
 
                     {% endfor %}
+
 
                 </ul>
 
@@ -830,11 +971,13 @@
 
                 <ul class="info-list">
 
+
                     <li>
 
                         <strong>
                             Email
                         </strong>
+
 
                         {% if ats_result.contact.email %}
 
@@ -859,6 +1002,7 @@
                             Phone
                         </strong>
 
+
                         {% if ats_result.contact.phone %}
 
                         <span class="status-found">
@@ -874,6 +1018,7 @@
                         {% endif %}
 
                     </li>
+
 
                 </ul>
 
@@ -896,53 +1041,84 @@
 
                 <ul class="info-list">
 
+
                     <li>
-                        <strong>Summary</strong>
+
+                        <strong>
+                            Summary
+                        </strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.summary }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Skills</strong>
+
+                        <strong>
+                            Skills
+                        </strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.skills }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Experience</strong>
+
+                        <strong>
+                            Experience
+                        </strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.experience }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Projects</strong>
+
+                        <strong>
+                            Projects
+                        </strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.projects }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Achievements</strong>
+
+                        <strong>
+                            Achievements
+                        </strong>
 
                         <span>
                             {{ ats_result.content_quality.breakdown.achievements }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Total</strong>
+
+                        <strong>
+                            Total
+                        </strong>
 
                         <span>
                             {{ ats_result.content_quality.score }}/{{ ats_result.content_quality.max_score }}
                         </span>
+
                     </li>
+
 
                 </ul>
 
@@ -971,58 +1147,87 @@
                     Resume quality score
                 </p>
 
+
                 <ul class="info-list">
 
+
                     <li>
-                        <strong>Resume Length</strong>
+
+                        <strong>
+                            Resume Length
+                        </strong>
 
                         <span>
                             {{ quality_result.length.word_count }}
                             words ·
                             {{ quality_result.length.rating|title }}
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Bullet Points</strong>
+
+                        <strong>
+                            Bullet Points
+                        </strong>
 
                         <span>
                             {{ quality_result.bullets.total }}
                             detected
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Quantifiable Achievements</strong>
+
+                        <strong>
+                            Quantifiable Achievements
+                        </strong>
 
                         <span>
                             {{ quality_result.achievements.quantifiable }}
                             detected
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Contact</strong>
+
+                        <strong>
+                            Contact
+                        </strong>
 
                         <span>
                             {{ quality_result.contact.passed }}/{{ quality_result.contact.total }}
                             complete
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Structure</strong>
+
+                        <strong>
+                            Structure
+                        </strong>
 
                         <span>
                             {{ quality_result.structure.present_count }}/{{ quality_result.structure.total_sections }}
                             sections
                         </span>
+
                     </li>
+
 
                 </ul>
 
             </section>
 
+
+            <!-- Quality breakdown -->
 
             <section class="card">
 
@@ -1032,53 +1237,84 @@
 
                 <ul class="info-list">
 
+
                     <li>
-                        <strong>Length</strong>
+
+                        <strong>
+                            Length
+                        </strong>
 
                         <span>
                             {{ quality_result.breakdown.length }}/15
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Sections</strong>
+
+                        <strong>
+                            Sections
+                        </strong>
 
                         <span>
                             {{ quality_result.breakdown.sections }}/15
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Bullet Usage</strong>
+
+                        <strong>
+                            Bullet Usage
+                        </strong>
 
                         <span>
                             {{ quality_result.breakdown.bullets }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Achievements</strong>
+
+                        <strong>
+                            Achievements
+                        </strong>
 
                         <span>
                             {{ quality_result.breakdown.achievements }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Contact</strong>
+
+                        <strong>
+                            Contact
+                        </strong>
 
                         <span>
                             {{ quality_result.breakdown.contact }}/10
                         </span>
+
                     </li>
 
+
                     <li>
-                        <strong>Structure</strong>
+
+                        <strong>
+                            Structure
+                        </strong>
 
                         <span>
                             {{ quality_result.breakdown.structure }}/10
                         </span>
+
                     </li>
+
 
                 </ul>
 
@@ -1118,6 +1354,9 @@
 
             {% if job_result %}
 
+
+            <!-- Job Match Score -->
+
             <section class="card score-card">
 
                 <h2 class="section-title">
@@ -1135,11 +1374,14 @@
             </section>
 
 
+            <!-- Matched Skills -->
+
             <section class="card">
 
                 <h2 class="section-title">
                     Matched Skills
                 </h2>
+
 
                 {% if job_result.matched_skills %}
 
@@ -1166,11 +1408,14 @@
             </section>
 
 
+            <!-- Missing Skills -->
+
             <section class="card">
 
                 <h2 class="section-title">
                     Missing Skills
                 </h2>
+
 
                 {% if job_result.missing_skills %}
 
@@ -1197,6 +1442,8 @@
             </section>
 
 
+            <!-- Keyword Intelligence -->
+
             <section class="card">
 
                 <h2 class="section-title">
@@ -1211,9 +1458,11 @@
                     Keyword coverage
                 </p>
 
+
                 <h3>
                     Matched Keywords
                 </h3>
+
 
                 {% if job_result.matched_keywords %}
 
@@ -1242,6 +1491,7 @@
                     Missing Keywords
                 </h3>
 
+
                 {% if job_result.missing_keywords %}
 
                 <ul class="skills missing">
@@ -1267,6 +1517,8 @@
             </section>
 
 
+            <!-- Keyword Suggestions -->
+
             {% if job_result.keyword_suggestions %}
 
             <section class="card full-width">
@@ -1290,6 +1542,7 @@
             </section>
 
             {% endif %}
+
 
             {% endif %}
 
@@ -1333,32 +1586,65 @@
 
     <div class="container">
 
-        AI Resume Analyzer · Built with Flask and Python · V2.3
+        AI Resume Analyzer · Built with Flask and Python · V2.4
 
     </div>
 
 </footer>
 
+
+<!-- =========================================
+     ANALYTICS PROGRESS BARS
+     ========================================= -->
+
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const progressBars = document.querySelectorAll(
-            ".analytics-progress-bar"
-        );
 
-        progressBars.forEach(function (bar) {
-            const score = Number(bar.dataset.score);
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
 
-            if (Number.isFinite(score)) {
-                const safeScore = Math.max(
-                    0,
-                    Math.min(100, score)
+            const progressBars =
+                document.querySelectorAll(
+                    ".analytics-progress-bar"
                 );
 
-                bar.style.width = safeScore + "%";
-            }
-        });
-    });
+
+            progressBars.forEach(
+                function (bar) {
+
+                    const score =
+                        Number(
+                            bar.dataset.score
+                        );
+
+
+                    if (
+                        Number.isFinite(score)
+                    ) {
+
+                        const safeScore =
+                            Math.max(
+                                0,
+                                Math.min(
+                                    100,
+                                    score
+                                )
+                            );
+
+
+                        bar.style.width =
+                            safeScore + "%";
+
+                    }
+
+                }
+            );
+
+        }
+    );
+
 </script>
+
 
 </body>
 
