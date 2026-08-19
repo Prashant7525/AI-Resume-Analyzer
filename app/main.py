@@ -18,6 +18,7 @@ V3.1
 - Privacy page
 - Terms page
 - Favicon support
+- Secure upload validation
 """
 
 from __future__ import annotations
@@ -25,6 +26,8 @@ from __future__ import annotations
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
+
+import pymupdf
 
 from flask import (
     Flask,
@@ -64,6 +67,9 @@ from app.score_explanation import build_score_explanations
 # ============================================================
 
 app = Flask(__name__)
+
+# Maximum request/upload size: 5 MB.
+app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = {"pdf"}
 
@@ -113,6 +119,9 @@ def allowed_file(filename: str) -> bool:
     Return True when the uploaded file is an allowed PDF.
     """
 
+    if not filename:
+        return False
+
     return (
         "." in filename
         and filename.rsplit(
@@ -121,6 +130,57 @@ def allowed_file(filename: str) -> bool:
         )[1].lower()
         in ALLOWED_EXTENSIONS
     )
+
+
+def is_valid_pdf(file) -> bool:
+    """
+    Validate that the uploaded file is an actual readable PDF.
+
+    The filename extension alone is not trusted.
+    """
+
+    if file is None:
+        return False
+
+    try:
+        file.stream.seek(0)
+
+        pdf_bytes = file.stream.read()
+
+        file.stream.seek(0)
+
+        # Empty upload.
+        if not pdf_bytes:
+            return False
+
+        # PDF signature check.
+        if not pdf_bytes.startswith(b"%PDF-"):
+            return False
+
+        # Structural PDF validation.
+        document = pymupdf.open(
+            stream=pdf_bytes,
+            filetype="pdf",
+        )
+
+        try:
+            return document.page_count > 0
+        finally:
+            document.close()
+
+    except Exception as exc:
+        app.logger.warning(
+            "PDF validation failed: %s",
+            exc,
+        )
+
+        return False
+
+    finally:
+        try:
+            file.stream.seek(0)
+        except Exception:
+            pass
 
 
 # ============================================================
@@ -142,11 +202,23 @@ def _analyze_uploaded_resume(
     # Extract PDF text
     # --------------------------------------------------------
 
-    extracted_text = extract_text_from_pdf(
-        file
-    )
+    try:
+        extracted_text = extract_text_from_pdf(
+            file
+        )
 
-    if not extracted_text:
+    except Exception as exc:
+        app.logger.exception(
+            "PDF text extraction failed: %s",
+            exc,
+        )
+
+        raise ValueError(
+            "Unable to process the PDF file."
+        ) from exc
+
+    if not extracted_text or not extracted_text.strip():
+
         raise ValueError(
             "The PDF does not contain readable text."
         )
@@ -155,9 +227,22 @@ def _analyze_uploaded_resume(
     # Resume parsing
     # --------------------------------------------------------
 
-    resume = parse_resume(
-        extracted_text
-    )
+    try:
+
+        resume = parse_resume(
+            extracted_text
+        )
+
+    except Exception as exc:
+
+        app.logger.exception(
+            "Resume parsing failed: %s",
+            exc,
+        )
+
+        raise ValueError(
+            "Unable to process the PDF file."
+        ) from exc
 
     # --------------------------------------------------------
     # ATS analysis
@@ -192,6 +277,7 @@ def _analyze_uploaded_resume(
     job_result = None
 
     if job_description:
+
         job_result = match_resume_to_job(
             resume,
             job_description,
@@ -261,21 +347,13 @@ def _save_analysis_results(
     """
 
     return save_analysis(
-        resume=results.get(
-            "resume"
-        ),
-        ats_result=results.get(
-            "ats_result"
-        ),
-        quality_result=results.get(
-            "quality_result"
-        ),
+        resume=results.get("resume"),
+        ats_result=results.get("ats_result"),
+        quality_result=results.get("quality_result"),
         improvement_result=results.get(
             "improvement_result"
         ),
-        job_result=results.get(
-            "job_result"
-        ),
+        job_result=results.get("job_result"),
         dashboard_result=results.get(
             "dashboard_result"
         ),
@@ -283,6 +361,43 @@ def _save_analysis_results(
             "analytics_result"
         ),
         job_description=job_description,
+    )
+
+
+# ============================================================
+# COMMON ERROR RENDERING
+# ============================================================
+
+def _render_index_error(
+    error: str,
+    job_description: str = "",
+):
+    """
+    Render the main page with a user-facing error message.
+    """
+
+    return render_template(
+        "index.html",
+
+        resume=None,
+
+        ats_result=None,
+        quality_result=None,
+        improvement_result=None,
+        job_result=None,
+
+        dashboard_result=None,
+        score_explanations=None,
+        analytics_result=None,
+
+        extracted_text=None,
+
+        error=error,
+
+        job_description=job_description,
+
+        history_view=False,
+        analysis_id=None,
     )
 
 
@@ -326,101 +441,111 @@ def index():
             "",
         ).strip()
 
-        # ----------------------------------------------------
-        # Validate uploaded file
-        # ----------------------------------------------------
+        try:
 
-        if (
-            file is None
-            or file.filename == ""
-        ):
+            # ------------------------------------------------
+            # Validate upload existence.
+            # ------------------------------------------------
 
-            error = (
-                "Please upload a PDF resume."
+            if (
+                file is None
+                or not file.filename
+            ):
+
+                raise ValueError(
+                    "Please upload a PDF resume."
+                )
+
+            # ------------------------------------------------
+            # Validate extension.
+            # ------------------------------------------------
+
+            if not allowed_file(
+                file.filename
+            ):
+
+                raise ValueError(
+                    "Only PDF resume files are supported."
+                )
+
+            # ------------------------------------------------
+            # Validate actual PDF contents.
+            # ------------------------------------------------
+
+            if not is_valid_pdf(file):
+
+                raise ValueError(
+                    "Unable to process the PDF file."
+                )
+
+            # ------------------------------------------------
+            # Analyze resume.
+            # ------------------------------------------------
+
+            results = _analyze_uploaded_resume(
+                file,
+                job_description,
             )
 
-        elif not allowed_file(
-            file.filename
-        ):
+            resume = results["resume"]
 
-            error = (
-                "Only PDF resume files are supported."
+            ats_result = results[
+                "ats_result"
+            ]
+
+            quality_result = results[
+                "quality_result"
+            ]
+
+            improvement_result = results[
+                "improvement_result"
+            ]
+
+            job_result = results[
+                "job_result"
+            ]
+
+            dashboard_result = results[
+                "dashboard_result"
+            ]
+
+            score_explanations = results[
+                "score_explanations"
+            ]
+
+            analytics_result = results[
+                "analytics_result"
+            ]
+
+            extracted_text = results[
+                "extracted_text"
+            ]
+
+            # ------------------------------------------------
+            # Save analysis to history.
+            # ------------------------------------------------
+
+            _save_analysis_results(
+                results,
+                job_description,
             )
 
-        else:
+        except ValueError as exc:
 
-            try:
+            error = str(exc)
 
-                # ------------------------------------------------
-                # Analyze resume
-                # ------------------------------------------------
+        except Exception as exc:
 
-                results = _analyze_uploaded_resume(
-                    file,
-                    job_description,
-                )
+            app.logger.exception(
+                "Unable to process resume: %s",
+                exc,
+            )
 
-                resume = results[
-                    "resume"
-                ]
-
-                ats_result = results[
-                    "ats_result"
-                ]
-
-                quality_result = results[
-                    "quality_result"
-                ]
-
-                improvement_result = results[
-                    "improvement_result"
-                ]
-
-                job_result = results[
-                    "job_result"
-                ]
-
-                dashboard_result = results[
-                    "dashboard_result"
-                ]
-
-                score_explanations = results[
-                    "score_explanations"
-                ]
-
-                analytics_result = results[
-                    "analytics_result"
-                ]
-
-                extracted_text = results[
-                    "extracted_text"
-                ]
-
-                # ------------------------------------------------
-                # Save analysis to history
-                # ------------------------------------------------
-
-                _save_analysis_results(
-                    results,
-                    job_description,
-                )
-
-            except ValueError as exc:
-
-                error = str(exc)
-
-            except Exception as exc:
-
-                app.logger.exception(
-                    "Unable to process resume: %s",
-                    exc,
-                )
-
-                error = (
-                    "Unable to process the PDF file. "
-                    "Please make sure it is a valid "
-                    "text-based PDF."
-                )
+            error = (
+                "Unable to process the PDF file. "
+                "Please make sure it is a valid "
+                "text-based PDF."
+            )
 
     return render_template(
         "index.html",
@@ -505,27 +630,12 @@ def view_history(
             error="Analysis not found.",
         ), 404
 
-    # --------------------------------------------------------
-    # Generate V3.1 score explanations dynamically.
-    # This keeps old saved analyses compatible.
-    # --------------------------------------------------------
-
     score_explanations = build_score_explanations(
-        analysis.get(
-            "dashboard_result"
-        ),
-        analysis.get(
-            "ats_result"
-        ),
-        analysis.get(
-            "quality_result"
-        ),
-        analysis.get(
-            "job_result"
-        ),
-        analysis.get(
-            "improvement_result"
-        ),
+        analysis.get("dashboard_result"),
+        analysis.get("ats_result"),
+        analysis.get("quality_result"),
+        analysis.get("job_result"),
+        analysis.get("improvement_result"),
     )
 
     return render_template(
@@ -611,14 +721,7 @@ def delete_history(
 def download_report():
     """
     Generate and download a PDF resume analysis report.
-
-    Invalid or missing uploads are handled gracefully
-    and return the main page with HTTP 200.
     """
-
-    # --------------------------------------------------------
-    # Safely obtain uploaded file and job description
-    # --------------------------------------------------------
 
     file = request.files.get(
         "resume"
@@ -629,78 +732,46 @@ def download_report():
         "",
     ).strip()
 
-    # --------------------------------------------------------
-    # Validate missing file
-    # --------------------------------------------------------
-
-    if (
-        file is None
-        or not file.filename
-    ):
-
-        return render_template(
-            "index.html",
-
-            resume=None,
-
-            ats_result=None,
-            quality_result=None,
-            improvement_result=None,
-            job_result=None,
-
-            dashboard_result=None,
-            score_explanations=None,
-            analytics_result=None,
-
-            extracted_text=None,
-
-            error="Please upload a PDF resume.",
-
-            job_description=job_description,
-
-            history_view=False,
-            analysis_id=None,
-        ), 200
-
-    # --------------------------------------------------------
-    # Validate file extension
-    # --------------------------------------------------------
-
-    if not allowed_file(
-        file.filename
-    ):
-
-        return render_template(
-            "index.html",
-
-            resume=None,
-
-            ats_result=None,
-            quality_result=None,
-            improvement_result=None,
-            job_result=None,
-
-            dashboard_result=None,
-            score_explanations=None,
-            analytics_result=None,
-
-            extracted_text=None,
-
-            error=(
-                "Only PDF resume files are supported."
-            ),
-
-            job_description=job_description,
-
-            history_view=False,
-            analysis_id=None,
-        ), 200
-
-    # --------------------------------------------------------
-    # Analyze resume
-    # --------------------------------------------------------
-
     try:
+
+        # ----------------------------------------------------
+        # Validate upload.
+        # ----------------------------------------------------
+
+        if (
+            file is None
+            or not file.filename
+        ):
+
+            raise ValueError(
+                "Please upload a PDF resume."
+            )
+
+        # ----------------------------------------------------
+        # Validate extension.
+        # ----------------------------------------------------
+
+        if not allowed_file(
+            file.filename
+        ):
+
+            raise ValueError(
+                "Only PDF resume files are supported."
+            )
+
+        # ----------------------------------------------------
+        # Validate actual PDF.
+        # ----------------------------------------------------
+
+        if not is_valid_pdf(file):
+
+            raise ValueError(
+                "Unable to generate the PDF report."
+            )
+
+        # ----------------------------------------------------
+        # Analyze resume.
+        # ----------------------------------------------------
 
         results = _analyze_uploaded_resume(
             file,
@@ -708,7 +779,7 @@ def download_report():
         )
 
         # ----------------------------------------------------
-        # Generate PDF report
+        # Generate PDF report.
         # ----------------------------------------------------
 
         pdf_bytes = generate_resume_report(
@@ -743,7 +814,7 @@ def download_report():
         )
 
         # ----------------------------------------------------
-        # Send PDF to browser
+        # Send PDF to browser.
         # ----------------------------------------------------
 
         return send_file(
@@ -763,29 +834,10 @@ def download_report():
 
     except ValueError as exc:
 
-        return render_template(
-            "index.html",
-
-            resume=None,
-
-            ats_result=None,
-            quality_result=None,
-            improvement_result=None,
-            job_result=None,
-
-            dashboard_result=None,
-            score_explanations=None,
-            analytics_result=None,
-
-            extracted_text=None,
-
-            error=str(exc),
-
-            job_description=job_description,
-
-            history_view=False,
-            analysis_id=None,
-        ), 200
+        return _render_index_error(
+            str(exc),
+            job_description,
+        )
 
     except Exception as exc:
 
@@ -794,33 +846,11 @@ def download_report():
             exc,
         )
 
-        return render_template(
-            "index.html",
-
-            resume=None,
-
-            ats_result=None,
-            quality_result=None,
-            improvement_result=None,
-            job_result=None,
-
-            dashboard_result=None,
-            score_explanations=None,
-            analytics_result=None,
-
-            extracted_text=None,
-
-            error=(
-                "Unable to process the PDF file. "
-                "Please make sure it is a valid "
-                "text-based PDF."
-            ),
-
-            job_description=job_description,
-
-            history_view=False,
-            analysis_id=None,
-        ), 200
+        return _render_index_error(
+            "Unable to generate the PDF report. "
+            "Please try again.",
+            job_description,
+        )
 
 
 # ============================================================
@@ -868,8 +898,7 @@ def terms():
 )
 def favicon():
     """
-    Serve the favicon.svg when browsers request
-    /favicon.ico.
+    Serve the favicon.svg when browsers request /favicon.ico.
     """
 
     static_folder = Path(
