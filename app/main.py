@@ -20,10 +20,12 @@ V3.1
 - Favicon support
 - Secure upload validation
 - Input sanitization
+- CSRF protection
 """
 
 from __future__ import annotations
 
+import os
 import re
 from datetime import datetime
 from io import BytesIO
@@ -40,6 +42,8 @@ from flask import (
     redirect,
     url_for,
 )
+
+from flask_wtf.csrf import CSRFProtect
 
 from app.analytics import build_analytics
 from app.ats_analyzer import analyze_resume
@@ -70,8 +74,33 @@ from app.score_explanation import build_score_explanations
 
 app = Flask(__name__)
 
+
+# ============================================================
+# SECURITY CONFIGURATION
+# ============================================================
+
+# Use an environment-provided secret in production.
+# The fallback keeps local development and tests working.
+app.config["SECRET_KEY"] = os.environ.get(
+    "SECRET_KEY",
+    "dev-only-change-this-secret-key",
+)
+
 # Maximum uploaded request size: 5 MB.
-app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
+app.config["MAX_CONTENT_LENGTH"] = (
+    5 * 1024 * 1024
+)
+
+# Enable CSRF protection.
+app.config["WTF_CSRF_ENABLED"] = True
+
+# CSRF tokens expire after one hour.
+app.config["WTF_CSRF_TIME_LIMIT"] = 3600
+
+
+# Initialize CSRF protection.
+csrf = CSRFProtect(app)
+
 
 ALLOWED_EXTENSIONS = {"pdf"}
 
@@ -102,7 +131,10 @@ def format_history_date(value):
     try:
 
         timestamp = datetime.fromisoformat(
-            str(value).replace("Z", "+00:00")
+            str(value).replace(
+                "Z",
+                "+00:00",
+            )
         )
 
         return timestamp.strftime(

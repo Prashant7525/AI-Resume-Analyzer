@@ -50,7 +50,8 @@ def client():
     """
 
     app.config.update(
-        TESTING=True
+        TESTING=True,
+        WTF_CSRF_ENABLED=False,
     )
 
     with app.test_client() as client:
@@ -811,3 +812,68 @@ def test_terms_does_not_accept_post(
     )
 
     assert response.status_code == 405
+
+# ============================================================
+# CSRF PROTECTION TESTS
+# ============================================================
+
+def test_homepage_contains_csrf_token(client):
+    """
+    The homepage should render a CSRF token for POST forms.
+    """
+
+    response = client.get("/")
+
+    assert response.status_code == 200
+
+    assert (
+        b'name="csrf_token"'
+        in response.data
+    )
+
+
+def test_history_contains_csrf_token(client):
+    """
+    The history page should render a CSRF token for
+    the delete POST form.
+    """
+
+    response = client.get("/history")
+
+    assert response.status_code == 200
+
+    assert (
+        b'name="csrf_token"'
+        in response.data
+    )
+
+
+def test_csrf_rejects_missing_token():
+    """
+    CSRF protection should reject a POST request without
+    a valid CSRF token.
+    """
+
+    app.config.update(
+        TESTING=False,
+        WTF_CSRF_ENABLED=True,
+    )
+
+    try:
+        with app.test_client() as test_client:
+
+            response = test_client.post(
+                "/",
+                data={
+                    "job_description": "",
+                },
+            )
+
+            assert response.status_code == 400
+
+    finally:
+
+        app.config.update(
+            TESTING=True,
+            WTF_CSRF_ENABLED=False,
+        )
