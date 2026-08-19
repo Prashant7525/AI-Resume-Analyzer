@@ -483,6 +483,347 @@
             {% endif %}
 
 
+            <!-- =================================================
+                 V3.1 SCORE EXPLANATION
+                 ================================================= -->
+
+            {% if score_explanations %}
+
+            <section class="card full-width score-explanation-card">
+
+                <div class="score-explanation-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V3.1 SCORE EXPLANATION
+                        </span>
+
+                        <h2 class="section-title">
+                            How Your Score Is Calculated
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Understand how your resume score is
+                            calculated and where your points come from.
+                        </p>
+
+                    </div>
+
+                </div>
+
+
+                <div class="score-explanation-overall">
+
+
+                    <div class="score-explanation-overall-item">
+
+                        <span>
+                            Overall Score
+                        </span>
+
+                        <strong>
+                            {{ score_explanations.overall.score }}/100
+                        </strong>
+
+                    </div>
+
+
+                    <div class="score-explanation-overall-item">
+
+                        <span>
+                            Rating
+                        </span>
+
+                        <strong>
+                            {{ score_explanations.overall.label }}
+                        </strong>
+
+                    </div>
+
+
+                </div>
+
+
+                <div class="score-formula">
+
+                    <span>
+                        Score Formula
+                    </span>
+
+                    <strong>
+                        {{ score_explanations.overall.formula }}
+                    </strong>
+
+                    <p>
+                        {{ score_explanations.overall.explanation }}
+                    </p>
+
+                </div>
+
+
+                <div class="score-explanation-grid">
+
+
+                    <!-- ATS -->
+
+                    <div class="score-explanation-item">
+
+                        <div class="score-explanation-item-header">
+
+                            <div>
+
+                                <h3>
+                                    ATS Readiness
+                                </h3>
+
+                                <span>
+                                    {{ score_explanations.ats.score }}/100
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ score_explanations.ats.label }}
+                            </strong>
+
+                        </div>
+
+
+                        <p>
+                            {{ score_explanations.ats.explanation }}
+                        </p>
+
+
+                        {% for factor in score_explanations.ats.factors %}
+
+                        <div class="score-factor">
+
+                            <div class="score-factor-header">
+
+                                <strong>
+                                    {{ factor.name }}
+                                </strong>
+
+                                <span>
+                                    {{ factor.weighted_score }}/{{ factor.weighted_max }}
+                                </span>
+
+                            </div>
+
+                            <p>
+                                {{ factor.description }}
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- QUALITY -->
+
+                    <div class="score-explanation-item">
+
+                        <div class="score-explanation-item-header">
+
+                            <div>
+
+                                <h3>
+                                    Resume Quality
+                                </h3>
+
+                                <span>
+                                    {{ score_explanations.quality.score }}/{{ score_explanations.quality.max_score }}
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ score_explanations.quality.label }}
+                            </strong>
+
+                        </div>
+
+
+                        <p>
+                            {{ score_explanations.quality.explanation }}
+                        </p>
+
+
+                        {% for factor in score_explanations.quality.factors %}
+
+                        <div class="score-factor">
+
+                            <div class="score-factor-header">
+
+                                <strong>
+                                    {{ factor.name }}
+                                </strong>
+
+                                <span>
+                                    {{ factor.score }}/{{ factor.max_score }}
+                                </span>
+
+                            </div>
+
+                            <p>
+                                {{ factor.description }}
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                    <!-- JOB MATCH -->
+
+                    {% if score_explanations.job_match.score is not none %}
+
+                    <div class="score-explanation-item">
+
+                        <div class="score-explanation-item-header">
+
+                            <div>
+
+                                <h3>
+                                    Job Match
+                                </h3>
+
+                                <span>
+                                    {{ score_explanations.job_match.score }}/100
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ score_explanations.job_match.label }}
+                            </strong>
+
+                        </div>
+
+
+                        <p>
+                            {{ score_explanations.job_match.explanation }}
+                        </p>
+
+
+                        {% for factor in score_explanations.job_match.factors %}
+
+                        <div class="score-factor">
+
+                            <div class="score-factor-header">
+
+                                <strong>
+                                    {{ factor.name }}
+                                </strong>
+
+                                <span>
+
+                                    {% if factor.max_score is not none %}
+
+                                        {{ factor.score }}/{{ factor.max_score }}
+
+                                    {% else %}
+
+                                        {{ factor.score }}
+
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                            <p>
+                                {{ factor.description }}
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+                    {% endif %}
+
+
+                    <!-- IMPROVEMENTS -->
+
+                    <div class="score-explanation-item">
+
+                        <div class="score-explanation-item-header">
+
+                            <div>
+
+                                <h3>
+                                    Improvement Readiness
+                                </h3>
+
+                                <span>
+                                    {{ score_explanations.improvements.score }}/100
+                                </span>
+
+                            </div>
+
+                            <strong>
+                                {{ score_explanations.improvements.label }}
+                            </strong>
+
+                        </div>
+
+
+                        <p>
+                            {{ score_explanations.improvements.explanation }}
+                        </p>
+
+
+                        {% for factor in score_explanations.improvements.factors %}
+
+                        <div class="score-factor">
+
+                            <div class="score-factor-header">
+
+                                <strong>
+                                    {{ factor.name }}
+                                </strong>
+
+                                <span>
+
+                                    {% if factor.max_score is not none %}
+
+                                        {{ factor.score }}/{{ factor.max_score }}
+
+                                    {% else %}
+
+                                        {{ factor.score }}
+
+                                    {% endif %}
+
+                                </span>
+
+                            </div>
+
+                            <p>
+                                {{ factor.description }}
+                            </p>
+
+                        </div>
+
+                        {% endfor %}
+
+                    </div>
+
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
             {% if dashboard_result %}
 
             <section class="card full-width quick-summary-card">
@@ -1699,14 +2040,17 @@
     ↑
 </button>
 
+
 <footer class="site-footer">
 
     <div class="container">
 
         <div class="footer-brand">
+
             <strong>
                 © 2026 Prashant Kumar · AI Resume Analyzer
             </strong>
+
         </div>
 
 
@@ -1720,6 +2064,7 @@
             aria-label="Footer navigation"
         >
 
+
             <a
                 href="https://github.com/Prashant7525"
                 target="_blank"
@@ -1728,19 +2073,23 @@
                 aria-label="GitHub"
                 title="GitHub"
             >
+
                 <svg
                     class="footer-social-icon"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                 >
+
                     <path
-                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.2 9.2 0 0 1 12 7.16c.85 0 1.71.12 2.51.36 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
+                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
                     />
+
                 </svg>
 
                 <span>
                     GitHub
                 </span>
+
             </a>
 
 
@@ -1757,19 +2106,23 @@
                 aria-label="LinkedIn"
                 title="LinkedIn"
             >
+
                 <svg
                     class="footer-social-icon"
                     viewBox="0 0 24 24"
                     aria-hidden="true"
                 >
+
                     <path
                         d="M6.5 8.25A1.75 1.75 0 1 0 6.5 4.75a1.75 1.75 0 0 0 0 3.5ZM5 9.75h3v9H5v-9Zm5 0h2.88v1.23h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v4.73h-3v-4.2c0-1 0-2.28-1.39-2.28-1.39 0-1.6 1.09-1.6 2.2v4.28h-3v-9Z"
                     />
+
                 </svg>
 
                 <span>
                     LinkedIn
                 </span>
+
             </a>
 
 
@@ -1797,6 +2150,7 @@
             >
                 Terms
             </a>
+
 
         </nav>
 

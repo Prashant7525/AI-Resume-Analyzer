@@ -1,7 +1,7 @@
 """
 Main Flask application for the AI Resume Analyzer.
 
-V3.0
+V3.1
 - Resume analysis
 - ATS analysis
 - Resume quality analysis
@@ -9,6 +9,7 @@ V3.0
 - Job matching
 - Keyword intelligence
 - Dashboard
+- Score explanations
 - Analytics
 - PDF report download
 - Analysis history
@@ -55,6 +56,7 @@ from app.resume_parser import (
     parse_resume,
 )
 from app.resume_quality import analyze_resume_quality
+from app.score_explanation import build_score_explanations
 
 
 # ============================================================
@@ -208,6 +210,18 @@ def _analyze_uploaded_resume(
     )
 
     # --------------------------------------------------------
+    # V3.1 score explanations
+    # --------------------------------------------------------
+
+    score_explanations = build_score_explanations(
+        dashboard_result,
+        ats_result,
+        quality_result,
+        job_result,
+        improvement_result,
+    )
+
+    # --------------------------------------------------------
     # Analytics
     # --------------------------------------------------------
 
@@ -225,6 +239,7 @@ def _analyze_uploaded_resume(
         "improvement_result": improvement_result,
         "job_result": job_result,
         "dashboard_result": dashboard_result,
+        "score_explanations": score_explanations,
         "analytics_result": analytics_result,
         "extracted_text": extracted_text,
     }
@@ -291,6 +306,7 @@ def index():
     improvement_result = None
     job_result = None
     dashboard_result = None
+    score_explanations = None
     analytics_result = None
 
     extracted_text = None
@@ -368,6 +384,10 @@ def index():
                     "dashboard_result"
                 ]
 
+                score_explanations = results[
+                    "score_explanations"
+                ]
+
                 analytics_result = results[
                     "analytics_result"
                 ]
@@ -413,6 +433,7 @@ def index():
         job_result=job_result,
 
         dashboard_result=dashboard_result,
+        score_explanations=score_explanations,
         analytics_result=analytics_result,
 
         extracted_text=extracted_text,
@@ -462,6 +483,10 @@ def view_history(
 ):
     """
     Display one saved analysis.
+
+    Score explanations are generated dynamically so
+    older saved analyses also receive the V3.1 score
+    explanation system.
     """
 
     analysis = get_analysis(
@@ -479,6 +504,19 @@ def view_history(
 
             error="Analysis not found.",
         ), 404
+
+    # --------------------------------------------------------
+    # Generate V3.1 score explanations dynamically.
+    # This keeps old saved analyses compatible.
+    # --------------------------------------------------------
+
+    score_explanations = build_score_explanations(
+        analysis.get("dashboard_result"),
+        analysis.get("ats_result"),
+        analysis.get("quality_result"),
+        analysis.get("job_result"),
+        analysis.get("improvement_result"),
+    )
 
     return render_template(
         "index.html",
@@ -506,6 +544,8 @@ def view_history(
         dashboard_result=analysis.get(
             "dashboard_result"
         ),
+
+        score_explanations=score_explanations,
 
         analytics_result=analysis.get(
             "analytics_result"
