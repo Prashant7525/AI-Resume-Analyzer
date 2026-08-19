@@ -1478,6 +1478,474 @@
 
 
             <!-- =================================================
+     V3.2 ACHIEVEMENT INTELLIGENCE
+     ================================================= -->
+
+{% if quality_result and quality_result.achievement_intelligence %}
+
+<section class="card full-width">
+
+    <div class="v3-recommendations-header">
+
+        <div>
+
+            <span class="dashboard-badge">
+                V3.2 ACHIEVEMENT INTELLIGENCE
+            </span>
+
+            <h2 class="section-title">
+                Achievement Intelligence
+            </h2>
+
+            <p class="dashboard-description">
+                Analyze measurable achievements for
+                impact, metrics, rankings, scale,
+                currency, and time-saving evidence.
+            </p>
+
+        </div>
+
+
+        <div class="v3-readiness-score">
+
+            <span>
+                Average
+            </span>
+
+            <strong>
+                {{ quality_result.achievement_intelligence.average_score }}/100
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <div class="quick-summary-grid">
+
+
+        <div class="summary-item">
+
+            <span>
+                Achievements Analyzed
+            </span>
+
+            <strong>
+                {{ quality_result.achievement_intelligence.total }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-item">
+
+            <span>
+                Strong
+            </span>
+
+            <strong>
+                {{ quality_result.achievement_intelligence.strong_count }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-item">
+
+            <span>
+                Needs Attention
+            </span>
+
+            <strong>
+                {{ quality_result.achievement_intelligence.needs_attention_count }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-item">
+
+            <span>
+                Measurable
+            </span>
+
+            <strong>
+                {{ quality_result.achievement_intelligence.measurable_count }}
+            </strong>
+
+        </div>
+
+
+        <div class="summary-item">
+
+            <span>
+                Rankings
+            </span>
+
+            <strong>
+                {{ quality_result.achievement_intelligence.ranking_count }}
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    {% for achievement in quality_result.achievement_intelligence.achievements %}
+
+    <div class="v3-check-card">
+
+
+        <div class="v3-check-header">
+
+            <h3>
+
+                {% if achievement.status == "strong" %}
+
+                    ✓ Strong Achievement
+
+                {% elif achievement.status == "good" %}
+
+                    ✓ Good Achievement
+
+                {% else %}
+
+                    ⚠ Needs Attention
+
+                {% endif %}
+
+            </h3>
+
+
+            <span
+                class="v3-status {% if achievement.status in ['strong', 'good'] %}v3-status-good{% else %}v3-status-warning{% endif %}"
+            >
+
+                {{ achievement.status|replace("_", " ")|title }}
+
+                ·
+
+                {{ achievement.score }}/{{ achievement.max_score }}
+
+            </span>
+
+        </div>
+
+
+        <div class="score-factor">
+
+            <div class="score-factor-header">
+
+                <strong>
+                    Achievement
+                </strong>
+
+                <span>
+                    {{ achievement.score }}/{{ achievement.max_score }}
+                </span>
+
+            </div>
+
+
+            <div class="score-factor-progress">
+
+                <div
+                    class="score-factor-progress-bar"
+                    data-score="{{ achievement.score }}"
+                ></div>
+
+            </div>
+
+
+            <p>
+                {{ achievement.text }}
+            </p>
+
+
+            {% if achievement.strengths %}
+
+            <div class="v3-missing-fields">
+
+                <strong>
+                    Strengths:
+                </strong>
+
+                <ul>
+
+                    {% for strength in achievement.strengths %}
+
+                    <li>
+                        {{ strength }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {% endif %}
+
+
+            {% if achievement.improvements %}
+
+            <div class="v3-missing-fields">
+
+                <strong>
+                    Improvements:
+                </strong>
+
+                <ul>
+
+                    {% for improvement in achievement.improvements %}
+
+                    <li>
+                        {{ improvement }}
+                    </li>
+
+                    {% endfor %}
+
+                </ul>
+
+            </div>
+
+            {% endif %}
+
+
+            <details>
+
+                <summary>
+                    View achievement details
+                </summary>
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Metrics
+                    </span>
+
+                    <strong>
+
+                        {% if achievement.metrics.count %}
+
+                            {{ achievement.metrics.count }} detected
+
+                        {% else %}
+
+                            None detected
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                {% if achievement.metrics.values %}
+
+                <div class="v3-missing-fields">
+
+                    <strong>
+                        Detected Metrics:
+                    </strong>
+
+                    <ul>
+
+                        {% for metric in achievement.metrics.values %}
+
+                        <li>
+                            {{ metric }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if achievement.classification.items %}
+
+                <div class="v3-missing-fields">
+
+                    <strong>
+                        Metric Types:
+                    </strong>
+
+                    <ul>
+
+                        {% for item in achievement.classification.items %}
+
+                        <li>
+                            {{ item.value }} · {{ item.type|title }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Impact Signals
+                    </span>
+
+                    <strong>
+
+                        {% if achievement.impact_signals %}
+
+                            {{ achievement.impact_signals|join(", ")|title }}
+
+                        {% else %}
+
+                            None detected
+
+                        {% endif %}
+
+                    </strong>
+
+                </div>
+
+
+                {% if achievement.rankings %}
+
+                <div class="v3-missing-fields">
+
+                    <strong>
+                        Ranking Signals:
+                    </strong>
+
+                    <ul>
+
+                        {% for ranking in achievement.rankings %}
+
+                        <li>
+                            {{ ranking }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                {% endif %}
+
+
+                {% if achievement.time_savings %}
+
+                <div class="v3-missing-fields">
+
+                    <strong>
+                        Time-Saving Signals:
+                    </strong>
+
+                    <ul>
+
+                        {% for saving in achievement.time_savings %}
+
+                        <li>
+                            {{ saving }}
+                        </li>
+
+                        {% endfor %}
+
+                    </ul>
+
+                </div>
+
+                {% endif %}
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Content Score
+                    </span>
+
+                    <strong>
+                        {{ achievement.breakdown.content }}/20
+                    </strong>
+
+                </div>
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Metric Score
+                    </span>
+
+                    <strong>
+                        {{ achievement.breakdown.metrics }}/30
+                    </strong>
+
+                </div>
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Metric Quality
+                    </span>
+
+                    <strong>
+                        {{ achievement.breakdown.metric_quality }}/20
+                    </strong>
+
+                </div>
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Impact Score
+                    </span>
+
+                    <strong>
+                        {{ achievement.breakdown.impact }}/20
+                    </strong>
+
+                </div>
+
+
+                <div class="v3-check-detail">
+
+                    <span>
+                        Additional Signal
+                    </span>
+
+                    <strong>
+                        {{ achievement.breakdown.additional_signal }}/10
+                    </strong>
+
+                </div>
+
+
+            </details>
+
+
+        </div>
+
+    </div>
+
+    {% endfor %}
+
+
+</section>
+
+{% endif %}
+
+
+            <!-- =================================================
                  V3.0 RECOMMENDATIONS
                  ================================================= -->
 
