@@ -705,6 +705,154 @@
 
 
             <!-- =========================================
+                 V3.0 RECOMMENDATION ENGINE
+                 ========================================= -->
+
+            {% if improvement_result %}
+
+            <section class="card full-width v3-recommendations-card">
+
+                <div class="v3-recommendations-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V3.0 RECOMMENDATION ENGINE
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Improvement Analysis
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Section-by-section analysis showing
+                            what is working well and what should
+                            be improved.
+                        </p>
+
+                    </div>
+
+
+                    <div class="v3-readiness-score">
+
+                        <span>
+                            Readiness
+                        </span>
+
+                        <strong>
+                            {{ improvement_result.score }}/100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="v3-check-grid">
+
+
+                    {% for section, check in improvement_result.checks.items() %}
+
+                    <article class="v3-check-card">
+
+
+                        <div class="v3-check-header">
+
+                            <h3>
+                                {{ section|replace("_", " ")|title }}
+                            </h3>
+
+
+                            {% if check.status in ["good", "complete"] %}
+
+                            <span class="v3-status v3-status-good">
+                                ✓ Good
+                            </span>
+
+                            {% else %}
+
+                            <span class="v3-status v3-status-warning">
+                                ⚠ {{ check.status|replace("_", " ")|title }}
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        {% if check.word_count is defined %}
+
+                        <div class="v3-check-detail">
+
+                            <span>
+                                Words
+                            </span>
+
+                            <strong>
+                                {{ check.word_count }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if check.bullet_count is defined %}
+
+                        <div class="v3-check-detail">
+
+                            <span>
+                                Bullets
+                            </span>
+
+                            <strong>
+                                {{ check.bullet_count }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if check.missing is defined and check.missing %}
+
+                        <div class="v3-missing-fields">
+
+                            <span>
+                                Missing:
+                            </span>
+
+                            {{ check.missing|join(", ") }}
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <p class="v3-recommendation">
+
+                            <strong>
+                                Recommendation
+                            </strong>
+
+                            {{ check.recommendation }}
+
+                        </p>
+
+
+                    </article>
+
+                    {% endfor %}
+
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- =========================================
                  ACTION PLAN
                  ========================================= -->
 
@@ -1345,6 +1493,150 @@
 
             </section>
 
+
+            <!-- =========================================
+                 V3.0 RECOMMENDATION ENGINE
+                 ========================================= -->
+
+            <section class="card full-width v3-recommendations-card">
+
+                <div class="v3-recommendations-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V3.0 RECOMMENDATION ENGINE
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Improvement Analysis
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Section-by-section analysis showing
+                            what is working well and what should
+                            be improved.
+                        </p>
+
+                    </div>
+
+
+                    <div class="v3-readiness-score">
+
+                        <span>
+                            Readiness
+                        </span>
+
+                        <strong>
+                            {{ improvement_result.score }}/100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="v3-check-grid">
+
+
+                    {% for section, check in improvement_result.checks.items() %}
+
+                    <article class="v3-check-card">
+
+
+                        <div class="v3-check-header">
+
+                            <h3>
+                                {{ section|replace("_", " ")|title }}
+                            </h3>
+
+
+                            {% if check.status in ["good", "complete"] %}
+
+                            <span class="v3-status v3-status-good">
+                                ✓ Good
+                            </span>
+
+                            {% else %}
+
+                            <span class="v3-status v3-status-warning">
+                                ⚠ {{ check.status|replace("_", " ")|title }}
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        {% if check.word_count is defined %}
+
+                        <div class="v3-check-detail">
+
+                            <span>
+                                Words
+                            </span>
+
+                            <strong>
+                                {{ check.word_count }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if check.bullet_count is defined %}
+
+                        <div class="v3-check-detail">
+
+                            <span>
+                                Bullets
+                            </span>
+
+                            <strong>
+                                {{ check.bullet_count }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if check.missing is defined and check.missing %}
+
+                        <div class="v3-missing-fields">
+
+                            <span>
+                                Missing:
+                            </span>
+
+                            {{ check.missing|join(", ") }}
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <p class="v3-recommendation">
+
+                            <strong>
+                                Recommendation
+                            </strong>
+
+                            {{ check.recommendation }}
+
+                        </p>
+
+
+                    </article>
+
+                    {% endfor %}
+
+
+                </div>
+
+            </section>
+
             {% endif %}
 
 
@@ -1586,7 +1878,7 @@
 
     <div class="container">
 
-        AI Resume Analyzer · Built with Flask and Python · V2.4
+        AI Resume Analyzer · Built with Flask and Python · V3.0
 
     </div>
 
