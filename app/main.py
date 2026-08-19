@@ -19,10 +19,12 @@ V3.1
 - Terms page
 - Favicon support
 - Secure upload validation
+- Input sanitization
 """
 
 from __future__ import annotations
 
+import re
 from datetime import datetime
 from io import BytesIO
 from pathlib import Path
@@ -68,10 +70,13 @@ from app.score_explanation import build_score_explanations
 
 app = Flask(__name__)
 
-# Maximum request/upload size: 5 MB.
+# Maximum uploaded request size: 5 MB.
 app.config["MAX_CONTENT_LENGTH"] = 5 * 1024 * 1024
 
 ALLOWED_EXTENSIONS = {"pdf"}
+
+# Maximum job-description length.
+MAX_JOB_DESCRIPTION_LENGTH = 20000
 
 
 # ============================================================
@@ -95,6 +100,7 @@ def format_history_date(value):
         return "Unknown date"
 
     try:
+
         timestamp = datetime.fromisoformat(
             str(value).replace("Z", "+00:00")
         )
@@ -107,14 +113,81 @@ def format_history_date(value):
         ValueError,
         TypeError,
     ):
+
         return str(value)
+
+
+# ============================================================
+# INPUT SANITIZATION
+# ============================================================
+
+def sanitize_text(
+    value: str,
+    max_length: int = 20000,
+) -> str:
+    """
+    Normalize user-provided text without changing its meaning.
+
+    The sanitizer:
+
+    - Rejects non-string values.
+    - Removes null/control characters.
+    - Normalizes line endings.
+    - Removes trailing whitespace from individual lines.
+    - Removes surrounding whitespace.
+    - Limits the final length.
+    """
+
+    if not isinstance(
+        value,
+        str,
+    ):
+        return ""
+
+    # Remove the null character explicitly.
+    value = value.replace(
+        "\x00",
+        "",
+    )
+
+    # Normalize line endings.
+    value = value.replace(
+        "\r\n",
+        "\n",
+    )
+
+    value = value.replace(
+        "\r",
+        "\n",
+    )
+
+    # Remove control characters while preserving
+    # tabs and newlines.
+    value = re.sub(
+        r"[\x00-\x08\x0b\x0c\x0e-\x1f\x7f]",
+        "",
+        value,
+    )
+
+    # Remove trailing whitespace from every line.
+    lines = [
+        line.rstrip()
+        for line in value.split("\n")
+    ]
+
+    value = "\n".join(lines).strip()
+
+    # Enforce the maximum length.
+    return value[:max_length]
 
 
 # ============================================================
 # FILE VALIDATION
 # ============================================================
 
-def allowed_file(filename: str) -> bool:
+def allowed_file(
+    filename: str,
+) -> bool:
     """
     Return True when the uploaded file is an allowed PDF.
     """
@@ -132,7 +205,9 @@ def allowed_file(filename: str) -> bool:
     )
 
 
-def is_valid_pdf(file) -> bool:
+def is_valid_pdf(
+    file,
+) -> bool:
     """
     Validate that the uploaded file is an actual readable PDF.
 
@@ -143,6 +218,7 @@ def is_valid_pdf(file) -> bool:
         return False
 
     try:
+
         file.stream.seek(0)
 
         pdf_bytes = file.stream.read()
@@ -154,7 +230,9 @@ def is_valid_pdf(file) -> bool:
             return False
 
         # PDF signature check.
-        if not pdf_bytes.startswith(b"%PDF-"):
+        if not pdf_bytes.startswith(
+            b"%PDF-"
+        ):
             return False
 
         # Structural PDF validation.
@@ -164,11 +242,15 @@ def is_valid_pdf(file) -> bool:
         )
 
         try:
+
             return document.page_count > 0
+
         finally:
+
             document.close()
 
     except Exception as exc:
+
         app.logger.warning(
             "PDF validation failed: %s",
             exc,
@@ -177,6 +259,7 @@ def is_valid_pdf(file) -> bool:
         return False
 
     finally:
+
         try:
             file.stream.seek(0)
         except Exception:
@@ -203,11 +286,13 @@ def _analyze_uploaded_resume(
     # --------------------------------------------------------
 
     try:
+
         extracted_text = extract_text_from_pdf(
             file
         )
 
     except Exception as exc:
+
         app.logger.exception(
             "PDF text extraction failed: %s",
             exc,
@@ -217,7 +302,10 @@ def _analyze_uploaded_resume(
             "Unable to process the PDF file."
         ) from exc
 
-    if not extracted_text or not extracted_text.strip():
+    if (
+        not extracted_text
+        or not extracted_text.strip()
+    ):
 
         raise ValueError(
             "The PDF does not contain readable text."
@@ -347,19 +435,35 @@ def _save_analysis_results(
     """
 
     return save_analysis(
-        resume=results.get("resume"),
-        ats_result=results.get("ats_result"),
-        quality_result=results.get("quality_result"),
+
+        resume=results.get(
+            "resume"
+        ),
+
+        ats_result=results.get(
+            "ats_result"
+        ),
+
+        quality_result=results.get(
+            "quality_result"
+        ),
+
         improvement_result=results.get(
             "improvement_result"
         ),
-        job_result=results.get("job_result"),
+
+        job_result=results.get(
+            "job_result"
+        ),
+
         dashboard_result=results.get(
             "dashboard_result"
         ),
+
         analytics_result=results.get(
             "analytics_result"
         ),
+
         job_description=job_description,
     )
 
@@ -377,17 +481,23 @@ def _render_index_error(
     """
 
     return render_template(
+
         "index.html",
 
         resume=None,
 
         ats_result=None,
+
         quality_result=None,
+
         improvement_result=None,
+
         job_result=None,
 
         dashboard_result=None,
+
         score_explanations=None,
+
         analytics_result=None,
 
         extracted_text=None,
@@ -397,6 +507,7 @@ def _render_index_error(
         job_description=job_description,
 
         history_view=False,
+
         analysis_id=None,
     )
 
@@ -417,11 +528,17 @@ def index():
     resume = None
 
     ats_result = None
+
     quality_result = None
+
     improvement_result = None
+
     job_result = None
+
     dashboard_result = None
+
     score_explanations = None
+
     analytics_result = None
 
     extracted_text = None
@@ -436,10 +553,19 @@ def index():
             "resume"
         )
 
-        job_description = request.form.get(
-            "job_description",
-            "",
-        ).strip()
+        # ----------------------------------------------------
+        # Sanitize job description.
+        # ----------------------------------------------------
+
+        job_description = sanitize_text(
+
+            request.form.get(
+                "job_description",
+                "",
+            ),
+
+            max_length=MAX_JOB_DESCRIPTION_LENGTH,
+        )
 
         try:
 
@@ -472,7 +598,9 @@ def index():
             # Validate actual PDF contents.
             # ------------------------------------------------
 
-            if not is_valid_pdf(file):
+            if not is_valid_pdf(
+                file
+            ):
 
                 raise ValueError(
                     "Unable to process the PDF file."
@@ -487,7 +615,9 @@ def index():
                 job_description,
             )
 
-            resume = results["resume"]
+            resume = results[
+                "resume"
+            ]
 
             ats_result = results[
                 "ats_result"
@@ -522,7 +652,7 @@ def index():
             ]
 
             # ------------------------------------------------
-            # Save analysis to history.
+            # Save analysis.
             # ------------------------------------------------
 
             _save_analysis_results(
@@ -548,17 +678,23 @@ def index():
             )
 
     return render_template(
+
         "index.html",
 
         resume=resume,
 
         ats_result=ats_result,
+
         quality_result=quality_result,
+
         improvement_result=improvement_result,
+
         job_result=job_result,
 
         dashboard_result=dashboard_result,
+
         score_explanations=score_explanations,
+
         analytics_result=analytics_result,
 
         extracted_text=extracted_text,
@@ -568,6 +704,7 @@ def index():
         job_description=job_description,
 
         history_view=False,
+
         analysis_id=None,
     )
 
@@ -590,7 +727,9 @@ def history():
     )
 
     return render_template(
+
         "history.html",
+
         analyses=analyses,
     )
 
@@ -621,6 +760,7 @@ def view_history(
     if analysis is None:
 
         return render_template(
+
             "history.html",
 
             analyses=get_analysis_history(
@@ -628,17 +768,34 @@ def view_history(
             ),
 
             error="Analysis not found.",
+
         ), 404
 
     score_explanations = build_score_explanations(
-        analysis.get("dashboard_result"),
-        analysis.get("ats_result"),
-        analysis.get("quality_result"),
-        analysis.get("job_result"),
-        analysis.get("improvement_result"),
+
+        analysis.get(
+            "dashboard_result"
+        ),
+
+        analysis.get(
+            "ats_result"
+        ),
+
+        analysis.get(
+            "quality_result"
+        ),
+
+        analysis.get(
+            "job_result"
+        ),
+
+        analysis.get(
+            "improvement_result"
+        ),
     )
 
     return render_template(
+
         "index.html",
 
         resume=analysis.get(
@@ -727,10 +884,15 @@ def download_report():
         "resume"
     )
 
-    job_description = request.form.get(
-        "job_description",
-        "",
-    ).strip()
+    job_description = sanitize_text(
+
+        request.form.get(
+            "job_description",
+            "",
+        ),
+
+        max_length=MAX_JOB_DESCRIPTION_LENGTH,
+    )
 
     try:
 
@@ -763,7 +925,9 @@ def download_report():
         # Validate actual PDF.
         # ----------------------------------------------------
 
-        if not is_valid_pdf(file):
+        if not is_valid_pdf(
+            file
+        ):
 
             raise ValueError(
                 "Unable to generate the PDF report."
@@ -774,7 +938,9 @@ def download_report():
         # ----------------------------------------------------
 
         results = _analyze_uploaded_resume(
+
             file,
+
             job_description,
         )
 
@@ -835,7 +1001,9 @@ def download_report():
     except ValueError as exc:
 
         return _render_index_error(
+
             str(exc),
+
             job_description,
         )
 
@@ -847,8 +1015,10 @@ def download_report():
         )
 
         return _render_index_error(
+
             "Unable to generate the PDF report. "
             "Please try again.",
+
             job_description,
         )
 
@@ -912,8 +1082,11 @@ def favicon():
     if favicon_path.exists():
 
         return send_from_directory(
+
             static_folder,
+
             "favicon.svg",
+
             mimetype="image/svg+xml",
         )
 

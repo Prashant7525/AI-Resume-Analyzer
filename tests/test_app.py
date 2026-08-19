@@ -2,7 +2,10 @@ import io
 
 import pytest
 
-from app.main import app
+from app.main import (
+    app,
+    sanitize_text,
+)
 
 
 SAMPLE_RESUME = """
@@ -40,10 +43,11 @@ ExampleProfile
 # TEST CLIENT
 # ============================================================
 
-
 @pytest.fixture
 def client():
-    """Create a Flask test client."""
+    """
+    Create a Flask test client.
+    """
 
     app.config.update(
         TESTING=True
@@ -57,182 +61,373 @@ def client():
 # RESUME PARSER TESTS
 # ============================================================
 
-
 def test_clean_text():
+
     from app.resume_parser import clean_text
 
     text = "Hello   World\r\n\r\nPython"
 
-    result = clean_text(text)
+    result = clean_text(
+        text
+    )
 
     assert result == "Hello World\nPython"
 
 
 def test_extract_name():
+
     from app.resume_parser import extract_name
 
-    result = extract_name(SAMPLE_RESUME)
+    result = extract_name(
+        SAMPLE_RESUME
+    )
 
     assert result == "ALEX JOHNSON"
 
 
 def test_extract_email():
+
     from app.resume_parser import extract_email
 
     text = "Contact: example@gmail.com"
 
-    assert extract_email(text) == "example@gmail.com"
+    assert (
+        extract_email(text)
+        == "example@gmail.com"
+    )
 
 
 def test_parse_sections():
+
     from app.resume_parser import parse_sections
 
-    sections = parse_sections(SAMPLE_RESUME)
+    sections = parse_sections(
+        SAMPLE_RESUME
+    )
 
-    assert "Software developer" in sections["summary"]
-    assert "Python, Java, SQL" in sections["skills"]
-    assert "Task Manager" in sections["projects"]
-    assert "Bachelor of Science" in sections["education"]
-    assert "Python Programming Certificate" in sections["certifications"]
-    assert "Completed several programming projects" in sections["achievements"]
+    assert (
+        "Software developer"
+        in sections["summary"]
+    )
+
+    assert (
+        "Python, Java, SQL"
+        in sections["skills"]
+    )
+
+    assert (
+        "Task Manager"
+        in sections["projects"]
+    )
+
+    assert (
+        "Bachelor of Science"
+        in sections["education"]
+    )
+
+    assert (
+        "Python Programming Certificate"
+        in sections["certifications"]
+    )
+
+    assert (
+        "Completed several programming projects"
+        in sections["achievements"]
+    )
 
 
 def test_parse_resume():
+
     from app.resume_parser import parse_resume
 
-    resume = parse_resume(SAMPLE_RESUME)
+    resume = parse_resume(
+        SAMPLE_RESUME
+    )
 
-    assert resume["name"] == "ALEX JOHNSON"
+    assert (
+        resume["name"]
+        == "ALEX JOHNSON"
+    )
+
     assert resume["summary"] != ""
+
     assert resume["skills"] != ""
+
     assert resume["projects"] != ""
+
     assert resume["education"] != ""
+
     assert resume["certifications"] != ""
+
     assert resume["achievements"] != ""
+
+
+# ============================================================
+# INPUT SANITIZATION TESTS
+# ============================================================
+
+def test_sanitize_text_removes_control_characters():
+
+    value = (
+        "Hello\x00World"
+        "\x01Python"
+    )
+
+    result = sanitize_text(
+        value
+    )
+
+    assert result == (
+        "HelloWorldPython"
+    )
+
+
+def test_sanitize_text_normalizes_line_endings():
+
+    value = (
+        "Hello\r\n"
+        "World\r"
+        "Python"
+    )
+
+    result = sanitize_text(
+        value
+    )
+
+    assert result == (
+        "Hello\n"
+        "World\n"
+        "Python"
+    )
+
+
+def test_sanitize_text_strips_trailing_whitespace():
+
+    value = (
+        "Hello   \n"
+        "World\t\n"
+    )
+
+    result = sanitize_text(
+        value
+    )
+
+    assert result == (
+        "Hello\n"
+        "World"
+    )
+
+
+def test_sanitize_text_limits_length():
+
+    value = "A" * 25000
+
+    result = sanitize_text(
+        value,
+        max_length=20000,
+    )
+
+    assert len(result) == 20000
+
+
+def test_sanitize_text_handles_non_string():
+
+    assert (
+        sanitize_text(None)
+        == ""
+    )
+
+    assert (
+        sanitize_text(12345)
+        == ""
+    )
 
 
 # ============================================================
 # BASIC FLASK ROUTES
 # ============================================================
 
+def test_home_route(
+    client,
+):
 
-def test_home_route(client):
-    """Homepage should render successfully."""
-
-    response = client.get("/")
-
-    assert response.status_code == 200
-    assert b"AI Resume Analyzer" in response.data
-    assert b"Analyze Your Resume" in response.data
-
-
-def test_history_route(client):
-    """History page should render successfully."""
-
-    response = client.get("/history")
+    response = client.get(
+        "/"
+    )
 
     assert response.status_code == 200
+
     assert (
-        b"Analysis History" in response.data
-        or b"History" in response.data
+        b"AI Resume Analyzer"
+        in response.data
+    )
+
+    assert (
+        b"Analyze Your Resume"
+        in response.data
     )
 
 
-def test_privacy_route(client):
-    """Privacy page should render successfully."""
+def test_history_route(
+    client,
+):
 
-    response = client.get("/privacy")
-
-    assert response.status_code == 200
-    assert b"Privacy" in response.data
-
-
-def test_terms_route(client):
-    """Terms page should render successfully."""
-
-    response = client.get("/terms")
+    response = client.get(
+        "/history"
+    )
 
     assert response.status_code == 200
-    assert b"Terms" in response.data
+
+    assert (
+        b"Analysis History"
+        in response.data
+        or b"History"
+        in response.data
+    )
 
 
-def test_favicon_route(client):
-    """Favicon route should respond successfully."""
+def test_privacy_route(
+    client,
+):
 
-    response = client.get("/favicon.ico")
+    response = client.get(
+        "/privacy"
+    )
 
-    assert response.status_code in {200, 204}
+    assert response.status_code == 200
+
+    assert (
+        b"Privacy"
+        in response.data
+    )
+
+
+def test_terms_route(
+    client,
+):
+
+    response = client.get(
+        "/terms"
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"Terms"
+        in response.data
+    )
+
+
+def test_favicon_route(
+    client,
+):
+
+    response = client.get(
+        "/favicon.ico"
+    )
+
+    assert response.status_code in {
+        200,
+        204,
+    }
 
 
 # ============================================================
 # UPLOAD VALIDATION
 # ============================================================
 
-
-def test_upload_without_resume(client):
-    """Submitting without a resume should show a useful error."""
+def test_upload_without_resume(
+    client,
+):
 
     response = client.post(
+
         "/",
+
         data={
             "job_description": "",
         },
     )
 
     assert response.status_code == 200
-    assert b"Please upload a PDF resume." in response.data
+
+    assert (
+        b"Please upload a PDF resume."
+        in response.data
+    )
 
 
-def test_upload_empty_filename(client):
-    """An empty uploaded filename should be rejected."""
+def test_upload_empty_filename(
+    client,
+):
 
     response = client.post(
+
         "/",
+
         data={
             "resume": (
                 io.BytesIO(b""),
                 "",
             ),
         },
+
         content_type="multipart/form-data",
     )
 
     assert response.status_code == 200
-    assert b"Please upload a PDF resume." in response.data
+
+    assert (
+        b"Please upload a PDF resume."
+        in response.data
+    )
 
 
-def test_upload_unsupported_file(client):
-    """Non-PDF uploads should be rejected."""
+def test_upload_unsupported_file(
+    client,
+):
 
     response = client.post(
+
         "/",
+
         data={
             "resume": (
-                io.BytesIO(b"not a pdf"),
+                io.BytesIO(
+                    b"not a pdf"
+                ),
                 "resume.txt",
             ),
         },
+
         content_type="multipart/form-data",
     )
 
     assert response.status_code == 200
+
     assert (
         b"Only PDF resume files are supported."
         in response.data
     )
 
 
-def test_upload_invalid_pdf(client):
-    """A file with a PDF extension but invalid PDF data should fail safely."""
+def test_upload_invalid_pdf(
+    client,
+):
 
     response = client.post(
+
         "/",
+
         data={
             "resume": (
-                io.BytesIO(b"This is not a valid PDF"),
+                io.BytesIO(
+                    b"This is not a valid PDF"
+                ),
                 "resume.pdf",
             ),
         },
+
         content_type="multipart/form-data",
     )
 
@@ -241,22 +436,29 @@ def test_upload_invalid_pdf(client):
     assert (
         b"Unable to process the PDF file."
         in response.data
-        or b"does not contain readable text"
+
+        or
+
+        b"does not contain readable text"
         in response.data
     )
 
 
-def test_empty_pdf(client):
-    """An empty PDF upload should fail safely."""
+def test_empty_pdf(
+    client,
+):
 
     response = client.post(
+
         "/",
+
         data={
             "resume": (
                 io.BytesIO(b""),
                 "empty.pdf",
             ),
         },
+
         content_type="multipart/form-data",
     )
 
@@ -265,9 +467,15 @@ def test_empty_pdf(client):
     assert (
         b"Unable to process the PDF file."
         in response.data
-        or b"does not contain readable text"
+
+        or
+
+        b"does not contain readable text"
         in response.data
-        or b"Please upload a PDF resume."
+
+        or
+
+        b"Please upload a PDF resume."
         in response.data
     )
 
@@ -276,62 +484,83 @@ def test_empty_pdf(client):
 # JOB DESCRIPTION
 # ============================================================
 
+def test_missing_job_description(
+    client,
+):
 
-def test_missing_job_description(client):
-    """
-    Resume analysis should still be possible without a job description.
-
-    Job matching is optional in V3.0/V3.1.
-    """
-
-    response = client.get("/")
+    response = client.get(
+        "/"
+    )
 
     assert response.status_code == 200
 
-    # The job description field should remain optional.
-    assert b"Job Description" in response.data
-    assert b"optional" in response.data.lower()
+    assert (
+        b"Job Description"
+        in response.data
+    )
+
+    assert (
+        b"optional"
+        in response.data.lower()
+    )
 
 
-def test_job_description_form_rendering(client):
-    """The homepage should expose the optional job description field."""
+def test_job_description_form_rendering(
+    client,
+):
 
-    response = client.get("/")
+    response = client.get(
+        "/"
+    )
 
     assert response.status_code == 200
-    assert b'name="job_description"' in response.data
+
+    assert (
+        b'name="job_description"'
+        in response.data
+    )
 
 
 # ============================================================
 # THEME-INDEPENDENT RENDERING
 # ============================================================
 
+def test_light_theme_rendering(
+    client,
+):
 
-def test_light_theme_rendering(client):
-    """Homepage should render without requiring a theme."""
-
-    response = client.get("/")
-
-    assert response.status_code == 200
-    assert b"themeToggle" in response.data
-    assert b"resume-analyzer-theme" in response.data
-
-
-def test_dark_theme_script_present(client):
-    """
-    Dark-mode support should be present in the rendered template.
-
-    Theme preference is handled client-side, so the Flask route
-    itself remains independent of the selected theme.
-    """
-
-    response = client.get("/")
+    response = client.get(
+        "/"
+    )
 
     assert response.status_code == 200
 
     assert (
-        b"data-theme" in response.data
-        or b"dark" in response.data
+        b"themeToggle"
+        in response.data
+    )
+
+    assert (
+        b"resume-analyzer-theme"
+        in response.data
+    )
+
+
+def test_dark_theme_script_present(
+    client,
+):
+
+    response = client.get(
+        "/"
+    )
+
+    assert response.status_code == 200
+
+    assert (
+        b"data-theme"
+        in response.data
+        or b"dark"
+        in response.data
     )
 
 
@@ -339,27 +568,30 @@ def test_dark_theme_script_present(client):
 # HISTORY ROUTE SAFETY
 # ============================================================
 
+def test_missing_history_analysis(
+    client,
+):
 
-def test_missing_history_analysis(client):
-    """Requesting a nonexistent analysis should return 404 safely."""
-
-    response = client.get("/history/999999999")
+    response = client.get(
+        "/history/999999999"
+    )
 
     assert response.status_code == 404
+
     assert (
         b"Analysis not found."
         in response.data
     )
 
 
-def test_delete_missing_history_analysis(client):
-    """
-    Deleting a nonexistent analysis should return to history
-    without crashing the application.
-    """
+def test_delete_missing_history_analysis(
+    client,
+):
 
     response = client.post(
+
         "/history/999999999/delete",
+
         follow_redirects=False,
     )
 
@@ -369,63 +601,93 @@ def test_delete_missing_history_analysis(client):
         404,
     }
 
-    if response.status_code in {302, 303}:
-        assert "/history" in response.headers["Location"]
+    if response.status_code in {
+        302,
+        303,
+    }:
+
+        assert (
+            "/history"
+            in response.headers["Location"]
+        )
 
 
 # ============================================================
 # REPORT ROUTE VALIDATION
 # ============================================================
 
-
-def test_report_without_resume(client):
-    """Report generation should reject missing resume files."""
+def test_report_without_resume(
+    client,
+):
 
     response = client.post(
+
         "/download-report",
+
         data={
             "job_description": "",
         },
     )
 
     assert response.status_code == 200
-    assert b"Please upload a PDF resume." in response.data
+
+    assert (
+        b"Please upload a PDF resume."
+        in response.data
+    )
 
 
-def test_report_with_unsupported_file(client):
-    """Report generation should reject non-PDF files."""
+def test_report_with_unsupported_file(
+    client,
+):
 
     response = client.post(
+
         "/download-report",
+
         data={
+
             "resume": (
-                io.BytesIO(b"not a pdf"),
+                io.BytesIO(
+                    b"not a pdf"
+                ),
                 "resume.txt",
             ),
+
             "job_description": "",
         },
+
         content_type="multipart/form-data",
     )
 
     assert response.status_code == 200
+
     assert (
         b"Only PDF resume files are supported."
         in response.data
     )
 
 
-def test_report_with_invalid_pdf(client):
-    """Report generation should fail safely for invalid PDFs."""
+def test_report_with_invalid_pdf(
+    client,
+):
 
     response = client.post(
+
         "/download-report",
+
         data={
+
             "resume": (
-                io.BytesIO(b"invalid pdf data"),
+                io.BytesIO(
+                    b"invalid pdf data"
+                ),
                 "resume.pdf",
             ),
+
             "job_description": "",
         },
+
         content_type="multipart/form-data",
     )
 
@@ -434,9 +696,15 @@ def test_report_with_invalid_pdf(client):
     assert (
         b"Unable to generate the PDF report."
         in response.data
-        or b"Unable to process the PDF file."
+
+        or
+
+        b"Unable to process the PDF file."
         in response.data
-        or b"does not contain readable text"
+
+        or
+
+        b"does not contain readable text"
         in response.data
     )
 
@@ -445,63 +713,101 @@ def test_report_with_invalid_pdf(client):
 # CONTENT / TEMPLATE TESTS
 # ============================================================
 
+def test_homepage_contains_footer_links(
+    client,
+):
 
-def test_homepage_contains_footer_links(client):
-    """Homepage should contain the main footer navigation."""
+    response = client.get(
+        "/"
+    )
 
-    response = client.get("/")
+    assert response.status_code == 200
+
+    assert (
+        b"GitHub"
+        in response.data
+    )
+
+    assert (
+        b"LinkedIn"
+        in response.data
+    )
+
+    assert (
+        b"Privacy"
+        in response.data
+    )
+
+    assert (
+        b"Terms"
+        in response.data
+    )
+
+
+def test_homepage_contains_history_navigation(
+    client,
+):
+
+    response = client.get(
+        "/"
+    )
 
     assert response.status_code == 200
 
-    assert b"GitHub" in response.data
-    assert b"LinkedIn" in response.data
-    assert b"Privacy" in response.data
-    assert b"Terms" in response.data
+    assert (
+        b"history"
+        in response.data.lower()
+    )
 
 
-def test_homepage_contains_history_navigation(client):
-    """Homepage should link to analysis history."""
+def test_homepage_contains_dark_mode_controls(
+    client,
+):
 
-    response = client.get("/")
-
-    assert response.status_code == 200
-    assert b"history" in response.data.lower()
-
-
-def test_homepage_contains_dark_mode_controls(client):
-    """Homepage should contain the V3.0/V3.1 theme controls."""
-
-    response = client.get("/")
+    response = client.get(
+        "/"
+    )
 
     assert response.status_code == 200
-    assert b"id=" in response.data
-    assert b"themeToggle" in response.data
+
+    assert (
+        b"themeToggle"
+        in response.data
+    )
 
 
 # ============================================================
 # HTTP METHOD SAFETY
 # ============================================================
 
+def test_history_does_not_accept_post(
+    client,
+):
 
-def test_history_does_not_accept_post(client):
-    """History listing is a GET-only route."""
-
-    response = client.post("/history")
-
-    assert response.status_code == 405
-
-
-def test_privacy_does_not_accept_post(client):
-    """Privacy page is a GET-only route."""
-
-    response = client.post("/privacy")
+    response = client.post(
+        "/history"
+    )
 
     assert response.status_code == 405
 
 
-def test_terms_does_not_accept_post(client):
-    """Terms page is a GET-only route."""
+def test_privacy_does_not_accept_post(
+    client,
+):
 
-    response = client.post("/terms")
+    response = client.post(
+        "/privacy"
+    )
+
+    assert response.status_code == 405
+
+
+def test_terms_does_not_accept_post(
+    client,
+):
+
+    response = client.post(
+        "/terms"
+    )
 
     assert response.status_code == 405
