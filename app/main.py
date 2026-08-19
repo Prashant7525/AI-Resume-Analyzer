@@ -511,11 +511,21 @@ def view_history(
     # --------------------------------------------------------
 
     score_explanations = build_score_explanations(
-        analysis.get("dashboard_result"),
-        analysis.get("ats_result"),
-        analysis.get("quality_result"),
-        analysis.get("job_result"),
-        analysis.get("improvement_result"),
+        analysis.get(
+            "dashboard_result"
+        ),
+        analysis.get(
+            "ats_result"
+        ),
+        analysis.get(
+            "quality_result"
+        ),
+        analysis.get(
+            "job_result"
+        ),
+        analysis.get(
+            "improvement_result"
+        ),
     )
 
     return render_template(
@@ -602,9 +612,13 @@ def download_report():
     """
     Generate and download a PDF resume analysis report.
 
-    The resume PDF is uploaded again because browsers do not
-    automatically reuse files selected in another form.
+    Invalid or missing uploads are handled gracefully
+    and return the main page with HTTP 200.
     """
+
+    # --------------------------------------------------------
+    # Safely obtain uploaded file and job description
+    # --------------------------------------------------------
 
     file = request.files.get(
         "resume"
@@ -616,16 +630,29 @@ def download_report():
     ).strip()
 
     # --------------------------------------------------------
-    # Validate uploaded file
+    # Validate missing file
     # --------------------------------------------------------
 
     if (
         file is None
-        or file.filename == ""
+        or not file.filename
     ):
 
         return render_template(
             "index.html",
+
+            resume=None,
+
+            ats_result=None,
+            quality_result=None,
+            improvement_result=None,
+            job_result=None,
+
+            dashboard_result=None,
+            score_explanations=None,
+            analytics_result=None,
+
+            extracted_text=None,
 
             error="Please upload a PDF resume.",
 
@@ -633,7 +660,11 @@ def download_report():
 
             history_view=False,
             analysis_id=None,
-        )
+        ), 200
+
+    # --------------------------------------------------------
+    # Validate file extension
+    # --------------------------------------------------------
 
     if not allowed_file(
         file.filename
@@ -642,13 +673,28 @@ def download_report():
         return render_template(
             "index.html",
 
-            error="Only PDF resume files are supported.",
+            resume=None,
+
+            ats_result=None,
+            quality_result=None,
+            improvement_result=None,
+            job_result=None,
+
+            dashboard_result=None,
+            score_explanations=None,
+            analytics_result=None,
+
+            extracted_text=None,
+
+            error=(
+                "Only PDF resume files are supported."
+            ),
 
             job_description=job_description,
 
             history_view=False,
             analysis_id=None,
-        )
+        ), 200
 
     # --------------------------------------------------------
     # Analyze resume
@@ -711,7 +757,7 @@ def download_report():
             as_attachment=True,
 
             download_name=(
-                "AI_Resume_Analyzer_V3.0_Report.pdf"
+                "AI_Resume_Analyzer_V3.1_Report.pdf"
             ),
         )
 
@@ -720,13 +766,26 @@ def download_report():
         return render_template(
             "index.html",
 
+            resume=None,
+
+            ats_result=None,
+            quality_result=None,
+            improvement_result=None,
+            job_result=None,
+
+            dashboard_result=None,
+            score_explanations=None,
+            analytics_result=None,
+
+            extracted_text=None,
+
             error=str(exc),
 
             job_description=job_description,
 
             history_view=False,
             analysis_id=None,
-        )
+        ), 200
 
     except Exception as exc:
 
@@ -738,16 +797,30 @@ def download_report():
         return render_template(
             "index.html",
 
+            resume=None,
+
+            ats_result=None,
+            quality_result=None,
+            improvement_result=None,
+            job_result=None,
+
+            dashboard_result=None,
+            score_explanations=None,
+            analytics_result=None,
+
+            extracted_text=None,
+
             error=(
-                "Unable to generate the PDF report. "
-                "Please try again."
+                "Unable to process the PDF file. "
+                "Please make sure it is a valid "
+                "text-based PDF."
             ),
 
             job_description=job_description,
 
             history_view=False,
             analysis_id=None,
-        )
+        ), 200
 
 
 # ============================================================
@@ -795,7 +868,8 @@ def terms():
 )
 def favicon():
     """
-    Serve the favicon.svg when browsers request /favicon.ico.
+    Serve the favicon.svg when browsers request
+    /favicon.ico.
     """
 
     static_folder = Path(

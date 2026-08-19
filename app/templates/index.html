@@ -41,11 +41,10 @@
 
             if (savedTheme === "dark") {
 
-                document.documentElement
-                    .setAttribute(
-                        "data-theme",
-                        "dark"
-                    );
+                document.documentElement.setAttribute(
+                    "data-theme",
+                    "dark"
+                );
 
             }
 
@@ -69,6 +68,7 @@
                 AI Resume Analyzer
             </span>
 
+
             <div class="top-navigation-actions">
 
                 <a
@@ -78,6 +78,7 @@
                     📋 Analysis History
                 </a>
 
+
                 <button
                     type="button"
                     id="themeToggle"
@@ -85,9 +86,11 @@
                     aria-label="Toggle dark mode"
                     title="Toggle dark mode"
                 >
+
                     <span id="themeIcon">
                         ☀️
                     </span>
+
                 </button>
 
             </div>
@@ -124,16 +127,19 @@
         </h1>
 
         <p class="hero-text">
+
             Upload your resume and optionally add a job
             description to evaluate ATS readiness,
             resume quality, job compatibility,
             keyword coverage, analytics, and
             improvement opportunities.
+
         </p>
 
     </div>
 
 </header>
+
 
 
 <main class="container">
@@ -146,7 +152,7 @@
         <div>
 
             <span class="dashboard-badge">
-                V3.0 HISTORY
+                V3.1 HISTORY
             </span>
 
             <h2 class="section-title">
@@ -154,12 +160,15 @@
             </h2>
 
             <p class="dashboard-description">
+
                 You are viewing a previously saved analysis.
                 The results below are read from your analysis
                 history.
+
             </p>
 
         </div>
+
 
         <a
             href="{{ url_for('history') }}"
@@ -173,6 +182,7 @@
     {% endif %}
 
 
+
     {% if not history_view %}
 
     <section class="card upload-card">
@@ -184,6 +194,7 @@
 
             <div class="form-grid">
 
+
                 <div class="field">
 
                     <label for="resume">
@@ -194,7 +205,7 @@
                         type="file"
                         id="resume"
                         name="resume"
-                        accept=".pdf"
+                        accept=".pdf,application/pdf"
                         required
                     >
 
@@ -203,6 +214,7 @@
                     </small>
 
                 </div>
+
 
 
                 <div class="field">
@@ -215,7 +227,7 @@
                         id="job_description"
                         name="job_description"
                         placeholder="Paste a job description here (optional)..."
-                    >{{ job_description }}</textarea>
+                    >{{ job_description or "" }}</textarea>
 
                     <small>
                         Adding a job description enables
@@ -223,6 +235,7 @@
                     </small>
 
                 </div>
+
 
             </div>
 
@@ -242,9 +255,14 @@
     {% endif %}
 
 
+
     {% if error %}
 
-    <section class="card error">
+    <section
+        class="card error"
+        role="alert"
+        aria-live="polite"
+    >
 
         <h2>
             Unable to Analyze Resume
@@ -259,13 +277,17 @@
     {% endif %}
 
 
-    {% if resume %}
 
+    {% if resume %}
 
     <div class="results">
 
         <div class="results-grid">
 
+
+            <!-- =================================================
+                 PDF REPORT
+                 ================================================= -->
 
             {% if not history_view %}
 
@@ -276,7 +298,7 @@
                     <div>
 
                         <span class="dashboard-badge">
-                            V3.0 REPORT
+                            V3.1 REPORT
                         </span>
 
                         <h2 class="section-title">
@@ -284,10 +306,12 @@
                         </h2>
 
                         <p class="dashboard-description">
+
                             Download a professional PDF containing
                             your complete resume analysis, scores,
                             analytics, recommendations, and job
                             compatibility results.
+
                         </p>
 
                     </div>
@@ -312,14 +336,14 @@
                                 type="file"
                                 id="report_resume"
                                 name="resume"
-                                accept=".pdf"
+                                accept=".pdf,application/pdf"
                                 required
                             >
 
                             <input
                                 type="hidden"
                                 name="job_description"
-                                value="{{ job_description }}"
+                                value="{{ job_description or '' }}"
                             >
 
                             <button
@@ -340,6 +364,7 @@
             {% endif %}
 
 
+
             <!-- =================================================
                  DASHBOARD
                  ================================================= -->
@@ -353,7 +378,7 @@
                     <div>
 
                         <span class="dashboard-badge">
-                            V3.0 DASHBOARD
+                            V3.1 DASHBOARD
                         </span>
 
                         <h2 class="section-title">
@@ -361,9 +386,11 @@
                         </h2>
 
                         <p class="dashboard-description">
+
                             A unified view of your resume's ATS
                             readiness, quality, improvements,
                             and job compatibility.
+
                         </p>
 
                     </div>
@@ -376,7 +403,7 @@
                     <div class="overall-score">
 
                         <span class="overall-score-value">
-                            {{ dashboard_result.overall_score }}
+                            {{ dashboard_result.overall_score or 0 }}
                         </span>
 
                         <span class="overall-score-max">
@@ -403,6 +430,7 @@
 
                 <div class="dashboard-grid">
 
+
                     <div class="dashboard-score-item">
 
                         <span class="dashboard-score-label">
@@ -410,7 +438,7 @@
                         </span>
 
                         <strong>
-                            {{ dashboard_result.breakdown.ats }}/100
+                            {{ dashboard_result.breakdown.ats or 0 }}/100
                         </strong>
 
                     </div>
@@ -423,7 +451,7 @@
                         </span>
 
                         <strong>
-                            {{ dashboard_result.breakdown.quality }}/100
+                            {{ dashboard_result.breakdown.quality or 0 }}/100
                         </strong>
 
                     </div>
@@ -461,18 +489,20 @@
                         </span>
 
                         <strong>
-                            {{ dashboard_result.breakdown.job_match }}/100
+                            {{ dashboard_result.breakdown.job_match or 0 }}/100
                         </strong>
 
                     </div>
 
                     {% endif %}
 
+
                 </div>
 
             </section>
 
             {% endif %}
+
 
 
             <!-- =================================================
@@ -494,6 +524,7 @@
 
                 <div class="quick-summary-grid">
 
+
                     <div class="summary-item">
 
                         <span>
@@ -501,13 +532,14 @@
                         </span>
 
                         <strong>
-                            {{ dashboard_result.overall_score }}/100
+                            {{ dashboard_result.overall_score or 0 }}/100
                         </strong>
 
                     </div>
 
 
-                    {% if dashboard_result.quick_summary.strongest_area %}
+                    {% if dashboard_result.quick_summary
+                          and dashboard_result.quick_summary.strongest_area %}
 
                     <div class="summary-item">
 
@@ -516,9 +548,11 @@
                         </span>
 
                         <strong>
+
                             {{ dashboard_result.quick_summary.strongest_area.name }}
                             ·
                             {{ dashboard_result.quick_summary.strongest_area.score }}/100
+
                         </strong>
 
                     </div>
@@ -526,7 +560,8 @@
                     {% endif %}
 
 
-                    {% if dashboard_result.quick_summary.weakest_area %}
+                    {% if dashboard_result.quick_summary
+                          and dashboard_result.quick_summary.weakest_area %}
 
                     <div class="summary-item">
 
@@ -535,17 +570,23 @@
                         </span>
 
                         <strong>
+
                             {{ dashboard_result.quick_summary.weakest_area.name }}
                             ·
                             {{ dashboard_result.quick_summary.weakest_area.score }}/100
+
                         </strong>
 
                     </div>
 
                     {% endif %}
 
+
                 </div>
 
+
+                {% if dashboard_result.quick_summary
+                      and dashboard_result.quick_summary.recommendation %}
 
                 <div class="summary-recommendation">
 
@@ -559,9 +600,12 @@
 
                 </div>
 
+                {% endif %}
+
             </section>
 
             {% endif %}
+
 
 
             <!-- =================================================
@@ -577,7 +621,7 @@
                     <div>
 
                         <span class="dashboard-badge">
-                            V3.0 ANALYTICS
+                            V3.1 ANALYTICS
                         </span>
 
                         <h2 class="section-title">
@@ -585,10 +629,12 @@
                         </h2>
 
                         <p class="dashboard-description">
+
                             Visual insights into your resume
                             performance across ATS readiness,
                             quality, improvements, and job
                             compatibility.
+
                         </p>
 
                     </div>
@@ -601,7 +647,7 @@
                         </span>
 
                         <strong>
-                            {{ analytics_result.summary.average_score }}/100
+                            {{ analytics_result.summary.average_score or 0 }}/100
                         </strong>
 
                     </div>
@@ -655,6 +701,7 @@
             </section>
 
 
+
             {% if analytics_result.strengths %}
 
             <section class="card">
@@ -678,6 +725,7 @@
             </section>
 
             {% endif %}
+
 
 
             {% if analytics_result.attention_areas %}
@@ -707,6 +755,7 @@
             {% endif %}
 
 
+
             <!-- =================================================
                  V3.1 SCORE EXPLANATION
                  ================================================= -->
@@ -728,8 +777,10 @@
                         </h2>
 
                         <p class="dashboard-description">
+
                             Understand how your resume score is
                             calculated and where your points come from.
+
                         </p>
 
                     </div>
@@ -737,7 +788,10 @@
                 </div>
 
 
+                {% if score_explanations.overall %}
+
                 <div class="score-explanation-overall">
+
 
                     <div class="score-explanation-overall-item">
 
@@ -764,6 +818,7 @@
 
                     </div>
 
+
                 </div>
 
 
@@ -783,13 +838,16 @@
 
                 </div>
 
+                {% endif %}
+
+
 
                 <div class="score-explanation-grid">
 
 
-                    <!-- =================================================
-                         ATS
-                         ================================================= -->
+                    <!-- ATS -->
+
+                    {% if score_explanations.ats %}
 
                     <div class="score-explanation-item">
 
@@ -856,10 +914,13 @@
 
                     </div>
 
+                    {% endif %}
 
-                    <!-- =================================================
-                         QUALITY
-                         ================================================= -->
+
+
+                    <!-- QUALITY -->
+
+                    {% if score_explanations.quality %}
 
                     <div class="score-explanation-item">
 
@@ -926,12 +987,14 @@
 
                     </div>
 
+                    {% endif %}
 
-                    <!-- =================================================
-                         JOB MATCH
-                         ================================================= -->
 
-                    {% if score_explanations.job_match.score is not none %}
+
+                    <!-- JOB MATCH -->
+
+                    {% if score_explanations.job_match
+                          and score_explanations.job_match.score is not none %}
 
                     <div class="score-explanation-item">
 
@@ -1015,9 +1078,10 @@
                     {% endif %}
 
 
-                    <!-- =================================================
-                         IMPROVEMENTS
-                         ================================================= -->
+
+                    <!-- IMPROVEMENTS -->
+
+                    {% if score_explanations.improvements %}
 
                     <div class="score-explanation-item">
 
@@ -1098,12 +1162,15 @@
 
                     </div>
 
+                    {% endif %}
+
 
                 </div>
 
             </section>
 
             {% endif %}
+
 
 
             <!-- =================================================
@@ -1119,7 +1186,7 @@
                     <div>
 
                         <span class="dashboard-badge">
-                            V3.0 RECOMMENDATIONS
+                            V3.1 RECOMMENDATIONS
                         </span>
 
                         <h2 class="section-title">
@@ -1127,10 +1194,12 @@
                         </h2>
 
                         <p class="dashboard-description">
+
                             Detailed recommendations based on
                             your resume's structure, content,
                             skills, experience, projects,
                             achievements, and contact information.
+
                         </p>
 
                     </div>
@@ -1150,6 +1219,8 @@
 
                 </div>
 
+
+                {% if improvement_result.checks %}
 
                 <div class="v3-check-grid">
 
@@ -1230,6 +1301,8 @@
                         {% endif %}
 
 
+                        {% if check.recommendation %}
+
                         <p class="v3-recommendation">
 
                             <strong>
@@ -1240,22 +1313,28 @@
 
                         </p>
 
+                        {% endif %}
+
                     </div>
 
                     {% endfor %}
 
                 </div>
 
+                {% endif %}
+
             </section>
 
             {% endif %}
+
 
 
             <!-- =================================================
                  ACTION PLAN
                  ================================================= -->
 
-            {% if dashboard_result and dashboard_result.recommendations %}
+            {% if dashboard_result
+                  and dashboard_result.recommendations %}
 
             <section class="card full-width action-plan-card">
 
@@ -1272,8 +1351,10 @@
                         </h2>
 
                         <p class="dashboard-description">
+
                             The most important improvements
                             identified from your resume analysis.
+
                         </p>
 
                     </div>
@@ -1321,6 +1402,7 @@
             </section>
 
             {% endif %}
+
 
 
             <!-- =================================================
@@ -1376,6 +1458,7 @@
                 </ul>
 
             </section>
+
 
 
             <!-- =================================================
@@ -1443,14 +1526,11 @@
 
             </section>
 
-            {% endif %}
 
 
             <!-- =================================================
                  RESUME SECTIONS
                  ================================================= -->
-
-            {% if ats_result %}
 
             <section class="card">
 
@@ -1491,14 +1571,11 @@
 
             </section>
 
-            {% endif %}
 
 
             <!-- =================================================
                  CONTACT INFORMATION
                  ================================================= -->
-
-            {% if ats_result %}
 
             <section class="card">
 
@@ -1559,14 +1636,11 @@
 
             </section>
 
-            {% endif %}
 
 
             <!-- =================================================
                  ATS CONTENT QUALITY
                  ================================================= -->
-
-            {% if ats_result %}
 
             <section class="card">
 
@@ -1660,6 +1734,7 @@
             {% endif %}
 
 
+
             <!-- =================================================
                  RESUME QUALITY
                  ================================================= -->
@@ -1690,9 +1765,11 @@
                         </strong>
 
                         <span>
+
                             {{ quality_result.length.word_count }}
                             words ·
                             {{ quality_result.length.rating|title }}
+
                         </span>
 
                     </li>
@@ -1756,6 +1833,7 @@
                 </ul>
 
             </section>
+
 
 
             <section class="card">
@@ -1850,6 +1928,7 @@
             {% endif %}
 
 
+
             <!-- =================================================
                  IMPROVEMENT SCORE
                  ================================================= -->
@@ -1875,6 +1954,7 @@
             {% endif %}
 
 
+
             <!-- =================================================
                  JOB MATCH
                  ================================================= -->
@@ -1896,6 +1976,7 @@
                 </p>
 
             </section>
+
 
 
             <section class="card">
@@ -1930,6 +2011,7 @@
             </section>
 
 
+
             <section class="card">
 
                 <h2 class="section-title">
@@ -1960,6 +2042,7 @@
                 {% endif %}
 
             </section>
+
 
 
             <section class="card">
@@ -2035,6 +2118,7 @@
             </section>
 
 
+
             {% if job_result.keyword_suggestions %}
 
             <section class="card full-width">
@@ -2060,6 +2144,7 @@
             {% endif %}
 
             {% endif %}
+
 
 
             <!-- =================================================
@@ -2097,6 +2182,7 @@
 </main>
 
 
+
 <!-- =========================================================
      BACK TO TOP
      ========================================================= -->
@@ -2110,6 +2196,7 @@
 >
     ↑
 </button>
+
 
 
 <!-- =========================================================
@@ -2232,277 +2319,289 @@
 </footer>
 
 
+
 <!-- =========================================================
      JAVASCRIPT
      ========================================================= -->
 
 <script>
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
 
 
-            /* =================================================
-               ANALYTICS PROGRESS BARS
-               ================================================= */
+        /* =====================================================
+           ANALYTICS PROGRESS BARS
+           ===================================================== */
 
-            const progressBars =
-                document.querySelectorAll(
-                    ".analytics-progress-bar"
-                );
-
-
-            progressBars.forEach(
-                function (bar) {
-
-                    const score =
-                        Number(
-                            bar.dataset.score
-                        );
-
-
-                    if (
-                        Number.isFinite(score)
-                    ) {
-
-                        const safeScore =
-                            Math.max(
-                                0,
-                                Math.min(
-                                    100,
-                                    score
-                                )
-                            );
-
-
-                        bar.style.width =
-                            safeScore + "%";
-
-                    }
-
-                }
+        const progressBars =
+            document.querySelectorAll(
+                ".analytics-progress-bar"
             );
 
 
-            /* =================================================
-               V3.1 SCORE EXPLANATION PROGRESS BARS
-               ================================================= */
+        progressBars.forEach(
+            function (bar) {
 
-            const scoreExplanationBars =
-                document.querySelectorAll(
-                    ".score-explanation-progress-bar, .score-factor-progress-bar"
-                );
+                const score =
+                    Number(
+                        bar.dataset.score
+                    );
 
 
-            scoreExplanationBars.forEach(
-                function (bar) {
+                if (
+                    Number.isFinite(score)
+                ) {
 
-                    const score =
-                        Number(
-                            bar.dataset.score
+                    const safeScore =
+                        Math.max(
+                            0,
+                            Math.min(
+                                100,
+                                score
+                            )
                         );
 
 
-                    if (
-                        Number.isFinite(score)
-                    ) {
-
-                        const safeScore =
-                            Math.max(
-                                0,
-                                Math.min(
-                                    100,
-                                    score
-                                )
-                            );
-
-
-                        bar.style.width =
-                            safeScore + "%";
-
-                    }
-
-                }
-            );
-
-
-            /* =================================================
-               DARK MODE
-               ================================================= */
-
-            const themeToggle =
-                document.getElementById(
-                    "themeToggle"
-                );
-
-
-            const themeIcon =
-                document.getElementById(
-                    "themeIcon"
-                );
-
-
-            function updateThemeIcon() {
-
-                const isDark =
-                    document.documentElement
-                        .getAttribute(
-                            "data-theme"
-                        ) === "dark";
-
-
-                if (themeIcon) {
-
-                    themeIcon.textContent =
-                        isDark
-                            ? "🌙"
-                            : "☀️";
-
-                }
-
-
-                if (themeToggle) {
-
-                    themeToggle.setAttribute(
-                        "aria-label",
-                        isDark
-                            ? "Switch to light mode"
-                            : "Switch to dark mode"
-                    );
-
-
-                    themeToggle.setAttribute(
-                        "title",
-                        isDark
-                            ? "Switch to light mode"
-                            : "Switch to dark mode"
-                    );
+                    bar.style.width =
+                        safeScore + "%";
 
                 }
 
             }
+        );
 
 
-            updateThemeIcon();
+
+        /* =====================================================
+           SCORE EXPLANATION PROGRESS BARS
+           ===================================================== */
+
+        const scoreExplanationBars =
+            document.querySelectorAll(
+                ".score-explanation-progress-bar, .score-factor-progress-bar"
+            );
+
+
+        scoreExplanationBars.forEach(
+            function (bar) {
+
+                const score =
+                    Number(
+                        bar.dataset.score
+                    );
+
+
+                if (
+                    Number.isFinite(score)
+                ) {
+
+                    const safeScore =
+                        Math.max(
+                            0,
+                            Math.min(
+                                100,
+                                score
+                            )
+                        );
+
+
+                    bar.style.width =
+                        safeScore + "%";
+
+                }
+
+            }
+        );
+
+
+
+        /* =====================================================
+           DARK MODE
+           ===================================================== */
+
+        const themeToggle =
+            document.getElementById(
+                "themeToggle"
+            );
+
+
+        const themeIcon =
+            document.getElementById(
+                "themeIcon"
+            );
+
+
+        function updateThemeIcon() {
+
+            const isDark =
+                document.documentElement
+                    .getAttribute(
+                        "data-theme"
+                    ) === "dark";
+
+
+            if (themeIcon) {
+
+                themeIcon.textContent =
+                    isDark
+                        ? "🌙"
+                        : "☀️";
+
+            }
 
 
             if (themeToggle) {
 
-                themeToggle.addEventListener(
-                    "click",
-                    function () {
-
-                        const isDark =
-                            document.documentElement
-                                .getAttribute(
-                                    "data-theme"
-                                ) === "dark";
+                themeToggle.setAttribute(
+                    "aria-label",
+                    isDark
+                        ? "Switch to light mode"
+                        : "Switch to dark mode"
+                );
 
 
-                        if (isDark) {
+                themeToggle.setAttribute(
+                    "title",
+                    isDark
+                        ? "Switch to light mode"
+                        : "Switch to dark mode"
+                );
 
-                            document.documentElement
-                                .removeAttribute(
-                                    "data-theme"
-                                );
+            }
+
+        }
 
 
-                            localStorage.setItem(
-                                "resume-analyzer-theme",
-                                "light"
+        updateThemeIcon();
+
+
+        if (themeToggle) {
+
+            themeToggle.addEventListener(
+                "click",
+                function () {
+
+                    const isDark =
+                        document.documentElement
+                            .getAttribute(
+                                "data-theme"
+                            ) === "dark";
+
+
+                    if (isDark) {
+
+                        document.documentElement
+                            .removeAttribute(
+                                "data-theme"
                             );
 
-                        } else {
 
-                            document.documentElement
-                                .setAttribute(
-                                    "data-theme",
-                                    "dark"
-                                );
+                        localStorage.setItem(
+                            "resume-analyzer-theme",
+                            "light"
+                        );
 
+                    }
 
-                            localStorage.setItem(
-                                "resume-analyzer-theme",
+                    else {
+
+                        document.documentElement
+                            .setAttribute(
+                                "data-theme",
                                 "dark"
                             );
 
-                        }
 
-
-                        updateThemeIcon();
+                        localStorage.setItem(
+                            "resume-analyzer-theme",
+                            "dark"
+                        );
 
                     }
-                );
-
-            }
 
 
-            /* =================================================
-               BACK TO TOP
-               ================================================= */
+                    updateThemeIcon();
 
-            const backToTop =
-                document.getElementById(
-                    "backToTop"
-                );
-
-
-            function updateBackToTop() {
-
-                if (!backToTop) {
-                    return;
-                }
-
-
-                if (window.scrollY > 500) {
-
-                    backToTop.classList.add(
-                        "visible"
-                    );
-
-                } else {
-
-                    backToTop.classList.remove(
-                        "visible"
-                    );
-
-                }
-
-            }
-
-
-            window.addEventListener(
-                "scroll",
-                updateBackToTop,
-                {
-                    passive: true
                 }
             );
 
+        }
 
-            updateBackToTop();
 
 
-            if (backToTop) {
+        /* =====================================================
+           BACK TO TOP
+           ===================================================== */
 
-                backToTop.addEventListener(
-                    "click",
-                    function () {
+        const backToTop =
+            document.getElementById(
+                "backToTop"
+            );
 
-                        window.scrollTo({
-                            top: 0,
-                            behavior: "smooth"
-                        });
 
-                    }
+        function updateBackToTop() {
+
+            if (!backToTop) {
+                return;
+            }
+
+
+            if (window.scrollY > 500) {
+
+                backToTop.classList.add(
+                    "visible"
                 );
 
             }
 
+            else {
+
+                backToTop.classList.remove(
+                    "visible"
+                );
+
+            }
 
         }
-    );
+
+
+        window.addEventListener(
+            "scroll",
+            updateBackToTop,
+            {
+                passive: true
+            }
+        );
+
+
+        updateBackToTop();
+
+
+        if (backToTop) {
+
+            backToTop.addEventListener(
+                "click",
+                function () {
+
+                    window.scrollTo({
+
+                        top: 0,
+
+                        behavior: "smooth"
+
+                    });
+
+                }
+            );
+
+        }
+
+
+    }
+
+);
 
 </script>
 
