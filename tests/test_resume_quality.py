@@ -218,3 +218,71 @@ def test_analyze_resume_quality():
     assert result["achievements"]["has_quantifiable"] is True
     assert result["contact"]["passed"] == 3
     assert result["structure"]["present_count"] == 7
+
+def test_analyze_bullet_intelligence():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    assert "bullet_intelligence" in result
+
+    intelligence = result[
+        "bullet_intelligence"
+    ]
+
+    assert "experience" in intelligence[
+        "sections"
+    ]
+
+    assert "projects" in intelligence[
+        "sections"
+    ]
+
+    assert "achievements" in intelligence[
+        "sections"
+    ]
+
+    assert (
+        intelligence["total_bullets"]
+        > 0
+    )
+
+
+def test_bullet_intelligence_analyzes_experience_bullets():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    experience = result[
+        "bullet_intelligence"
+    ][
+        "sections"
+    ][
+        "experience"
+    ]
+
+    assert experience[
+        "total"
+    ] == 3
+
+    assert (
+        experience["average_score"]
+        > 0
+    )
+
+    assert (
+        len(
+            experience["bullets"]
+        )
+        == 3
+    )
+
+
+def test_bullet_intelligence_does_not_change_quality_score():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    # Existing V3.0/V3.1 score must remain unchanged.
+    assert result["score"] == 63
+    assert result["max_score"] == 70

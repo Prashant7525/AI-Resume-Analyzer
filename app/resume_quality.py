@@ -11,12 +11,17 @@ V3.2
 - Quality scoring
 - Quality suggestions
 - Section intelligence
+- Bullet intelligence
 """
 
 from __future__ import annotations
 
 import re
 from typing import Any
+
+from app.bullet_analyzer import (
+    analyze_section_bullets,
+)
 
 from app.section_intelligence import (
     analyze_section_intelligence,
@@ -284,6 +289,102 @@ def analyze_bullet_usage(
 
 
 # ============================================================
+# V3.2 BULLET INTELLIGENCE
+# ============================================================
+
+def analyze_bullet_intelligence(
+    resume: dict,
+) -> dict:
+    """
+    Analyze bullet quality for the most important
+    bullet-driven resume sections.
+
+    Existing quality scoring is intentionally not changed.
+    """
+
+    sections = [
+        "experience",
+        "projects",
+        "achievements",
+    ]
+
+    result = {}
+
+    total_bullets = 0
+    total_scores = []
+
+    strong_bullets = 0
+    needs_attention_bullets = 0
+
+    for section in sections:
+
+        analysis = analyze_section_bullets(
+            _text(
+                resume.get(
+                    section
+                )
+            )
+        )
+
+        result[section] = analysis
+
+        total_bullets += analysis.get(
+            "total",
+            0,
+        )
+
+        average_score = analysis.get(
+            "average_score",
+            0,
+        )
+
+        if analysis.get(
+            "total",
+            0,
+        ) > 0:
+
+            total_scores.append(
+                average_score
+            )
+
+        strong_bullets += analysis.get(
+            "strong_count",
+            0,
+        )
+
+        needs_attention_bullets += (
+            analysis.get(
+                "needs_attention_count",
+                0,
+            )
+        )
+
+    overall_average = (
+        round(
+            sum(total_scores)
+            / len(total_scores)
+        )
+        if total_scores
+        else 0
+    )
+
+    return {
+        "sections": result,
+
+        "total_bullets": total_bullets,
+
+        "average_score": overall_average,
+
+        "strong_bullets": strong_bullets,
+
+        "needs_attention_bullets":
+            needs_attention_bullets,
+
+        "analyzed_sections": sections,
+    }
+
+
+# ============================================================
 # ACHIEVEMENTS
 # ============================================================
 
@@ -439,6 +540,10 @@ def calculate_quality_score(
 ) -> dict:
     """
     Calculate a deterministic resume quality score out of 70.
+
+    IMPORTANT:
+    This existing V3.0/V3.1 scoring model is intentionally
+    preserved in V3.2.
     """
 
     breakdown = {}
@@ -667,7 +772,13 @@ def analyze_resume_quality(
     """
     Run the complete resume quality analysis.
 
-    V3.2 additionally includes section intelligence.
+    V3.2 includes:
+
+    - Existing quality analysis
+    - Section intelligence
+    - Bullet intelligence
+
+    Existing score calculations remain unchanged.
     """
 
     length = analyze_resume_length(
@@ -722,6 +833,16 @@ def analyze_resume_quality(
         )
     )
 
+    # --------------------------------------------------------
+    # V3.2 Bullet Intelligence
+    # --------------------------------------------------------
+
+    bullet_intelligence = (
+        analyze_bullet_intelligence(
+            resume
+        )
+    )
+
     return {
         "score": score["score"],
 
@@ -750,4 +871,7 @@ def analyze_resume_quality(
         # V3.2
         "section_intelligence":
             section_intelligence,
+
+        "bullet_intelligence":
+            bullet_intelligence,
     }
