@@ -1,28 +1,24 @@
-/* =========================================================
-   AI RESUME ANALYZER
-   V2.4 - COMPLETE APPLICATION STYLES
-   ========================================================= */
+/* AI Resume Analyzer — V3.1 */
 
-
-/* =========================================================
-   GLOBAL
-   ========================================================= */
+/* =========================
+   1. Variables & Base
+   ========================= */
 
 :root {
     --primary: #5146e5;
-    --primary-dark: #4438d5;
+    --primary-dark: #4338ca;
     --primary-light: #eef0ff;
 
     --text: #17233c;
-    --text-secondary: #243452;
-    --muted: #68748a;
+    --text-secondary: #334155;
+    --muted: #64748b;
 
-    --background: #f4f7fb;
+    --background: #f5f7fc;
     --surface: #ffffff;
     --surface-secondary: #f8fafc;
 
     --border-color: #e2e8f0;
-    --border-light: #e8ebf1;
+    --border-light: #edf0f5;
 
     --success: #16a34a;
     --warning: #f59e0b;
@@ -32,7 +28,10 @@
     --radius: 20px;
 
     --shadow:
-        0 12px 35px rgba(35, 45, 75, 0.07);
+        0 12px 35px rgba(30, 41, 59, 0.07);
+
+    --shadow-hover:
+        0 18px 42px rgba(30, 41, 59, 0.11);
 }
 
 * {
@@ -45,106 +44,166 @@ html {
 
 body {
     margin: 0;
+    min-height: 100vh;
 
     font-family:
         Arial,
         Helvetica,
         sans-serif;
 
-    background: var(--background);
     color: var(--text);
-
     line-height: 1.6;
+
+    background:
+        radial-gradient(
+            circle at 10% 0%,
+            rgba(81, 70, 229, 0.10),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(37, 99, 235, 0.07),
+            transparent 28%
+        ),
+        linear-gradient(
+            180deg,
+            #f8f9ff 0%,
+            #f5f7fc 45%,
+            #f1f5f9 100%
+        );
 }
 
 a {
     color: inherit;
 }
 
-.container {
-    width: min(
-        1180px,
-        calc(100% - 40px)
-    );
+button,
+input,
+textarea {
+    font-family: inherit;
+}
 
+.container {
+    width: min(1180px, calc(100% - 40px));
     margin: 0 auto;
 }
 
 
-/* =========================================================
-   HEADER
-   ========================================================= */
+/* =========================
+   2. Header
+   ========================= */
 
 header {
-    padding: 70px 0 45px;
-    text-align: center;
+    position: relative;
+    padding: 28px 0 55px;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.88),
+            rgba(248, 249, 255, 0.55)
+        );
+
+    border-bottom: 1px solid rgba(226, 232, 240, 0.75);
+}
+
+header::before {
+    content: "";
+    position: absolute;
+
+    top: 0;
+    left: 50%;
+
+    width: min(900px, 90%);
+    height: 1px;
+
+    transform: translateX(-50%);
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(81, 70, 229, 0.35),
+            transparent
+        );
+}
+
+.top-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 20px;
+    margin-bottom: 55px;
 }
 
 .badge,
 .dashboard-badge {
-    display: inline-block;
+    display: inline-flex;
+    align-items: center;
 
-    padding: 8px 16px;
+    padding: 7px 14px;
 
+    border: 1px solid #dcd9ff;
     border-radius: 999px;
 
-    background: var(--primary-light);
+    background: rgba(238, 240, 255, 0.9);
     color: var(--primary);
 
-    font-size: 14px;
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 800;
 
-    letter-spacing: 0.4px;
+    letter-spacing: 0.06em;
 }
 
 header h1 {
     margin: 18px 0 12px;
 
-    font-size: clamp(
-        38px,
-        5vw,
-        60px
-    );
+    font-size: clamp(38px, 5vw, 60px);
+    line-height: 1.08;
 
-    line-height: 1.1;
+    letter-spacing: -1.5px;
 
     color: var(--text);
 }
 
 .hero-text {
     max-width: 760px;
-
     margin: 0 auto;
 
     color: var(--muted);
-
     font-size: 17px;
 }
 
 
-/* =========================================================
-   MAIN
-   ========================================================= */
+/* =========================
+   3. Main & Cards
+   ========================= */
 
 main {
-    padding-bottom: 60px;
+    padding: 38px 0 70px;
 }
 
-
-/* =========================================================
-   CARDS
-   ========================================================= */
-
 .card {
-    background: var(--surface);
+    background: rgba(255, 255, 255, 0.94);
 
-    border: 1px solid #e3e7ef;
-
+    border: 1px solid rgba(226, 232, 240, 0.9);
     border-radius: var(--radius);
 
     padding: 30px;
 
     box-shadow: var(--shadow);
+
+    backdrop-filter: blur(8px);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.card:hover {
+    border-color: #dce1ec;
 }
 
 .card + .card {
@@ -156,28 +215,61 @@ main {
 }
 
 .results {
-    margin-top: 35px;
+    margin-top: 30px;
 }
 
 .results-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
+        repeat(2, minmax(0, 1fr));
 
-    gap: 26px;
+    gap: 24px;
 }
 
 
-/* =========================================================
-   UPLOAD
-   ========================================================= */
+/* =========================
+   4. Typography
+   ========================= */
+
+.section-title {
+    margin: 0 0 20px;
+
+    color: var(--text);
+
+    font-size: 25px;
+    line-height: 1.25;
+    letter-spacing: -0.3px;
+}
+
+.card h3 {
+    color: var(--text);
+}
+
+.dashboard-description {
+    margin: 0;
+
+    color: var(--muted);
+    font-size: 15px;
+    line-height: 1.65;
+}
+
+
+/* =========================
+   5. Upload Form
+   ========================= */
 
 .upload-card {
     padding: 34px;
+
+    border-color: #dfe3f0;
+
+    background:
+        linear-gradient(
+            145deg,
+            rgba(255, 255, 255, 0.98),
+            rgba(248, 249, 255, 0.96)
+        );
 }
 
 .form-grid {
@@ -195,26 +287,29 @@ main {
 }
 
 .field label {
-    margin-bottom: 10px;
-
-    font-weight: 700;
-    font-size: 16px;
+    margin-bottom: 9px;
 
     color: var(--text);
+
+    font-size: 15px;
+    font-weight: 800;
 }
 
 .field input[type="file"],
 .field textarea {
     width: 100%;
 
-    border: 1px solid #dce1ea;
-
+    border: 1px solid #d8deea;
     border-radius: 14px;
 
-    background: var(--surface);
+    background: #ffffff;
+    color: var(--text);
 
     font: inherit;
-    color: var(--text);
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
 }
 
 .field input[type="file"] {
@@ -223,7 +318,6 @@ main {
 
 .field textarea {
     min-height: 205px;
-
     padding: 14px;
 
     resize: vertical;
@@ -236,19 +330,19 @@ main {
     border-color: var(--primary);
 
     box-shadow:
-        0 0 0 3px
-        rgba(81, 70, 229, 0.1);
+        0 0 0 4px
+        rgba(81, 70, 229, 0.10);
 }
 
 .field small {
-    margin-top: 10px;
+    margin-top: 9px;
 
     color: var(--muted);
+    font-size: 13px;
 }
 
 .button-row {
     display: flex;
-
     justify-content: center;
 
     margin-top: 26px;
@@ -256,18 +350,27 @@ main {
 
 button {
     border: 0;
-
     border-radius: 13px;
 
     padding: 14px 28px;
 
-    background: var(--primary);
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary),
+            #635bdf
+        );
+
     color: #ffffff;
 
-    font-size: 16px;
-    font-weight: 700;
+    font-size: 15px;
+    font-weight: 800;
 
     cursor: pointer;
+
+    box-shadow:
+        0 8px 20px
+        rgba(81, 70, 229, 0.18);
 
     transition:
         transform 0.2s ease,
@@ -278,36 +381,22 @@ button {
 button:hover {
     transform: translateY(-2px);
 
-    background: var(--primary-dark);
+    background:
+        linear-gradient(
+            135deg,
+            var(--primary-dark),
+            var(--primary)
+        );
 
     box-shadow:
-        0 8px 20px
+        0 12px 25px
         rgba(81, 70, 229, 0.25);
 }
 
 
-/* =========================================================
-   HEADINGS
-   ========================================================= */
-
-.section-title {
-    margin: 0 0 22px;
-
-    font-size: 25px;
-
-    line-height: 1.25;
-
-    color: var(--text);
-}
-
-.card h3 {
-    color: var(--text);
-}
-
-
-/* =========================================================
-   INFO LIST
-   ========================================================= */
+/* =========================
+   6. Lists & Status
+   ========================= */
 
 .info-list {
     list-style: none;
@@ -318,7 +407,6 @@ button:hover {
 
 .info-list li {
     display: flex;
-
     justify-content: space-between;
     align-items: center;
 
@@ -326,8 +414,7 @@ button:hover {
 
     padding: 13px 0;
 
-    border-bottom:
-        1px solid var(--border-light);
+    border-bottom: 1px solid var(--border-light);
 }
 
 .info-list li:last-child {
@@ -340,31 +427,23 @@ button:hover {
 
 .info-list span {
     color: var(--text-secondary);
-
     text-align: right;
 }
 
-
-/* =========================================================
-   STATUS
-   ========================================================= */
-
 .status-found {
-    color: #159447 !important;
-
-    font-weight: 700;
+    color: #15803d !important;
+    font-weight: 800;
 }
 
 .status-missing {
-    color: #e53935 !important;
-
-    font-weight: 700;
+    color: #dc2626 !important;
+    font-weight: 800;
 }
 
 
-/* =========================================================
-   SCORE CARDS
-   ========================================================= */
+/* =========================
+   7. Scores
+   ========================= */
 
 .score-card {
     text-align: center;
@@ -376,10 +455,10 @@ button:hover {
     color: var(--primary);
 
     font-size: 50px;
-
     line-height: 1.1;
 
     font-weight: 800;
+    letter-spacing: -1px;
 }
 
 .score-label {
@@ -389,13 +468,12 @@ button:hover {
 }
 
 
-/* =========================================================
-   V2.4 DASHBOARD
-   ========================================================= */
+/* =========================
+   8. Dashboard
+   ========================= */
 
 .dashboard-card {
     padding: 38px;
-
     overflow: hidden;
 }
 
@@ -404,128 +482,92 @@ button:hover {
 }
 
 .dashboard-badge {
-    margin-bottom: 14px;
-
+    margin-bottom: 12px;
     text-transform: uppercase;
 }
 
 .dashboard-heading .section-title {
-    margin-bottom: 12px;
-
+    margin-bottom: 10px;
     font-size: 30px;
 }
 
-.dashboard-description {
-    margin: 0;
-
-    color: var(--muted);
-
-    font-size: 16px;
-}
-
-
-/* =========================================================
-   OVERALL SCORE
-   ========================================================= */
-
 .dashboard-overall {
     display: flex;
-
     align-items: center;
 
     gap: 35px;
 
     padding: 32px;
-
     margin-bottom: 26px;
 
+    border: 1px solid #e3e2ff;
     border-radius: 20px;
 
     background:
         linear-gradient(
             135deg,
-            #f5f4ff 0%,
+            #f3f2ff 0%,
             #ffffff 100%
         );
-
-    border: 1px solid #e5e4ff;
 }
 
 .overall-score {
     display: flex;
-
     align-items: baseline;
-
     flex-shrink: 0;
 }
 
 .overall-score-value {
-    font-size: 76px;
+    color: var(--primary);
 
+    font-size: 76px;
     line-height: 1;
 
     font-weight: 800;
-
-    color: var(--primary);
+    letter-spacing: -2px;
 }
 
 .overall-score-max {
     margin-left: 5px;
 
-    font-size: 24px;
-
-    font-weight: 600;
-
     color: #7a8498;
+
+    font-size: 24px;
+    font-weight: 600;
 }
 
 .overall-score-content h3 {
     margin: 0 0 4px;
-
     font-size: 24px;
 }
 
 .overall-score-content p {
     margin: 0;
-
     color: var(--muted);
 }
-
-
-/* =========================================================
-   DASHBOARD METRIC CARDS
-   ========================================================= */
 
 .dashboard-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            3,
-            minmax(0, 1fr)
-        );
+        repeat(3, minmax(0, 1fr));
 
     gap: 18px;
 }
 
 .dashboard-score-item {
-    position: relative;
-
     min-height: 120px;
 
     padding: 24px;
 
     display: flex;
-
     flex-direction: column;
-
     justify-content: center;
 
-    border: 1px solid #e4e8ef;
-
+    border: 1px solid var(--border-color);
     border-radius: 16px;
 
-    background: var(--surface);
+    background: var(--surface-secondary);
 
     transition:
         transform 0.2s ease,
@@ -546,42 +588,31 @@ button:hover {
 .dashboard-score-label {
     margin-bottom: 7px;
 
-    color: #69748a;
+    color: var(--muted);
 
-    font-size: 14px;
-
-    font-weight: 600;
+    font-size: 13px;
+    font-weight: 700;
 }
 
 .dashboard-score-item strong {
     color: var(--text);
-
     font-size: 27px;
 }
 
 
-/* =========================================================
-   QUICK SUMMARY
-   ========================================================= */
+/* =========================
+   9. Quick Summary
+   ========================= */
 
 .quick-summary-card {
-    position: relative;
-
     overflow: hidden;
-}
-
-.summary-header {
-    margin-bottom: 24px;
 }
 
 .quick-summary-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            3,
-            minmax(0, 1fr)
-        );
+        repeat(3, minmax(0, 1fr));
 
     gap: 16px;
 
@@ -592,10 +623,9 @@ button:hover {
     padding: 20px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 14px;
 
-    background: var(--surface);
+    background: var(--surface-secondary);
 }
 
 .summary-item span {
@@ -603,11 +633,10 @@ button:hover {
 
     margin-bottom: 8px;
 
+    color: var(--muted);
+
     font-size: 13px;
-
-    font-weight: 600;
-
-    color: #64748b;
+    font-weight: 700;
 }
 
 .summary-item strong {
@@ -616,7 +645,6 @@ button:hover {
     color: #172554;
 
     font-size: 18px;
-
     line-height: 1.4;
 }
 
@@ -625,9 +653,8 @@ button:hover {
 
     padding: 20px 22px;
 
-    border-radius: 14px;
-
     border: 1px solid #e0e7ff;
+    border-radius: 14px;
 
     background: #f8faff;
 }
@@ -638,22 +665,18 @@ button:hover {
     margin-bottom: 6px;
 
     color: #4338ca;
-
     font-size: 14px;
 }
 
 .summary-recommendation p {
     margin: 0;
-
-    color: #334155;
-
-    line-height: 1.6;
+    color: var(--text-secondary);
 }
 
 
-/* =========================================================
-   ANALYTICS
-   ========================================================= */
+/* =========================
+   10. Analytics
+   ========================= */
 
 .analytics-card {
     overflow: hidden;
@@ -661,13 +684,10 @@ button:hover {
 
 .analytics-header {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 24px;
-
     margin-bottom: 28px;
 }
 
@@ -677,7 +697,6 @@ button:hover {
     padding: 18px 20px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 16px;
 
     text-align: center;
@@ -690,40 +709,28 @@ button:hover {
 
     margin-bottom: 6px;
 
-    font-size: 0.78rem;
+    color: var(--muted);
 
-    font-weight: 700;
+    font-size: 12px;
+    font-weight: 800;
 
     text-transform: uppercase;
-
     letter-spacing: 0.08em;
-
-    color: var(--muted);
 }
 
 .analytics-average strong {
     display: block;
 
-    font-size: 1.8rem;
-
-    line-height: 1.2;
-
     color: var(--text);
+
+    font-size: 1.8rem;
 }
-
-
-/* =========================================================
-   ANALYTICS METRIC GRID
-   ========================================================= */
 
 .analytics-grid {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            2,
-            minmax(0, 1fr)
-        );
+        repeat(2, minmax(0, 1fr));
 
     gap: 18px;
 }
@@ -732,7 +739,6 @@ button:hover {
     padding: 20px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 16px;
 
     background: var(--surface-secondary);
@@ -740,42 +746,30 @@ button:hover {
 
 .analytics-item-top {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 16px;
-
     margin-bottom: 12px;
 }
 
 .analytics-item-top span {
-    font-weight: 700;
-
     color: var(--text);
+    font-weight: 700;
 }
 
 .analytics-item-top strong {
-    font-size: 1.1rem;
-
     color: var(--text);
+    font-size: 1.1rem;
 }
-
-
-/* =========================================================
-   ANALYTICS PROGRESS
-   ========================================================= */
 
 .analytics-progress {
     width: 100%;
-
     height: 10px;
 
     overflow: hidden;
 
-    margin-top: 12px;
-    margin-bottom: 10px;
+    margin: 12px 0 10px;
 
     border-radius: 999px;
 
@@ -786,13 +780,11 @@ button:hover {
     display: block;
 
     height: 100%;
-
     min-width: 4px;
 
     border-radius: inherit;
 
-    transition:
-        width 0.6s ease;
+    transition: width 0.6s ease;
 }
 
 .analytics-progress-bar.excellent {
@@ -822,18 +814,11 @@ button:hover {
     margin-top: 10px;
 
     color: var(--muted);
-
     font-weight: 600;
 }
 
-
-/* =========================================================
-   ANALYTICS LISTS
-   ========================================================= */
-
 .analytics-list {
     display: grid;
-
     gap: 12px;
 
     margin: 0;
@@ -845,14 +830,9 @@ button:hover {
 .analytics-list li {
     position: relative;
 
-    padding:
-        16px
-        18px
-        16px
-        44px;
+    padding: 16px 18px 16px 44px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 12px;
 
     background: var(--surface);
@@ -871,36 +851,29 @@ button:hover {
 
 .strengths-list li::before {
     content: "✓";
-
     color: var(--success);
 }
 
 .attention-list li::before {
     content: "!";
-
     color: var(--warning);
 }
 
 
-/* =========================================================
-   ACTION PLAN
-   ========================================================= */
+/* =========================
+   11. Action Plan
+   ========================= */
 
 .action-plan-card {
-    position: relative;
-
     overflow: hidden;
 }
 
 .action-plan-header {
     display: flex;
-
     align-items: flex-start;
-
     justify-content: space-between;
 
     gap: 24px;
-
     margin-bottom: 30px;
 }
 
@@ -910,7 +883,6 @@ button:hover {
     padding: 16px 20px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 14px;
 
     text-align: center;
@@ -921,11 +893,10 @@ button:hover {
 .action-plan-count strong {
     display: block;
 
-    font-size: 28px;
-
-    line-height: 1;
-
     color: var(--primary);
+
+    font-size: 28px;
+    line-height: 1;
 }
 
 .action-plan-count span {
@@ -933,18 +904,15 @@ button:hover {
 
     margin-top: 6px;
 
+    color: var(--muted);
+
     font-size: 12px;
-
-    font-weight: 600;
-
-    color: #64748b;
+    font-weight: 700;
 }
 
 .action-plan-list {
     display: flex;
-
     flex-direction: column;
-
     gap: 14px;
 
     margin: 0;
@@ -955,7 +923,6 @@ button:hover {
 
 .action-plan-list li {
     display: flex;
-
     align-items: flex-start;
 
     gap: 16px;
@@ -963,7 +930,6 @@ button:hover {
     padding: 18px 20px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 14px;
 
     background: var(--surface);
@@ -991,35 +957,30 @@ button:hover {
     height: 34px;
 
     display: flex;
-
     align-items: center;
     justify-content: center;
 
     border-radius: 50%;
 
     background: #eef2ff;
-
     color: var(--primary);
 
-    font-weight: 800;
-
     font-size: 14px;
+    font-weight: 800;
 }
 
 .action-plan-content {
     flex: 1;
-
     padding-top: 5px;
 
-    line-height: 1.55;
-
     color: #172554;
+    line-height: 1.55;
 }
 
 
-/* =========================================================
-   RECOMMENDATIONS
-   ========================================================= */
+/* =========================
+   12. Recommendations
+   ========================= */
 
 .recommendations-card {
     overflow: hidden;
@@ -1032,13 +993,8 @@ button:hover {
         );
 }
 
-.recommendations-header {
-    margin-bottom: 8px;
-}
-
 .suggestions {
     margin: 0;
-
     padding-left: 24px;
 }
 
@@ -1046,7 +1002,6 @@ button:hover {
     margin: 10px 0;
 
     color: var(--text-secondary);
-
     line-height: 1.6;
 }
 
@@ -1059,78 +1014,68 @@ button:hover {
 }
 
 
-/* =========================================================
-   SKILLS
-   ========================================================= */
+/* =========================
+   13. Skills
+   ========================= */
 
 .skills {
     display: flex;
-
     flex-wrap: wrap;
 
     gap: 9px;
 
-    list-style: none;
-
-    padding: 0;
     margin: 0;
+    padding: 0;
+
+    list-style: none;
 }
 
 .skills li {
     padding: 7px 12px;
 
+    border: 1px solid #dfe3ff;
     border-radius: 999px;
 
     background: var(--primary-light);
-
     color: var(--primary);
 
     font-size: 14px;
-
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .skills.missing li {
-    background: #fff0f0;
+    border-color: #fecaca;
 
+    background: #fff0f0;
     color: #d63333;
 }
 
 
-/* =========================================================
-   DETAILS / EXTRACTED TEXT
-   ========================================================= */
+/* =========================
+   14. Extracted Text & Error
+   ========================= */
 
 details summary {
     cursor: pointer;
 
-    font-weight: 700;
-
     color: var(--text);
+    font-weight: 800;
 }
 
 pre {
     max-height: 500px;
-
     overflow: auto;
 
     padding: 18px;
 
+    border: 1px solid #e2e6ed;
     border-radius: 12px;
 
     background: #f5f7fa;
 
-    border: 1px solid #e2e6ed;
-
     white-space: pre-wrap;
-
     word-break: break-word;
 }
-
-
-/* =========================================================
-   ERROR
-   ========================================================= */
 
 .error {
     margin-top: 25px;
@@ -1146,34 +1091,29 @@ pre {
 
 .error p {
     margin-bottom: 0;
-
     color: #8d3030;
 }
 
 
-/* =========================================================
-   PDF REPORT
-   ========================================================= */
+/* =========================
+   15. PDF Report
+   ========================= */
 
 .report-card {
     overflow: hidden;
 }
 
 .report-download-card {
-    margin-top: 28px;
-
-    padding: 24px;
-
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 24px;
 
-    border: 1px solid var(--border-color);
+    margin-top: 28px;
+    padding: 24px;
 
+    border: 1px solid var(--border-color);
     border-radius: 18px;
 
     background: var(--surface-secondary);
@@ -1181,23 +1121,17 @@ pre {
 
 .report-download-card h3 {
     margin: 10px 0 6px;
-
     font-size: 20px;
 }
 
 .report-download-card p {
     margin: 0;
-
-    color: #64748b;
-
-    line-height: 1.6;
+    color: var(--muted);
 }
 
 .report-header {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 28px;
@@ -1213,29 +1147,23 @@ pre {
 
 .report-action form {
     display: flex;
-
     flex-direction: column;
-
     gap: 10px;
 }
 
 .report-file-label {
-    font-size: 13px;
-
-    font-weight: 700;
-
     color: #475569;
+    font-size: 13px;
+    font-weight: 800;
 }
 
 .report-action input[type="file"] {
     width: 100%;
-
     max-width: 260px;
 
     padding: 9px;
 
     border: 1px solid #dce1ea;
-
     border-radius: 10px;
 
     background: #ffffff;
@@ -1244,9 +1172,7 @@ pre {
 .download-report-button,
 .secondary-button {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     padding: 13px 22px;
@@ -1254,17 +1180,14 @@ pre {
     border-radius: 10px;
 
     background: var(--primary);
-
     color: #ffffff;
 
     text-decoration: none;
 
     font-size: 15px;
-
-    font-weight: 700;
+    font-weight: 800;
 
     white-space: nowrap;
-
     cursor: pointer;
 
     transition:
@@ -1290,24 +1213,16 @@ pre {
 }
 
 
-/* =========================================================
-   V2.4 ANALYSIS HISTORY
-   ========================================================= */
-
-
-/* ---------------------------------------------------------
-   HISTORY TOP NAVIGATION
-   --------------------------------------------------------- */
+/* =========================
+   16. History
+   ========================= */
 
 .history-top-navigation {
     display: flex;
-
     align-items: center;
-
     justify-content: center;
 
     gap: 9px;
-
     margin-bottom: 30px;
 
     font-size: 15px;
@@ -1315,10 +1230,8 @@ pre {
 
 .brand-link {
     color: var(--primary);
-
     text-decoration: none;
-
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .brand-link:hover {
@@ -1330,40 +1243,29 @@ pre {
 }
 
 .history-current-page {
-    color: #64748b;
-
-    font-weight: 600;
+    color: var(--muted);
+    font-weight: 700;
 }
-
-
-/* ---------------------------------------------------------
-   ANALYZE NEW RESUME NAVIGATION
-   --------------------------------------------------------- */
 
 .history-navigation {
     display: flex;
-
     justify-content: flex-end;
-
     margin-top: 28px;
 }
 
 .history-nav-button {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     padding: 10px 18px;
 
     color: var(--primary);
 
-    font-size: 15px;
+    font-size: 14px;
+    font-weight: 800;
 
-    font-weight: 700;
-
-    text-decoration: underline;
+    text-decoration: none;
 
     transition:
         color 0.2s ease,
@@ -1372,37 +1274,22 @@ pre {
 
 .history-nav-button:hover {
     color: var(--primary-dark);
-
     transform: translateX(-2px);
 }
 
-
-/* ---------------------------------------------------------
-   HISTORY HEADER CARD
-   --------------------------------------------------------- */
-
 .history-header-card {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 30px;
 
-    margin-top: 25px;
-
-    margin-bottom: 18px;
+    margin: 25px 0 18px;
 }
 
 .history-header-card > div:first-child {
     flex: 1;
-
     min-width: 0;
-}
-
-.history-header-card .section-title {
-    margin-bottom: 10px;
 }
 
 .history-count {
@@ -1411,17 +1298,13 @@ pre {
     min-height: 90px;
 
     display: flex;
-
     flex-direction: column;
-
     align-items: center;
-
     justify-content: center;
 
     padding: 16px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 16px;
 
     background: var(--surface-secondary);
@@ -1435,10 +1318,7 @@ pre {
     color: var(--primary);
 
     font-size: 30px;
-
     line-height: 1;
-
-    font-weight: 800;
 }
 
 .history-count span {
@@ -1449,37 +1329,22 @@ pre {
     color: var(--muted);
 
     font-size: 12px;
-
-    font-weight: 700;
+    font-weight: 800;
 }
-
-
-/* ---------------------------------------------------------
-   HISTORY LIST
-   --------------------------------------------------------- */
 
 .history-list {
     display: flex;
-
     flex-direction: column;
-
     gap: 18px;
 
     margin-top: 0;
-
     padding: 0;
 }
-
-
-/* ---------------------------------------------------------
-   HISTORY ITEM
-   --------------------------------------------------------- */
 
 .history-item {
     position: relative;
 
     display: flex;
-
     flex-direction: column;
 
     gap: 22px;
@@ -1499,24 +1364,11 @@ pre {
 
     border-color: #d7d3ff;
 
-    box-shadow:
-        0 16px 35px
-        rgba(35, 45, 75, 0.09);
+    box-shadow: var(--shadow-hover);
 }
-
-
-/* ---------------------------------------------------------
-   HISTORY ITEM MAIN INFORMATION
-   --------------------------------------------------------- */
 
 .history-item-main {
     display: grid;
-
-    /*
-       IMPORTANT:
-       minmax(0, 1fr) prevents long resume names
-       from forcing the layout to become extremely narrow.
-    */
 
     grid-template-columns:
         minmax(0, 1fr)
@@ -1531,7 +1383,6 @@ pre {
 
 .history-item-title {
     min-width: 0;
-
     width: 100%;
 }
 
@@ -1549,19 +1400,10 @@ pre {
     color: var(--text);
 
     font-size: 25px;
-
     line-height: 1.25;
 
-    /*
-       Prevent the browser from breaking normal names
-       character-by-character.
-    */
-
     white-space: normal;
-
     overflow-wrap: anywhere;
-
-    word-break: normal;
 }
 
 .history-item-title p {
@@ -1574,30 +1416,17 @@ pre {
     color: var(--muted);
 
     font-size: 14px;
-
     line-height: 1.5;
 
-    white-space: normal;
-
     overflow-wrap: anywhere;
-
-    word-break: normal;
 }
 
-
-/* ---------------------------------------------------------
-   HISTORY OVERALL SCORE
-   --------------------------------------------------------- */
-
 .history-score {
-    flex: 0 0 auto;
-
     min-width: 145px;
 
     padding: 18px 20px;
 
     border: 1px solid #e0e7ff;
-
     border-radius: 16px;
 
     background:
@@ -1618,12 +1447,9 @@ pre {
     color: var(--muted);
 
     font-size: 12px;
-
-    font-weight: 700;
+    font-weight: 800;
 
     text-transform: uppercase;
-
-    letter-spacing: 0.04em;
 }
 
 .history-score strong {
@@ -1632,25 +1458,14 @@ pre {
     color: var(--primary);
 
     font-size: 28px;
-
     line-height: 1.2;
-
-    font-weight: 800;
 }
-
-
-/* ---------------------------------------------------------
-   HISTORY METRICS
-   --------------------------------------------------------- */
 
 .history-metrics {
     display: grid;
 
     grid-template-columns:
-        repeat(
-            5,
-            minmax(0, 1fr)
-        );
+        repeat(5, minmax(0, 1fr));
 
     gap: 12px;
 
@@ -1663,7 +1478,6 @@ pre {
     padding: 16px;
 
     border: 1px solid var(--border-color);
-
     border-radius: 13px;
 
     background: var(--surface-secondary);
@@ -1679,8 +1493,7 @@ pre {
     color: var(--muted);
 
     font-size: 12px;
-
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .history-metric strong {
@@ -1690,15 +1503,8 @@ pre {
 
     font-size: 16px;
 
-    line-height: 1.3;
-
     overflow-wrap: anywhere;
 }
-
-
-/* ---------------------------------------------------------
-   HISTORY STATUS
-   --------------------------------------------------------- */
 
 .history-status-row {
     margin-top: 15px;
@@ -1706,7 +1512,6 @@ pre {
 
 .history-status {
     display: inline-flex;
-
     align-items: center;
 
     padding: 6px 10px;
@@ -1714,32 +1519,22 @@ pre {
     border-radius: 999px;
 
     font-size: 12px;
-
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .job-enabled {
     background: #ecfdf3;
-
     color: #15803d;
 }
 
 .job-disabled {
     background: #f1f5f9;
-
     color: #64748b;
 }
 
-
-/* ---------------------------------------------------------
-   HISTORY ACTIONS
-   --------------------------------------------------------- */
-
 .history-actions {
     display: flex;
-
     align-items: center;
-
     justify-content: flex-end;
 
     gap: 10px;
@@ -1757,9 +1552,7 @@ pre {
 
 .history-primary-button {
     display: inline-flex;
-
     align-items: center;
-
     justify-content: center;
 
     min-height: 42px;
@@ -1767,18 +1560,15 @@ pre {
     padding: 10px 18px;
 
     border: 1px solid var(--primary);
-
     border-radius: 10px;
 
     background: var(--primary);
-
     color: #ffffff;
 
     text-decoration: none;
 
     font-size: 14px;
-
-    font-weight: 700;
+    font-weight: 800;
 
     transition:
         transform 0.2s ease,
@@ -1802,16 +1592,13 @@ pre {
     padding: 10px 18px;
 
     border: 1px solid #fecaca;
-
     border-radius: 10px;
 
     background: #ffffff;
-
     color: var(--danger);
 
     font-size: 14px;
-
-    font-weight: 700;
+    font-weight: 800;
 
     cursor: pointer;
 
@@ -1823,18 +1610,12 @@ pre {
 
 .history-delete-button:hover {
     background: #fff5f5;
-
     border-color: #fca5a5;
 
     transform: translateY(-2px);
 
     box-shadow: none;
 }
-
-
-/* ---------------------------------------------------------
-   HISTORY EMPTY STATE
-   --------------------------------------------------------- */
 
 .history-empty-card {
     margin-top: 18px;
@@ -1846,47 +1627,30 @@ pre {
 
 .history-empty-icon {
     margin-bottom: 15px;
-
     font-size: 42px;
 }
 
 .history-empty-card h2 {
     margin: 0 0 8px;
-
-    color: var(--text);
-
     font-size: 24px;
 }
 
 .history-empty-card p {
     margin: 0 0 24px;
-
     color: var(--muted);
 }
 
-.history-primary-button {
-    cursor: pointer;
-}
-
-
-/* ---------------------------------------------------------
-   HISTORY ERROR
-   --------------------------------------------------------- */
-
 .history-error {
     margin-bottom: 18px;
-
     padding: 16px 18px;
 
     border: 1px solid #fecaca;
-
     border-radius: 13px;
 
     background: #fff7f7;
-
     color: #8d3030;
 
-    font-weight: 600;
+    font-weight: 700;
 }
 
 .history-error strong {
@@ -1895,30 +1659,19 @@ pre {
 
 .history-error p {
     margin: 6px 0 0;
-
-    color: #8d3030;
 }
-
-
-/* ---------------------------------------------------------
-   SAVED ANALYSIS BANNER
-   --------------------------------------------------------- */
 
 .saved-analysis-banner {
     display: flex;
-
     align-items: center;
-
     justify-content: space-between;
 
     gap: 18px;
 
     margin-bottom: 24px;
-
     padding: 15px 18px;
 
     border: 1px solid #dcd8ff;
-
     border-radius: 14px;
 
     background: #f8f7ff;
@@ -1926,10 +1679,8 @@ pre {
 
 .saved-analysis-banner-content {
     color: #4338ca;
-
     font-size: 14px;
-
-    font-weight: 700;
+    font-weight: 800;
 }
 
 .saved-analysis-banner-link {
@@ -1938,7 +1689,6 @@ pre {
     text-decoration: none;
 
     font-size: 13px;
-
     font-weight: 800;
 
     white-space: nowrap;
@@ -1949,42 +1699,245 @@ pre {
 }
 
 
-/* =========================================================
-   FOOTER
-   ========================================================= */
+/* =========================
+   17. Saved Analysis
+   ========================= */
+
+.history-view-card {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+
+    margin-bottom: 26px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #ffffff,
+            #f8f7ff
+        );
+}
+
+
+/* =========================
+   18. V3 Recommendation Engine
+   ========================= */
+
+.v3-recommendations-card {
+    overflow: hidden;
+}
+
+.v3-recommendations-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 24px;
+    margin-bottom: 28px;
+}
+
+.v3-readiness-score {
+    flex: 0 0 auto;
+
+    min-width: 130px;
+
+    padding: 16px 20px;
+
+    border: 1px solid #e0e7ff;
+    border-radius: 15px;
+
+    background: #f8f7ff;
+
+    text-align: center;
+}
+
+.v3-readiness-score span {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--muted);
+
+    font-size: 12px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+}
+
+.v3-readiness-score strong {
+    display: block;
+
+    color: var(--primary);
+
+    font-size: 28px;
+}
+
+.v3-check-grid {
+    display: grid;
+
+    grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+    gap: 18px;
+}
+
+.v3-check-card {
+    padding: 20px;
+
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+
+    background: var(--surface-secondary);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease,
+        border-color 0.2s ease;
+}
+
+.v3-check-card:hover {
+    transform: translateY(-2px);
+
+    border-color: #d7d3ff;
+
+    box-shadow:
+        0 10px 25px
+        rgba(35, 45, 75, 0.07);
+}
+
+.v3-check-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+
+    gap: 12px;
+    margin-bottom: 16px;
+}
+
+.v3-check-header h3 {
+    margin: 0;
+
+    color: var(--text);
+    font-size: 18px;
+}
+
+.v3-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    padding: 5px 9px;
+
+    border-radius: 999px;
+
+    font-size: 11px;
+    font-weight: 800;
+
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.v3-status-good {
+    background: #ecfdf3;
+    color: #15803d;
+}
+
+.v3-status-warning {
+    background: #fff7ed;
+    color: #c2410c;
+}
+
+.v3-check-detail {
+    display: flex;
+    justify-content: space-between;
+
+    gap: 12px;
+
+    padding: 9px 0;
+
+    border-bottom: 1px solid var(--border-light);
+
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.v3-check-detail strong {
+    color: var(--text);
+}
+
+.v3-missing-fields {
+    margin-top: 12px;
+
+    padding: 10px 12px;
+
+    border-radius: 10px;
+
+    background: #fff7f7;
+    color: #991b1b;
+
+    font-size: 13px;
+}
+
+.v3-missing-fields span {
+    font-weight: 800;
+}
+
+.v3-recommendation {
+    margin: 16px 0 0;
+
+    color: var(--text-secondary);
+
+    font-size: 14px;
+    line-height: 1.6;
+}
+
+.v3-recommendation strong {
+    display: block;
+
+    margin-bottom: 5px;
+
+    color: var(--primary);
+    font-size: 13px;
+}
+
+
+/* =========================
+   19. Footer
+   ========================= */
 
 footer {
-    padding: 30px 0;
+    padding: 34px 0;
 
-    border-top: 1px solid #e4e8ef;
+    border-top: 1px solid rgba(226, 232, 240, 0.9);
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255, 255, 255, 0.75),
+            rgba(248, 250, 252, 0.95)
+        );
 
     color: #7a8498;
 
     text-align: center;
 
-    font-size: 14px;
+    font-size: 13px;
 }
 
 
-/* =========================================================
-   RESPONSIVE - 1000px
-   ========================================================= */
+/* =========================
+   20. Responsive
+   ========================= */
 
 @media (max-width: 1000px) {
 
     .history-metrics {
         grid-template-columns:
-            repeat(
-                3,
-                minmax(0, 1fr)
-            );
+            repeat(3, minmax(0, 1fr));
     }
 }
-
-
-/* =========================================================
-   RESPONSIVE - 900px
-   ========================================================= */
 
 @media (max-width: 900px) {
 
@@ -2007,39 +1960,31 @@ footer {
 
     .quick-summary-grid {
         grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+            repeat(2, minmax(0, 1fr));
     }
 
-    .action-plan-header {
-        flex-direction: column;
-    }
-
-    .action-plan-count {
-        width: 100%;
-    }
-
+    .action-plan-header,
     .history-header-card {
-        align-items: flex-start;
-
         flex-direction: column;
+        align-items: stretch;
     }
 
+    .action-plan-count,
     .history-count {
         width: 100%;
+    }
 
-        flex-basis: auto;
+    .history-view-card {
+        align-items: stretch;
+        flex-direction: column;
     }
 }
 
-
-/* =========================================================
-   RESPONSIVE - 800px
-   ========================================================= */
-
 @media (max-width: 800px) {
+
+    .top-navigation {
+        margin-bottom: 40px;
+    }
 
     .history-item-main {
         grid-template-columns: 1fr;
@@ -2048,34 +1993,33 @@ footer {
     .history-score {
         width: 100%;
     }
+
+    .v3-recommendations-header {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .v3-readiness-score {
+        width: 100%;
+    }
+
+    .v3-check-grid {
+        grid-template-columns: 1fr;
+    }
 }
-
-
-/* =========================================================
-   RESPONSIVE - 750px
-   ========================================================= */
 
 @media (max-width: 750px) {
 
     .history-metrics {
         grid-template-columns:
-            repeat(
-                2,
-                minmax(0, 1fr)
-            );
+            repeat(2, minmax(0, 1fr));
     }
 }
-
-
-/* =========================================================
-   RESPONSIVE - 700px
-   ========================================================= */
 
 @media (max-width: 700px) {
 
     .analytics-header {
         flex-direction: column;
-
         align-items: stretch;
     }
 
@@ -2087,66 +2031,37 @@ footer {
         grid-template-columns: 1fr;
     }
 
-    .report-download-card {
-        flex-direction: column;
-
-        align-items: flex-start;
-    }
-
-    .download-report-button {
-        width: 100%;
-    }
-
+    .report-download-card,
     .report-header {
         flex-direction: column;
-
         align-items: stretch;
     }
 
-    .report-action {
+    .report-action,
+    .secondary-button {
         width: 100%;
     }
 
     .report-action input[type="file"] {
         max-width: none;
-
-        width: 100%;
-    }
-
-    .secondary-button {
-        width: 100%;
-    }
-
-    .history-item-main {
-        align-items: stretch;
     }
 
     .history-actions {
         align-items: stretch;
-
         flex-direction: column;
     }
 
     .history-primary-button,
-    .history-delete-button {
-        width: 100%;
-    }
-
+    .history-delete-button,
     .history-actions form {
         width: 100%;
     }
 
     .saved-analysis-banner {
         align-items: flex-start;
-
         flex-direction: column;
     }
 }
-
-
-/* =========================================================
-   RESPONSIVE - 650px
-   ========================================================= */
 
 @media (max-width: 650px) {
 
@@ -2158,49 +2073,41 @@ footer {
         padding: 16px;
     }
 
-    .action-plan-number {
-        flex-basis: 30px;
-
-        width: 30px;
-        height: 30px;
-
-        font-size: 13px;
-    }
-
     .summary-item strong {
         font-size: 16px;
     }
 }
 
-
-/* =========================================================
-   RESPONSIVE - 600px
-   ========================================================= */
-
 @media (max-width: 600px) {
 
     .container {
-        width: min(
-            calc(100% - 24px),
-            1180px
-        );
+        width: calc(100% - 24px);
     }
 
     header {
-        padding: 45px 0 30px;
+        padding: 25px 0 38px;
+    }
+
+    .top-navigation {
+        align-items: flex-start;
+        flex-direction: column;
     }
 
     header h1 {
         font-size: 38px;
+        letter-spacing: -1px;
     }
 
     .hero-text {
         font-size: 15px;
     }
 
+    main {
+        padding-top: 24px;
+    }
+
     .card {
         padding: 22px;
-
         border-radius: 16px;
     }
 
@@ -2210,11 +2117,9 @@ footer {
 
     .dashboard-overall {
         flex-direction: column;
-
         align-items: flex-start;
 
         gap: 18px;
-
         padding: 24px;
     }
 
@@ -2228,9 +2133,7 @@ footer {
 
     .info-list li {
         align-items: flex-start;
-
         flex-direction: column;
-
         gap: 4px;
     }
 
@@ -2244,10 +2147,6 @@ footer {
 
     .history-navigation {
         justify-content: center;
-    }
-
-    .history-nav-button {
-        font-size: 14px;
     }
 
     .history-item {
@@ -2264,8 +2163,6 @@ footer {
 
     .history-actions {
         flex-direction: column;
-
-        align-items: stretch;
     }
 
     .history-primary-button,
@@ -2276,18 +2173,7 @@ footer {
     .history-count {
         min-height: 80px;
     }
-
-    .saved-analysis-banner {
-        align-items: flex-start;
-
-        flex-direction: column;
-    }
 }
-
-
-/* =========================================================
-   RESPONSIVE - 500px
-   ========================================================= */
 
 @media (max-width: 500px) {
 
@@ -2298,222 +2184,6 @@ footer {
     .history-item-title h2 {
         font-size: 21px;
     }
-}
-
-
-/* =========================================================
-   PRINT
-   ========================================================= */
-
-@media print {
-
-    body {
-        background: #ffffff !important;
-    }
-
-    .upload-card,
-    .history-navigation,
-    .history-actions {
-        display: none !important;
-    }
-
-    .badge {
-        border: 1px solid #ddd;
-    }
-
-    .card {
-        break-inside: avoid;
-
-        box-shadow: none;
-    }
-
-    footer {
-        display: none !important;
-    }
-
-    .download-report-button,
-    .secondary-button {
-        display: none !important;
-    }
-}
-
-/* =========================================================
-   V3.0 RECOMMENDATION ENGINE
-   ========================================================= */
-
-.v3-recommendations-card {
-    overflow: hidden;
-}
-
-.v3-recommendations-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 28px;
-}
-
-.v3-readiness-score {
-    flex: 0 0 auto;
-    min-width: 130px;
-    padding: 16px 20px;
-    border: 1px solid #e0e7ff;
-    border-radius: 15px;
-    background: #f8f7ff;
-    text-align: center;
-}
-
-.v3-readiness-score span {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-}
-
-.v3-readiness-score strong {
-    display: block;
-    color: var(--primary);
-    font-size: 28px;
-    line-height: 1.1;
-}
-
-.v3-check-grid {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 18px;
-}
-
-.v3-check-card {
-    padding: 20px;
-    border: 1px solid var(--border-color);
-    border-radius: 15px;
-    background: var(--surface-secondary);
-
-    transition:
-        transform 0.2s ease,
-        box-shadow 0.2s ease,
-        border-color 0.2s ease;
-}
-
-.v3-check-card:hover {
-    transform: translateY(-2px);
-    border-color: #d7d3ff;
-    box-shadow:
-        0 10px 25px rgba(35, 45, 75, 0.07);
-}
-
-.v3-check-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 12px;
-    margin-bottom: 16px;
-}
-
-.v3-check-header h3 {
-    margin: 0;
-    color: var(--text);
-    font-size: 18px;
-}
-
-.v3-status {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    padding: 5px 9px;
-    border-radius: 999px;
-
-    font-size: 11px;
-    font-weight: 800;
-    text-transform: uppercase;
-    white-space: nowrap;
-}
-
-.v3-status-good {
-    background: #ecfdf3;
-    color: #15803d;
-}
-
-.v3-status-warning {
-    background: #fff7ed;
-    color: #c2410c;
-}
-
-.v3-check-detail {
-    display: flex;
-    justify-content: space-between;
-    gap: 12px;
-
-    padding: 9px 0;
-
-    border-bottom: 1px solid var(--border-light);
-
-    color: var(--muted);
-    font-size: 13px;
-}
-
-.v3-check-detail strong {
-    color: var(--text);
-}
-
-.v3-missing-fields {
-    margin-top: 12px;
-    padding: 10px 12px;
-
-    border-radius: 10px;
-
-    background: #fff7f7;
-    color: #991b1b;
-
-    font-size: 13px;
-    line-height: 1.5;
-}
-
-.v3-missing-fields span {
-    font-weight: 800;
-}
-
-.v3-recommendation {
-    margin: 16px 0 0;
-    color: var(--text-secondary);
-    font-size: 14px;
-    line-height: 1.6;
-}
-
-.v3-recommendation strong {
-    display: block;
-    margin-bottom: 5px;
-    color: var(--primary);
-    font-size: 13px;
-}
-
-
-/* =========================================
-   V3.0 RESPONSIVE
-   ========================================= */
-
-@media (max-width: 800px) {
-
-    .v3-recommendations-header {
-        align-items: stretch;
-        flex-direction: column;
-    }
-
-    .v3-readiness-score {
-        width: 100%;
-    }
-
-    .v3-check-grid {
-        grid-template-columns: 1fr;
-    }
-}
-
-
-@media (max-width: 500px) {
 
     .v3-check-card {
         padding: 17px;
@@ -2528,3 +2198,2145 @@ footer {
         align-self: flex-start;
     }
 }
+
+
+/* =========================
+   21. Print
+   ========================= */
+
+@media print {
+
+    body {
+        background: #ffffff !important;
+    }
+
+    .upload-card,
+    .history-navigation,
+    .history-actions {
+        display: none !important;
+    }
+
+    .card {
+        break-inside: avoid;
+        box-shadow: none;
+    }
+
+    footer {
+        display: none !important;
+    }
+
+    .download-report-button,
+    .secondary-button {
+        display: none !important;
+    }
+}
+
+/* =========================
+   V3.2 LIQUID UI
+   ========================= */
+
+:root {
+    --liquid-bg: #f5f7ff;
+    --liquid-card: rgba(255, 255, 255, 0.72);
+    --liquid-card-strong: rgba(255, 255, 255, 0.88);
+
+    --liquid-border:
+        rgba(255, 255, 255, 0.75);
+
+    --liquid-shadow:
+        0 20px 60px rgba(50, 60, 110, 0.10);
+
+    --liquid-shadow-hover:
+        0 28px 75px rgba(50, 60, 110, 0.16);
+
+    --liquid-blur: 24px;
+}
+
+
+/* =========================
+   Background
+   ========================= */
+
+body {
+    position: relative;
+    overflow-x: hidden;
+
+    background:
+        radial-gradient(
+            circle at 10% 5%,
+            rgba(99, 91, 255, 0.14),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(56, 189, 248, 0.10),
+            transparent 25%
+        ),
+        radial-gradient(
+            circle at 50% 80%,
+            rgba(167, 139, 250, 0.08),
+            transparent 30%
+        ),
+        #f5f7ff;
+}
+
+
+/* =========================
+   Floating Background Glow
+   ========================= */
+
+body::before,
+body::after {
+    content: "";
+
+    position: fixed;
+
+    width: 320px;
+    height: 320px;
+
+    border-radius: 50%;
+
+    pointer-events: none;
+
+    filter: blur(80px);
+
+    opacity: 0.45;
+
+    z-index: -1;
+}
+
+body::before {
+    top: 15%;
+    left: -160px;
+
+    background: rgba(99, 102, 241, 0.18);
+
+    animation:
+        liquidFloatOne
+        12s
+        ease-in-out
+        infinite;
+}
+
+body::after {
+    right: -160px;
+    bottom: 10%;
+
+    background: rgba(56, 189, 248, 0.14);
+
+    animation:
+        liquidFloatTwo
+        15s
+        ease-in-out
+        infinite;
+}
+
+
+@keyframes liquidFloatOne {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(60px);
+    }
+
+}
+
+
+@keyframes liquidFloatTwo {
+
+    0%,
+    100% {
+        transform: translateY(0);
+    }
+
+    50% {
+        transform: translateY(-70px);
+    }
+
+}
+
+
+/* =========================
+   Top Navigation
+   ========================= */
+
+.top-navigation {
+    position: relative;
+
+    padding: 10px 14px;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.8);
+
+    border-radius: 18px;
+
+    background:
+        rgba(255, 255, 255, 0.48);
+
+    backdrop-filter:
+        blur(20px)
+        saturate(160%);
+
+    -webkit-backdrop-filter:
+        blur(20px)
+        saturate(160%);
+
+    box-shadow:
+        0 10px 35px
+        rgba(50, 60, 110, 0.06);
+}
+
+
+.top-navigation-actions {
+    display: flex;
+
+    align-items: center;
+
+    gap: 8px;
+}
+
+
+/* =========================
+   Theme Toggle
+   ========================= */
+
+.theme-toggle {
+    width: 42px;
+    height: 42px;
+
+    display: inline-flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.9);
+
+    border-radius: 50%;
+
+    background:
+        rgba(255, 255, 255, 0.72);
+
+    color: var(--text);
+
+    box-shadow:
+        0 6px 18px
+        rgba(30, 41, 59, 0.08);
+
+    cursor: pointer;
+
+    font-size: 17px;
+
+    transition:
+        transform 0.25s ease,
+        background 0.25s ease,
+        box-shadow 0.25s ease;
+}
+
+.theme-toggle:hover {
+    transform: rotate(12deg) scale(1.06);
+
+    background:
+        rgba(255, 255, 255, 0.95);
+
+    box-shadow:
+        0 10px 25px
+        rgba(30, 41, 59, 0.13);
+}
+
+
+/* =========================
+   Glass Cards
+   ========================= */
+
+.card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.78),
+            rgba(255, 255, 255, 0.58)
+        );
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.82);
+
+    box-shadow:
+        var(--liquid-shadow);
+
+    backdrop-filter:
+        blur(var(--liquid-blur))
+        saturate(150%);
+
+    -webkit-backdrop-filter:
+        blur(var(--liquid-blur))
+        saturate(150%);
+
+    transition:
+        transform 0.28s ease,
+        box-shadow 0.28s ease,
+        border-color 0.28s ease;
+}
+
+.card:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        var(--liquid-shadow-hover);
+
+    border-color:
+        rgba(255, 255, 255, 1);
+}
+
+
+/* =========================
+   Upload Card
+   ========================= */
+
+.upload-card {
+    position: relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.84),
+            rgba(248, 249, 255, 0.68)
+        );
+}
+
+.upload-card::before {
+    content: "";
+
+    position: absolute;
+
+    top: 0;
+    left: 8%;
+
+    width: 84%;
+    height: 1px;
+
+    background:
+        linear-gradient(
+            90deg,
+            transparent,
+            rgba(255, 255, 255, 1),
+            transparent
+        );
+}
+
+
+/* =========================
+   Inputs
+   ========================= */
+
+.field input[type="file"],
+.field textarea {
+    background:
+        rgba(255, 255, 255, 0.62);
+
+    border:
+        1px solid
+        rgba(203, 213, 225, 0.75);
+
+    backdrop-filter:
+        blur(12px);
+
+    transition:
+        border-color 0.25s ease,
+        box-shadow 0.25s ease,
+        background 0.25s ease;
+}
+
+.field input[type="file"]:hover,
+.field textarea:hover {
+    background:
+        rgba(255, 255, 255, 0.82);
+}
+
+.field input[type="file"]:focus,
+.field textarea:focus {
+    background:
+        rgba(255, 255, 255, 0.92);
+
+    border-color:
+        rgba(81, 70, 229, 0.5);
+
+    box-shadow:
+        0 0 0 4px
+        rgba(81, 70, 229, 0.10),
+        0 10px 30px
+        rgba(81, 70, 229, 0.07);
+}
+
+
+/* =========================
+   Buttons
+   ========================= */
+
+button,
+.history-primary-button,
+.download-report-button,
+.secondary-button {
+    background:
+        linear-gradient(
+            135deg,
+            #5b52ef,
+            #5146e5
+        );
+
+    box-shadow:
+        0 10px 25px
+        rgba(81, 70, 229, 0.20);
+}
+
+button:hover,
+.history-primary-button:hover,
+.download-report-button:hover,
+.secondary-button:hover {
+    box-shadow:
+        0 15px 32px
+        rgba(81, 70, 229, 0.28);
+}
+
+
+/* =========================
+   Dashboard Score
+   ========================= */
+
+.dashboard-overall {
+    position: relative;
+    overflow: hidden;
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(238, 237, 255, 0.82),
+            rgba(255, 255, 255, 0.52)
+        );
+
+    backdrop-filter:
+        blur(20px);
+}
+
+.dashboard-overall::after {
+    content: "";
+
+    position: absolute;
+
+    width: 180px;
+    height: 180px;
+
+    right: -70px;
+    top: -80px;
+
+    border-radius: 50%;
+
+    background:
+        rgba(99, 102, 241, 0.08);
+
+    filter: blur(5px);
+}
+
+.overall-score-value {
+    text-shadow:
+        0 8px 30px
+        rgba(81, 70, 229, 0.16);
+}
+
+
+/* =========================
+   Metric Cards
+   ========================= */
+
+.dashboard-score-item,
+.summary-item,
+.analytics-item,
+.history-metric,
+.v3-check-card {
+    background:
+        rgba(248, 250, 252, 0.62);
+
+    border:
+        1px solid
+        rgba(226, 232, 240, 0.72);
+
+    backdrop-filter:
+        blur(14px);
+
+    -webkit-backdrop-filter:
+        blur(14px);
+}
+
+.dashboard-score-item:hover,
+.v3-check-card:hover {
+    background:
+        rgba(255, 255, 255, 0.76);
+}
+
+
+/* =========================
+   Score Typography
+   ========================= */
+
+.score {
+    text-shadow:
+        0 8px 30px
+        rgba(81, 70, 229, 0.13);
+}
+
+
+/* =========================
+   Analytics
+   ========================= */
+
+.analytics-progress {
+    height: 11px;
+
+    background:
+        rgba(226, 232, 240, 0.65);
+
+    box-shadow:
+        inset 0 1px 3px
+        rgba(30, 41, 59, 0.06);
+}
+
+.analytics-progress-bar {
+    box-shadow:
+        0 2px 10px
+        rgba(81, 70, 229, 0.18);
+}
+
+
+/* =========================
+   Status Pills
+   ========================= */
+
+.status-found,
+.status-missing,
+.v3-status {
+    box-shadow:
+        0 3px 10px
+        rgba(30, 41, 59, 0.05);
+}
+
+
+/* =========================
+   Action Plan
+   ========================= */
+
+.action-plan-list li {
+    background:
+        rgba(255, 255, 255, 0.58);
+
+    backdrop-filter:
+        blur(14px);
+}
+
+.action-plan-number {
+    box-shadow:
+        0 5px 15px
+        rgba(81, 70, 229, 0.10);
+}
+
+
+/* =========================
+   Skills
+   ========================= */
+
+.skills li {
+    box-shadow:
+        0 4px 12px
+        rgba(81, 70, 229, 0.06);
+
+    transition:
+        transform 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.skills li:hover {
+    transform: translateY(-2px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(81, 70, 229, 0.11);
+}
+
+
+/* =========================
+   Back To Top
+   ========================= */
+
+.back-to-top {
+    position: fixed;
+
+    right: 28px;
+    bottom: 28px;
+
+    width: 50px;
+    height: 50px;
+
+    display: flex;
+
+    align-items: center;
+    justify-content: center;
+
+    padding: 0;
+
+    border:
+        1px solid
+        rgba(255, 255, 255, 0.75);
+
+    border-radius: 50%;
+
+    background:
+        rgba(81, 70, 229, 0.78);
+
+    color: #ffffff;
+
+    backdrop-filter:
+        blur(18px)
+        saturate(150%);
+
+    -webkit-backdrop-filter:
+        blur(18px)
+        saturate(150%);
+
+    box-shadow:
+        0 12px 30px
+        rgba(81, 70, 229, 0.25);
+
+    font-size: 21px;
+
+    opacity: 0;
+    visibility: hidden;
+
+    transform:
+        translateY(15px)
+        scale(0.85);
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.25s ease;
+    z-index: 1000;
+}
+
+.back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+
+    transform:
+        translateY(0)
+        scale(1);
+}
+
+.back-to-top:hover {
+    transform:
+        translateY(-4px)
+        scale(1.05);
+
+    box-shadow:
+        0 16px 35px
+        rgba(81, 70, 229, 0.34);
+}
+
+
+/* =========================
+   Dark Mode
+   ========================= */
+
+[data-theme="dark"] {
+    --text: #f1f5f9;
+    --text-secondary: #cbd5e1;
+    --muted: #94a3b8;
+
+    --background: #090d18;
+    --surface: #111827;
+    --surface-secondary: #151c2c;
+
+    --border-color: #273247;
+    --border-light: #202a3c;
+
+    --liquid-card:
+        rgba(17, 24, 39, 0.68);
+
+    --liquid-card-strong:
+        rgba(17, 24, 39, 0.84);
+
+    --liquid-border:
+        rgba(255, 255, 255, 0.08);
+
+    --liquid-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.28);
+}
+
+[data-theme="dark"] body {
+    background:
+        radial-gradient(
+            circle at 10% 5%,
+            rgba(99, 102, 241, 0.15),
+            transparent 30%
+        ),
+        radial-gradient(
+            circle at 90% 10%,
+            rgba(56, 189, 248, 0.08),
+            transparent 28%
+        ),
+        linear-gradient(
+            180deg,
+            #080c16,
+            #0b1120 50%,
+            #090d18
+        );
+}
+
+[data-theme="dark"] header {
+    background:
+        rgba(9, 13, 24, 0.62);
+
+    border-bottom:
+        1px solid
+        rgba(255, 255, 255, 0.06);
+}
+
+[data-theme="dark"] .top-navigation {
+    background:
+        rgba(17, 24, 39, 0.58);
+
+    border-color:
+        rgba(255, 255, 255, 0.08);
+}
+
+[data-theme="dark"] .badge,
+[data-theme="dark"] .dashboard-badge {
+    background:
+        rgba(99, 102, 241, 0.14);
+
+    border-color:
+        rgba(129, 140, 248, 0.22);
+
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17, 24, 39, 0.78),
+            rgba(15, 23, 42, 0.62)
+        );
+
+    border-color:
+        rgba(255, 255, 255, 0.08);
+
+    box-shadow:
+        0 20px 60px
+        rgba(0, 0, 0, 0.25);
+}
+
+[data-theme="dark"] .card:hover {
+    border-color:
+        rgba(129, 140, 248, 0.18);
+}
+
+[data-theme="dark"] .field input[type="file"],
+[data-theme="dark"] .field textarea {
+    background:
+        rgba(15, 23, 42, 0.72);
+
+    border-color:
+        rgba(148, 163, 184, 0.22);
+
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .field input[type="file"]:hover,
+[data-theme="dark"] .field textarea:hover {
+    background:
+        rgba(15, 23, 42, 0.9);
+}
+
+[data-theme="dark"] .theme-toggle {
+    background:
+        rgba(30, 41, 59, 0.8);
+
+    border-color:
+        rgba(255, 255, 255, 0.10);
+}
+
+[data-theme="dark"] .dashboard-overall {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(49, 46, 129, 0.28),
+            rgba(15, 23, 42, 0.46)
+        );
+
+    border-color:
+        rgba(129, 140, 248, 0.16);
+}
+
+[data-theme="dark"] .dashboard-score-item,
+[data-theme="dark"] .summary-item,
+[data-theme="dark"] .analytics-item,
+[data-theme="dark"] .history-metric,
+[data-theme="dark"] .v3-check-card {
+    background:
+        rgba(15, 23, 42, 0.55);
+
+    border-color:
+        rgba(148, 163, 184, 0.12);
+}
+
+[data-theme="dark"] .dashboard-score-item:hover,
+[data-theme="dark"] .v3-check-card:hover {
+    background:
+        rgba(30, 41, 59, 0.72);
+}
+
+[data-theme="dark"] .summary-item strong,
+[data-theme="dark"] .action-plan-content {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .summary-recommendation {
+    background:
+        rgba(49, 46, 129, 0.16);
+
+    border-color:
+        rgba(129, 140, 248, 0.16);
+}
+
+[data-theme="dark"] .summary-recommendation p {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .action-plan-list li {
+    background:
+        rgba(15, 23, 42, 0.55);
+
+    border-color:
+        rgba(148, 163, 184, 0.12);
+}
+
+[data-theme="dark"] .analytics-progress {
+    background:
+        rgba(51, 65, 85, 0.65);
+}
+
+[data-theme="dark"] .skills li {
+    background:
+        rgba(99, 102, 241, 0.14);
+
+    border-color:
+        rgba(129, 140, 248, 0.18);
+
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .skills.missing li {
+    background:
+        rgba(127, 29, 29, 0.18);
+
+    border-color:
+        rgba(248, 113, 113, 0.15);
+
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .history-score,
+[data-theme="dark"] .v3-readiness-score,
+[data-theme="dark"] .analytics-average,
+[data-theme="dark"] .action-plan-count {
+    background:
+        rgba(30, 41, 59, 0.62);
+
+    border-color:
+        rgba(129, 140, 248, 0.14);
+}
+
+[data-theme="dark"] .history-score strong,
+[data-theme="dark"] .v3-readiness-score strong {
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] pre {
+    background:
+        #0b1220;
+
+    border-color:
+        #263248;
+
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] footer {
+    background:
+        rgba(9, 13, 24, 0.75);
+
+    border-color:
+        rgba(255, 255, 255, 0.06);
+}
+
+
+/* =========================
+   Dark Mode Responsive
+   ========================= */
+
+@media (max-width: 600px) {
+
+    .back-to-top {
+        right: 18px;
+        bottom: 18px;
+
+        width: 46px;
+        height: 46px;
+    }
+
+    .top-navigation-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+}
+
+/* =========================================================
+   AI Resume Analyzer — V3.3 FINAL OVERRIDES
+   Reviewed against the current V3.1 + V3.2 stylesheet.
+   These rules resolve the remaining cascade conflicts without
+   changing the existing HTML structure.
+   ========================================================= */
+
+/* ---------- Accessibility & global polish ---------- */
+
+::selection {
+    background: rgba(81, 70, 229, 0.18);
+    color: var(--text);
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+summary:focus-visible {
+    outline: 3px solid rgba(81, 70, 229, 0.28);
+    outline-offset: 3px;
+}
+
+button:disabled,
+input:disabled,
+textarea:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+input[type="file"]::file-selector-button {
+    margin-right: 10px;
+    padding: 8px 12px;
+
+    border: 0;
+    border-radius: 9px;
+
+    background: var(--primary-light);
+    color: var(--primary);
+
+    font-weight: 800;
+    cursor: pointer;
+
+    transition:
+        background 0.2s ease,
+        transform 0.2s ease;
+}
+
+input[type="file"]::file-selector-button:hover {
+    background: rgba(81, 70, 229, 0.16);
+    transform: translateY(-1px);
+}
+
+/* ---------- Keep the desktop header balanced ---------- */
+
+.top-navigation {
+    min-height: 62px;
+}
+
+.top-navigation-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+}
+
+/* ---------- Better glass fallback ---------- */
+
+@supports not (
+    backdrop-filter: blur(10px)
+) {
+    .top-navigation,
+    .card,
+    .field input[type="file"],
+    .field textarea,
+    .dashboard-score-item,
+    .summary-item,
+    .analytics-item,
+    .history-metric,
+    .v3-check-card,
+    .action-plan-list li,
+    .back-to-top {
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}
+
+/* ---------- Improve interactive cards ---------- */
+
+.dashboard-score-item,
+.summary-item,
+.analytics-item,
+.history-metric,
+.v3-check-card,
+.action-plan-list li {
+    will-change: transform;
+}
+
+.dashboard-score-item:focus-within,
+.summary-item:focus-within,
+.analytics-item:focus-within,
+.v3-check-card:focus-within {
+    border-color: rgba(81, 70, 229, 0.30);
+}
+
+/* ---------- Consistent report controls ---------- */
+
+.report-download-card {
+    overflow: hidden;
+}
+
+.report-download-card .download-report-button,
+.report-download-card .secondary-button {
+    min-height: 46px;
+}
+
+/* ---------- Error cards work correctly in liquid UI ---------- */
+
+.error,
+.history-error {
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+}
+
+/* ---------- Saved-analysis / history polish ---------- */
+
+.history-view-card,
+.saved-analysis-banner {
+    backdrop-filter: blur(18px);
+    -webkit-backdrop-filter: blur(18px);
+}
+
+.history-delete-button {
+    box-shadow: 0 5px 15px rgba(220, 38, 38, 0.05);
+}
+
+.history-delete-button:focus-visible {
+    outline-color: rgba(220, 38, 38, 0.30);
+}
+
+/* ---------- Dark mode completeness ---------- */
+
+[data-theme="dark"] {
+    color-scheme: dark;
+}
+
+[data-theme="dark"] .field label,
+[data-theme="dark"] .section-title,
+[data-theme="dark"] .card h3,
+[data-theme="dark"] .overall-score-content h3,
+[data-theme="dark"] .history-item-title h2,
+[data-theme="dark"] details summary {
+    color: var(--text);
+}
+
+[data-theme="dark"] .upload-card,
+[data-theme="dark"] .recommendations-card,
+[data-theme="dark"] .history-view-card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17, 24, 39, 0.78),
+            rgba(15, 23, 42, 0.62)
+        );
+}
+
+[data-theme="dark"] .dashboard-overall::after {
+    background: rgba(129, 140, 248, 0.08);
+}
+
+[data-theme="dark"] .summary-item strong,
+[data-theme="dark"] .action-plan-content {
+    color: #e2e8f0;
+}
+
+[data-theme="dark"] .summary-recommendation strong {
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] .report-download-card,
+[data-theme="dark"] .analytics-list li {
+    background: rgba(15, 23, 42, 0.55);
+    border-color: rgba(148, 163, 184, 0.12);
+}
+
+[data-theme="dark"] .report-file-label {
+    color: #cbd5e1;
+}
+
+[data-theme="dark"] .report-action input[type="file"] {
+    background: rgba(15, 23, 42, 0.72);
+    border-color: rgba(148, 163, 184, 0.22);
+    color: #f8fafc;
+}
+
+[data-theme="dark"] .history-delete-button {
+    background: rgba(15, 23, 42, 0.62);
+    border-color: rgba(248, 113, 113, 0.22);
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .history-delete-button:hover {
+    background: rgba(127, 29, 29, 0.18);
+}
+
+[data-theme="dark"] .history-status.job-disabled {
+    background: rgba(51, 65, 85, 0.55);
+    color: #94a3b8;
+}
+
+[data-theme="dark"] .history-status.job-enabled,
+[data-theme="dark"] .v3-status-good {
+    background: rgba(22, 163, 74, 0.14);
+    color: #86efac;
+}
+
+[data-theme="dark"] .v3-status-warning {
+    background: rgba(245, 158, 11, 0.14);
+    color: #fdba74;
+}
+
+[data-theme="dark"] .v3-missing-fields {
+    background: rgba(127, 29, 29, 0.18);
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .error {
+    background: rgba(127, 29, 29, 0.12);
+    border-color: rgba(248, 113, 113, 0.22);
+}
+
+[data-theme="dark"] .error h2 {
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .error p,
+[data-theme="dark"] .history-error {
+    color: #fecaca;
+}
+
+[data-theme="dark"] .history-error {
+    background: rgba(127, 29, 29, 0.12);
+    border-color: rgba(248, 113, 113, 0.20);
+}
+
+[data-theme="dark"] .history-error strong {
+    color: #fca5a5;
+}
+
+[data-theme="dark"] .saved-analysis-banner {
+    background: rgba(49, 46, 129, 0.16);
+    border-color: rgba(129, 140, 248, 0.16);
+}
+
+[data-theme="dark"] .saved-analysis-banner-content,
+[data-theme="dark"] .saved-analysis-banner-link {
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] input[type="file"]::file-selector-button {
+    background: rgba(99, 102, 241, 0.16);
+    color: #a5b4fc;
+}
+
+[data-theme="dark"] input[type="file"]::file-selector-button:hover {
+    background: rgba(99, 102, 241, 0.24);
+}
+
+/* ---------- Mobile: keep the top bar usable ---------- */
+
+@media (max-width: 600px) {
+    .top-navigation {
+        align-items: center;
+        flex-direction: row;
+        gap: 10px;
+        padding: 9px 11px;
+    }
+
+    .top-navigation-actions {
+        width: auto;
+        flex-shrink: 0;
+        justify-content: flex-end;
+    }
+
+    .top-navigation .history-nav-button {
+        display: none;
+    }
+
+    .badge {
+        max-width: calc(100% - 55px);
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+    }
+
+    .dashboard-overall {
+        width: 100%;
+    }
+
+    .overall-score-value {
+        font-size: 58px;
+    }
+
+    .report-download-card,
+    .report-header {
+        gap: 18px;
+    }
+}
+
+/* ---------- Reduced motion ---------- */
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+
+/* =========================================================
+   AI Resume Analyzer — V3.4 VISUAL REFINEMENT
+   Based on the current rendered History + Analyze screenshots.
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. History page: reduce excessive hero whitespace
+   --------------------------------------------------------- */
+
+@supports selector(header:has(.history-top-navigation)) {
+    header:has(.history-top-navigation) {
+        padding-bottom: 34px;
+    }
+
+    header:has(.history-top-navigation) .history-top-navigation {
+        margin-bottom: 22px;
+    }
+
+    header:has(.history-top-navigation) .container {
+        padding-bottom: 0;
+    }
+
+    header:has(.history-top-navigation) + main {
+        padding-top: 30px;
+    }
+}
+
+/* Keep the history breadcrumb visually secondary. */
+.history-top-navigation {
+    font-size: 14px;
+}
+
+.history-current-page {
+    font-weight: 700;
+}
+
+/* ---------------------------------------------------------
+   2. History header/card proportions
+   --------------------------------------------------------- */
+
+.history-header-card {
+    margin-top: 18px;
+    margin-bottom: 16px;
+    padding-top: 28px;
+    padding-bottom: 28px;
+}
+
+.history-header-card .section-title {
+    margin-bottom: 7px;
+}
+
+.history-count {
+    min-width: 116px;
+}
+
+/* ---------------------------------------------------------
+   3. History cards: slightly tighter, cleaner hierarchy
+   --------------------------------------------------------- */
+
+.history-item {
+    gap: 18px;
+    padding: 25px;
+}
+
+.history-item-main {
+    gap: 24px;
+}
+
+.history-item-title h2 {
+    font-size: 24px;
+}
+
+.history-item-title p {
+    margin-top: 8px;
+}
+
+.history-score {
+    min-width: 150px;
+    padding: 16px 18px;
+}
+
+.history-metrics {
+    gap: 10px;
+}
+
+.history-metric {
+    padding: 14px 12px;
+}
+
+.history-actions {
+    padding-top: 15px;
+}
+
+/* ---------------------------------------------------------
+   4. Analyze page: improve hero/card vertical rhythm
+   --------------------------------------------------------- */
+
+@supports selector(header:has(.top-navigation)) {
+    header:has(.top-navigation) {
+        padding-bottom: 46px;
+    }
+
+    header:has(.top-navigation) + main {
+        padding-top: 34px;
+    }
+}
+
+.upload-card {
+    padding: 32px;
+}
+
+.form-grid {
+    gap: 24px;
+}
+
+.field textarea {
+    min-height: 190px;
+}
+
+/* ---------------------------------------------------------
+   5. Make the main CTA feel more like a primary action
+   --------------------------------------------------------- */
+
+.button-row {
+    margin-top: 22px;
+}
+
+.button-row button {
+    min-width: 185px;
+    min-height: 48px;
+}
+
+/* ---------------------------------------------------------
+   6. Improve the glass effect without making text washed out
+   --------------------------------------------------------- */
+
+.card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(255, 255, 255, 0.84),
+            rgba(255, 255, 255, 0.64)
+        );
+}
+
+[data-theme="dark"] .card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(17, 24, 39, 0.84),
+            rgba(15, 23, 42, 0.68)
+        );
+}
+
+/* ---------------------------------------------------------
+   7. Footer consistency
+   --------------------------------------------------------- */
+
+footer {
+    padding-top: 28px;
+    padding-bottom: 28px;
+}
+
+/* ---------------------------------------------------------
+   8. Small-screen refinement
+   --------------------------------------------------------- */
+
+@media (max-width: 600px) {
+    .history-header-card {
+        padding: 22px;
+    }
+
+    .history-item {
+        padding: 20px;
+    }
+
+    .upload-card {
+        padding: 22px;
+    }
+
+    .field textarea {
+        min-height: 170px;
+    }
+
+    .button-row button {
+        width: 100%;
+        min-width: 0;
+    }
+}
+
+/* =========================================================
+   FOOTER
+   ========================================================= */
+
+.site-footer {
+    margin-top: 30px;
+    padding: 32px 0;
+    border-top: 1px solid var(--border-color);
+    color: var(--muted);
+    text-align: center;
+    font-size: 14px;
+}
+
+.footer-brand strong {
+    display: block;
+    color: var(--text);
+    font-size: 14px;
+}
+
+.footer-built {
+    margin-top: 6px;
+    color: var(--muted);
+}
+
+.footer-links {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 14px;
+}
+
+.footer-social-link,
+.footer-text-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--muted);
+    text-decoration: none;
+    font-weight: 600;
+    transition:
+        color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.footer-social-link:hover,
+.footer-text-link:hover {
+    color: var(--primary);
+    transform: translateY(-1px);
+}
+
+.footer-social-icon {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+    flex-shrink: 0;
+}
+
+.footer-separator {
+    color: var(--border-color);
+}
+
+@media (max-width: 600px) {
+
+    .site-footer {
+        padding: 26px 0;
+    }
+
+    .footer-links {
+        gap: 8px;
+    }
+}
+
+/* =========================================================
+   PRIVACY / TERMS PAGES — V3.3
+   ========================================================= */
+
+/* Better spacing between policy cards */
+.policy-page .card,
+.legal-page .card {
+    margin-bottom: 22px;
+}
+
+/* Last card should not have unnecessary bottom spacing */
+.policy-page .card:last-child,
+.legal-page .card:last-child {
+    margin-bottom: 0;
+}
+
+
+/* =========================================================
+   DARK THEME
+   ========================================================= */
+
+html.dark-theme {
+    color-scheme: dark;
+}
+
+html.dark-theme body {
+    color: #e5e7eb;
+
+    background:
+        radial-gradient(
+            circle at 10% 5%,
+            rgba(99, 91, 255, 0.18),
+            transparent 28%
+        ),
+        radial-gradient(
+            circle at 90% 15%,
+            rgba(56, 189, 248, 0.10),
+            transparent 25%
+        ),
+        #0f172a;
+}
+
+/* Header */
+html.dark-theme header {
+    background:
+        linear-gradient(
+            180deg,
+            rgba(15, 23, 42, 0.92),
+            rgba(15, 23, 42, 0.72)
+        );
+
+    border-bottom-color: rgba(71, 85, 105, 0.45);
+}
+
+/* Navigation */
+html.dark-theme .top-navigation {
+    background: rgba(30, 41, 59, 0.78);
+    border-color: rgba(148, 163, 184, 0.16);
+}
+
+/* Cards */
+html.dark-theme .policy-page .card,
+html.dark-theme .legal-page .card {
+    background: rgba(30, 41, 59, 0.82);
+    border-color: rgba(148, 163, 184, 0.14);
+    box-shadow:
+        0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+/* Headings */
+html.dark-theme h1,
+html.dark-theme h2,
+html.dark-theme h3 {
+    color: #f8fafc;
+}
+
+/* Normal text */
+html.dark-theme p,
+html.dark-theme li,
+html.dark-theme .info-list,
+html.dark-theme .card {
+    color: #cbd5e1;
+}
+
+/* Links */
+html.dark-theme a {
+    color: #a5b4fc;
+}
+
+/* Footer */
+html.dark-theme footer {
+    background: rgba(15, 23, 42, 0.85);
+    border-top-color: rgba(71, 85, 105, 0.45);
+    color: #94a3b8;
+}
+
+
+/* =========================================================
+   THEME TOGGLE
+   ========================================================= */
+
+.theme-toggle {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    width: 44px;
+    height: 44px;
+
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 50%;
+
+    background: rgba(255, 255, 255, 0.78);
+    color: var(--text);
+
+    font-size: 20px;
+    cursor: pointer;
+
+    box-shadow: 0 8px 25px rgba(30, 41, 59, 0.08);
+
+    transition:
+        transform 0.2s ease,
+        background 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.theme-toggle:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 30px rgba(30, 41, 59, 0.14);
+}
+
+html.dark-theme .theme-toggle {
+    background: rgba(51, 65, 85, 0.85);
+    color: #f8fafc;
+    border-color: rgba(148, 163, 184, 0.25);
+}
+
+
+/* =========================================================
+   BACK TO TOP
+   ========================================================= */
+
+.back-to-top {
+    position: fixed;
+
+    right: 24px;
+    bottom: 24px;
+
+    width: 46px;
+    height: 46px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    border: 0;
+    border-radius: 50%;
+
+    background: var(--primary);
+    color: white;
+
+    font-size: 20px;
+    font-weight: 800;
+
+    cursor: pointer;
+
+    box-shadow:
+        0 12px 30px rgba(81, 70, 229, 0.30);
+
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(12px);
+
+    transition:
+        opacity 0.25s ease,
+        visibility 0.25s ease,
+        transform 0.25s ease;
+    z-index: 1000;
+}
+
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.back-to-top:hover {
+    transform: translateY(-3px);
+    background: var(--primary-dark);
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .policy-page .card,
+    .legal-page .card {
+        margin-bottom: 16px;
+    }
+
+    .theme-toggle {
+        width: 40px;
+        height: 40px;
+        font-size: 18px;
+    }
+
+    .back-to-top {
+        right: 16px;
+        bottom: 16px;
+
+        width: 42px;
+        height: 42px;
+    }
+}
+
+/* =========================================================
+   LEGAL PAGE NAVIGATION + CENTERED HERO
+   ========================================================= */
+
+.top-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.top-navigation-actions {
+    margin-left: auto;
+
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    gap: 18px;
+}
+
+/* Keep history and theme together on the right */
+.top-navigation-actions .history-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    white-space: nowrap;
+}
+
+/* Center Privacy Policy / Terms of Use hero */
+.legal-hero {
+    width: 100%;
+    text-align: center;
+
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.legal-hero h1 {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.legal-hero .hero-text {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+
+    .top-navigation-actions {
+        gap: 10px;
+    }
+
+    .top-navigation-actions .history-nav-button {
+        font-size: 14px;
+    }
+
+}
+
+@media (max-width: 560px) {
+
+    .top-navigation-actions .history-nav-button {
+        font-size: 0;
+    }
+
+    .top-navigation-actions .history-nav-button::first-letter {
+        font-size: 18px;
+    }
+
+    .top-navigation {
+        gap: 10px;
+    }
+
+}
+
+/* =========================================================
+   AI Resume Analyzer — V3.5 FINAL LAYOUT REFINEMENTS
+   Purpose:
+   - Keep the existing V3.1–V3.4 design intact
+   - Center all main page hero headings
+   - Keep Analysis History beside the theme toggle
+   - Add clean spacing between Privacy / Terms cards
+   - Keep Light / Dark theme support consistent
+   - Keep Back To Top styling consistent
+   ========================================================= */
+
+/* ---------------------------------------------------------
+   1. Shared Hero Layout
+   --------------------------------------------------------- */
+
+header .container {
+    text-align: center;
+}
+
+header h1 {
+    width: 100%;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+header .hero-text {
+    width: min(760px, 100%);
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* Keep the navigation row independent from hero alignment. */
+.top-navigation {
+    text-align: left;
+}
+
+/* ---------------------------------------------------------
+   2. Top Navigation
+   --------------------------------------------------------- */
+
+.top-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.top-navigation-actions {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 18px;
+    flex-shrink: 0;
+}
+
+.top-navigation-actions .history-nav-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+}
+
+/* ---------------------------------------------------------
+   3. Privacy / Terms Pages
+   --------------------------------------------------------- */
+
+.policy-page,
+.legal-page {
+    padding-bottom: 20px;
+}
+
+.policy-page .card,
+.legal-page .card {
+    margin-bottom: 22px;
+}
+
+.policy-page .card:last-child,
+.legal-page .card:last-child {
+    margin-bottom: 0;
+}
+
+/* Legal hero remains centered even if other page styles change. */
+.legal-hero {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.legal-hero h1,
+.legal-hero .hero-text {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+/* ---------------------------------------------------------
+   4. History Page Hero
+   --------------------------------------------------------- */
+
+header:has(.history-top-navigation) h1,
+header:has(.history-top-navigation) .hero-text {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+header:has(.history-top-navigation) .history-top-navigation {
+    text-align: center;
+}
+
+/* Keep the 'Analyze New Resume' action aligned to the content edge. */
+.history-navigation {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 26px;
+}
+
+/* ---------------------------------------------------------
+   5. Back To Top
+   --------------------------------------------------------- */
+
+.back-to-top {
+    right: 24px;
+    bottom: 24px;
+}
+
+/* Support both class names used by the existing JavaScript. */
+.back-to-top.visible,
+.back-to-top.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* ---------------------------------------------------------
+   6. Light Theme
+   --------------------------------------------------------- */
+
+html:not(.dark-theme),
+html[data-theme="light"] {
+    color-scheme: light;
+}
+
+/* ---------------------------------------------------------
+   7. Dark Theme — Legal Pages
+   --------------------------------------------------------- */
+
+html.dark-theme .legal-hero,
+html[data-theme="dark"] .legal-hero {
+    color: var(--text);
+}
+
+html.dark-theme .policy-page .card,
+html.dark-theme .legal-page .card,
+html[data-theme="dark"] .policy-page .card,
+html[data-theme="dark"] .legal-page .card {
+    background:
+        linear-gradient(
+            135deg,
+            rgba(30, 41, 59, 0.86),
+            rgba(15, 23, 42, 0.76)
+        );
+    border-color: rgba(148, 163, 184, 0.14);
+    color: #cbd5e1;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.25);
+}
+
+html.dark-theme .policy-page .card h2,
+html.dark-theme .policy-page .card h3,
+html.dark-theme .legal-page .card h2,
+html.dark-theme .legal-page .card h3,
+html[data-theme="dark"] .policy-page .card h2,
+html[data-theme="dark"] .policy-page .card h3,
+html[data-theme="dark"] .legal-page .card h2,
+html[data-theme="dark"] .legal-page .card h3 {
+    color: #f8fafc;
+}
+
+/* ---------------------------------------------------------
+   8. Mobile Navigation & Hero
+   --------------------------------------------------------- */
+
+@media (max-width: 700px) {
+    .top-navigation-actions {
+        gap: 10px;
+    }
+
+    .top-navigation-actions .history-nav-button {
+        font-size: 14px;
+    }
+}
+
+@media (max-width: 600px) {
+    header .container {
+        text-align: center;
+    }
+
+    header h1 {
+        font-size: 38px;
+        letter-spacing: -1px;
+        text-align: center;
+    }
+
+    header .hero-text {
+        font-size: 15px;
+        text-align: center;
+    }
+
+    .top-navigation {
+        align-items: center;
+        flex-direction: row;
+    }
+
+    .top-navigation-actions {
+        width: auto;
+        margin-left: auto;
+        flex-shrink: 0;
+    }
+
+    .policy-page .card,
+    .legal-page .card {
+        margin-bottom: 16px;
+    }
+
+    .back-to-top {
+        right: 16px;
+        bottom: 16px;
+        width: 42px;
+        height: 42px;
+    }
+}
+
+@media (max-width: 560px) {
+    .top-navigation-actions .history-nav-button {
+        font-size: 0;
+    }
+
+    .top-navigation-actions .history-nav-button::first-letter {
+        font-size: 18px;
+    }
+}
+
+/* ---------------------------------------------------------
+   9. Accessibility / Reduced Motion
+   --------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+    .back-to-top {
+        transition: none;
+    }
+}
+
+/* =========================================================
+   FINAL DARK MODE TEXT FIX — PRIVACY / TERMS
+   ========================================================= */
+
+html.dark-theme .policy-page .info-list strong,
+html.dark-theme .legal-page .info-list strong,
+html[data-theme="dark"] .policy-page .info-list strong,
+html[data-theme="dark"] .legal-page .info-list strong {
+    color: #f8fafc;
+}
+
+html.dark-theme .policy-page .info-list span,
+html.dark-theme .legal-page .info-list span,
+html[data-theme="dark"] .policy-page .info-list span,
+html[data-theme="dark"] .legal-page .info-list span {
+    color: #cbd5e1;
+}
+
+html.dark-theme .policy-page .info-list li,
+html.dark-theme .legal-page .info-list li,
+html[data-theme="dark"] .policy-page .info-list li,
+html[data-theme="dark"] .legal-page .info-list li {
+    border-bottom-color: rgba(148, 163, 184, 0.16);
+}
+
+/* =========================================================
+   FINAL DARK MODE FOOTER TEXT FIX
+   ========================================================= */
+
+html.dark-theme footer,
+html[data-theme="dark"] footer {
+    color: #94a3b8;
+}
+
+html.dark-theme footer p,
+html[data-theme="dark"] footer p {
+    color: #94a3b8;
+}
+
+html.dark-theme footer .copyright,
+html[data-theme="dark"] footer .copyright {
+    color: #94a3b8;
+}
+
+html.dark-theme footer a,
+html[data-theme="dark"] footer a {
+    color: #a5b4fc;
+}
+
+/* =========================================================
+   FINAL FIX — LEGAL PAGE FOOTER VISIBILITY
+   Privacy Policy + Terms of Use
+   ========================================================= */
+
+html.dark-theme .site-footer,
+html[data-theme="dark"] .site-footer {
+    color: #94a3b8;
+}
+
+html.dark-theme .site-footer .footer-brand strong,
+html[data-theme="dark"] .site-footer .footer-brand strong {
+    color: #f8fafc;
+}
+
+html.dark-theme .site-footer .footer-built,
+html[data-theme="dark"] .site-footer .footer-built {
+    color: #94a3b8;
+}
+
+html.dark-theme .site-footer .footer-links a,
+html[data-theme="dark"] .site-footer .footer-links a {
+    color: #a5b4fc;
+}
+
+html.dark-theme .site-footer .footer-links a:hover,
+html[data-theme="dark"] .site-footer .footer-links a:hover {
+    color: #c7d2fe;
+}
+
+/* =========================================================
+   END OF V3.5 FINAL LAYOUT REFINEMENTS
+   ========================================================= */

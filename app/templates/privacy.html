@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#5146e5"
+    >
+
+    <title>
+        Privacy Policy · AI Resume Analyzer
+    </title>
+
+    <link
+        rel="icon"
+        href="{{ url_for('static', filename='favicon.svg') }}"
+        type="image/svg+xml"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="container">
+
+        <div class="top-navigation">
+
+    <a
+        href="{{ url_for('index') }}"
+        class="badge"
+    >
+        AI Resume Analyzer
+    </a>
+
+    <div class="top-navigation-actions">
+
+        <a
+            href="{{ url_for('history') }}"
+            class="history-nav-button"
+        >
+            📋 Analysis History
+        </a>
+
+        <button
+            type="button"
+            id="themeToggle"
+            class="theme-toggle"
+            aria-label="Toggle dark mode"
+            title="Toggle dark mode"
+        >
+            🌙
+        </button>
+
+    </div>
+
+</div>
+
+<div class="legal-hero">
+
+    <span class="badge">
+        V3.0
+    </span>
+
+    <h1>
+        Privacy Policy
+    </h1>
+
+    <p class="hero-text">
+        Information about how AI Resume Analyzer handles
+        resume and application data.
+    </p>
+
+</div>
+
+</header>
+
+
+<main class="container policy-page">
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Privacy at a Glance
+        </h2>
+
+
+        <p>
+            AI Resume Analyzer is designed to analyze resume
+            documents and provide ATS, resume quality,
+            improvement, analytics, and job compatibility
+            insights.
+        </p>
+
+
+        <p>
+            This page describes the application's current
+            data-handling approach. It is intended as general
+            information and should be reviewed and customized
+            before using the application as a production
+            commercial service.
+        </p>
+
+
+    </section>
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Information You Provide
+        </h2>
+
+
+        <ul class="info-list">
+
+            <li>
+                <strong>Resume PDF</strong>
+
+                <span>
+                    Used to extract resume information for analysis.
+                </span>
+            </li>
+
+
+            <li>
+                <strong>Job Description</strong>
+
+                <span>
+                    Used when provided to calculate job matching
+                    and keyword coverage.
+                </span>
+            </li>
+
+
+            <li>
+                <strong>Analysis Results</strong>
+
+                <span>
+                    Analysis results may be stored locally in the
+                    application's SQLite database for history.
+                </span>
+            </li>
+
+        </ul>
+
+    </section>
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Local Storage
+        </h2>
+
+
+        <p>
+            The current application stores analysis history
+            locally in its SQLite database. Saved analyses can
+            be viewed and deleted through the Analysis History
+            page.
+        </p>
+
+
+        <p>
+            The application does not require an account or
+            login for its current local usage.
+        </p>
+
+    </section>
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Resume Data
+        </h2>
+
+
+        <p>
+            Resume documents can contain sensitive personal
+            information such as names, email addresses,
+            telephone numbers, education, employment history,
+            and other professional information.
+        </p>
+
+
+        <p>
+            Only upload resumes that you are comfortable
+            processing with this application.
+        </p>
+
+    </section>
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Third-Party Services
+        </h2>
+
+
+        <p>
+            The current application is intended to operate
+            locally with Flask, Python, and SQLite. If external
+            APIs, cloud storage, analytics services, hosting
+            providers, or other third-party services are added
+            later, this privacy policy should be updated to
+            describe their data handling.
+        </p>
+
+    </section>
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Data Deletion
+        </h2>
+
+
+        <p>
+            Saved analysis records can be deleted from the
+            Analysis History page using the Delete option.
+        </p>
+
+    </section>
+
+
+    <section class="card">
+
+
+        <h2 class="section-title">
+            Policy Updates
+        </h2>
+
+
+        <p>
+            This Privacy Policy may be updated as the
+            application develops or new functionality is
+            introduced.
+        </p>
+
+
+        <p>
+            Last updated:
+            <strong>2026</strong>
+        </p>
+
+    </section>
+
+
+</main>
+
+<footer class="site-footer">
+
+    <div class="container">
+
+        <div class="footer-brand">
+            <strong>
+                © 2026 Prashant Kumar · AI Resume Analyzer
+            </strong>
+        </div>
+
+
+        <div class="footer-built">
+            Built with Flask &amp; Python · V3.0
+        </div>
+
+
+        <nav
+            class="footer-links"
+            aria-label="Footer navigation"
+        >
+
+            <a
+                href="https://github.com/Prashant7525"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-social-link"
+                aria-label="GitHub"
+                title="GitHub"
+            >
+                <svg
+                    class="footer-social-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.2 9.2 0 0 1 12 7.16c.85 0 1.71.12 2.51.36 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
+                    />
+                </svg>
+
+                <span>
+                    GitHub
+                </span>
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <a
+                href="https://www.linkedin.com/in/prashant7525"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-social-link"
+                aria-label="LinkedIn"
+                title="LinkedIn"
+            >
+                <svg
+                    class="footer-social-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M6.5 8.25A1.75 1.75 0 1 0 6.5 4.75a1.75 1.75 0 0 0 0 3.5ZM5 9.75h3v9H5v-9Zm5 0h2.88v1.23h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v4.73h-3v-4.2c0-1 0-2.28-1.39-2.28-1.39 0-1.6 1.09-1.6 2.2v4.28h-3v-9Z"
+                    />
+                </svg>
+
+                <span>
+                    LinkedIn
+                </span>
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <a
+                href="{{ url_for('privacy') }}"
+                class="footer-text-link"
+            >
+                Privacy
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <a
+                href="{{ url_for('terms') }}"
+                class="footer-text-link"
+            >
+                Terms
+            </a>
+
+        </nav>
+
+    </div>
+
+</footer>
+
+<script>
+(function () {
+
+    const html = document.documentElement;
+    const toggle = document.getElementById("themeToggle");
+
+    function updateThemeIcon() {
+
+        if (!toggle) return;
+
+        const isDark =
+            html.getAttribute("data-theme") === "dark";
+
+        toggle.textContent =
+            isDark ? "🌙" : "☀️";
+    }
+
+    /* Load saved theme */
+    const savedTheme =
+        localStorage.getItem("resume-analyzer-theme");
+
+    if (savedTheme === "dark") {
+
+        html.setAttribute(
+            "data-theme",
+            "dark"
+        );
+
+    } else {
+
+        html.removeAttribute(
+            "data-theme"
+        );
+
+    }
+
+    updateThemeIcon();
+
+    /* Toggle theme */
+    if (toggle) {
+
+        toggle.addEventListener(
+            "click",
+            function () {
+
+                const isDark =
+                    html.getAttribute("data-theme") === "dark";
+
+                if (isDark) {
+
+                    html.removeAttribute(
+                        "data-theme"
+                    );
+
+                    localStorage.setItem(
+                        "resume-analyzer-theme",
+                        "light"
+                    );
+
+                } else {
+
+                    html.setAttribute(
+                        "data-theme",
+                        "dark"
+                    );
+
+                    localStorage.setItem(
+                        "resume-analyzer-theme",
+                        "dark"
+                    );
+
+                }
+
+                updateThemeIcon();
+
+            }
+        );
+
+    }
+
+})();
+</script>
+
+<!-- Back to Top -->
+
+<button
+    type="button"
+    class="back-to-top"
+    id="backToTop"
+    aria-label="Back to top"
+    title="Back to top"
+>
+    ↑
+</button>
+
+
+<script>
+(function () {
+
+    const button =
+        document.getElementById("backToTop");
+
+    if (!button) return;
+
+    function updateBackToTop() {
+
+        if (window.scrollY > 450) {
+
+            button.classList.add("show");
+
+        } else {
+
+            button.classList.remove("show");
+
+        }
+
+    }
+
+    window.addEventListener(
+        "scroll",
+        updateBackToTop,
+        {
+            passive: true
+        }
+    );
+
+    updateBackToTop();
+
+    button.addEventListener(
+        "click",
+        function () {
+
+            window.scrollTo({
+                top: 0,
+                behavior: "smooth"
+            });
+
+        }
+    );
+
+})();
+</script>
+
+</body>
+
+</html>

@@ -1,28 +1,36 @@
 """
 Main Flask application for the AI Resume Analyzer.
 
-V2.4
+V3.0
 - Resume analysis
+- ATS analysis
+- Resume quality analysis
+- Resume improvement analysis
+- Job matching
+- Keyword intelligence
 - Dashboard
 - Analytics
 - PDF report download
 - Analysis history
 - Saved analysis viewing
 - Analysis deletion
+- Privacy page
+- Terms page
+- Favicon support
 """
 
 from __future__ import annotations
 
-import os
-
 from datetime import datetime
 from io import BytesIO
+from pathlib import Path
 
 from flask import (
     Flask,
     render_template,
     request,
     send_file,
+    send_from_directory,
     redirect,
     url_for,
 )
@@ -55,15 +63,13 @@ from app.resume_quality import analyze_resume_quality
 
 app = Flask(__name__)
 
-app.config["SECRET_KEY"] = os.getenv(
-    "SECRET_KEY",
-    "development-secret-key",
-)
-
 ALLOWED_EXTENSIONS = {"pdf"}
 
 
-# Initialize database when application starts.
+# ============================================================
+# DATABASE INITIALIZATION
+# ============================================================
+
 init_database()
 
 
@@ -71,10 +77,11 @@ init_database()
 # TEMPLATE FILTERS
 # ============================================================
 
-
 @app.template_filter("format_history_date")
 def format_history_date(value):
-    """Format an ISO timestamp for the analysis history page."""
+    """
+    Format an ISO timestamp for the analysis history page.
+    """
 
     if not value:
         return "Unknown date"
@@ -99,9 +106,10 @@ def format_history_date(value):
 # FILE VALIDATION
 # ============================================================
 
-
 def allowed_file(filename: str) -> bool:
-    """Return True when the uploaded file is an allowed PDF."""
+    """
+    Return True when the uploaded file is an allowed PDF.
+    """
 
     return (
         "." in filename
@@ -117,7 +125,6 @@ def allowed_file(filename: str) -> bool:
 # RESUME ANALYSIS
 # ============================================================
 
-
 def _analyze_uploaded_resume(
     file,
     job_description: str = "",
@@ -128,6 +135,10 @@ def _analyze_uploaded_resume(
     Returns:
         Dictionary containing all analysis results.
     """
+
+    # --------------------------------------------------------
+    # Extract PDF text
+    # --------------------------------------------------------
 
     extracted_text = extract_text_from_pdf(
         file
@@ -163,7 +174,7 @@ def _analyze_uploaded_resume(
     )
 
     # --------------------------------------------------------
-    # Improvement analysis
+    # Resume improvement analysis
     # --------------------------------------------------------
 
     improvement_result = (
@@ -223,7 +234,6 @@ def _analyze_uploaded_resume(
 # SAVE ANALYSIS
 # ============================================================
 
-
 def _save_analysis_results(
     results: dict,
     job_description: str,
@@ -265,13 +275,14 @@ def _save_analysis_results(
 # MAIN PAGE
 # ============================================================
 
-
 @app.route(
     "/",
     methods=["GET", "POST"],
 )
 def index():
-    """Render the main resume analyzer page."""
+    """
+    Render the main resume analyzer page.
+    """
 
     resume = None
 
@@ -411,7 +422,6 @@ def index():
         job_description=job_description,
 
         history_view=False,
-
         analysis_id=None,
     )
 
@@ -420,13 +430,14 @@ def index():
 # HISTORY PAGE
 # ============================================================
 
-
 @app.route(
     "/history",
     methods=["GET"],
 )
 def history():
-    """Display saved resume analyses."""
+    """
+    Display saved resume analyses.
+    """
 
     analyses = get_analysis_history(
         limit=50
@@ -441,7 +452,6 @@ def history():
 # ============================================================
 # VIEW SAVED ANALYSIS
 # ============================================================
-
 
 @app.route(
     "/history/<int:analysis_id>",
@@ -462,9 +472,11 @@ def view_history(
 
         return render_template(
             "history.html",
+
             analyses=get_analysis_history(
                 limit=50
             ),
+
             error="Analysis not found.",
         ), 404
 
@@ -518,7 +530,6 @@ def view_history(
 # DELETE SAVED ANALYSIS
 # ============================================================
 
-
 @app.route(
     "/history/<int:analysis_id>/delete",
     methods=["POST"],
@@ -526,7 +537,9 @@ def view_history(
 def delete_history(
     analysis_id: int,
 ):
-    """Delete a saved analysis and return to history."""
+    """
+    Delete a saved analysis and return to history.
+    """
 
     delete_analysis(
         analysis_id
@@ -540,7 +553,6 @@ def delete_history(
 # ============================================================
 # PDF REPORT DOWNLOAD
 # ============================================================
-
 
 @app.route(
     "/download-report",
@@ -574,8 +586,11 @@ def download_report():
 
         return render_template(
             "index.html",
+
             error="Please upload a PDF resume.",
+
             job_description=job_description,
+
             history_view=False,
             analysis_id=None,
         )
@@ -586,8 +601,11 @@ def download_report():
 
         return render_template(
             "index.html",
+
             error="Only PDF resume files are supported.",
+
             job_description=job_description,
+
             history_view=False,
             analysis_id=None,
         )
@@ -608,24 +626,31 @@ def download_report():
         # ----------------------------------------------------
 
         pdf_bytes = generate_resume_report(
+
             resume=results[
                 "resume"
             ],
+
             ats_result=results[
                 "ats_result"
             ],
+
             quality_result=results[
                 "quality_result"
             ],
+
             improvement_result=results[
                 "improvement_result"
             ],
+
             job_result=results[
                 "job_result"
             ],
+
             dashboard_result=results[
                 "dashboard_result"
             ],
+
             analytics_result=results[
                 "analytics_result"
             ],
@@ -636,11 +661,17 @@ def download_report():
         # ----------------------------------------------------
 
         return send_file(
-            BytesIO(pdf_bytes),
+
+            BytesIO(
+                pdf_bytes
+            ),
+
             mimetype="application/pdf",
+
             as_attachment=True,
+
             download_name=(
-                "AI_Resume_Analyzer_V2.4_Report.pdf"
+                "AI_Resume_Analyzer_V3.0_Report.pdf"
             ),
         )
 
@@ -648,8 +679,11 @@ def download_report():
 
         return render_template(
             "index.html",
+
             error=str(exc),
+
             job_description=job_description,
+
             history_view=False,
             analysis_id=None,
         )
@@ -663,50 +697,92 @@ def download_report():
 
         return render_template(
             "index.html",
+
             error=(
                 "Unable to generate the PDF report. "
                 "Please try again."
             ),
+
             job_description=job_description,
+
             history_view=False,
             analysis_id=None,
         )
 
 
 # ============================================================
+# PRIVACY PAGE
+# ============================================================
+
+@app.route(
+    "/privacy",
+    methods=["GET"],
+)
+def privacy():
+    """
+    Display the application's privacy information.
+    """
+
+    return render_template(
+        "privacy.html"
+    )
+
+
+# ============================================================
+# TERMS PAGE
+# ============================================================
+
+@app.route(
+    "/terms",
+    methods=["GET"],
+)
+def terms():
+    """
+    Display the application's terms of use.
+    """
+
+    return render_template(
+        "terms.html"
+    )
+
+
+# ============================================================
+# FAVICON
+# ============================================================
+
+@app.route(
+    "/favicon.ico"
+)
+def favicon():
+    """
+    Serve the favicon.svg when browsers request /favicon.ico.
+    """
+
+    static_folder = Path(
+        app.static_folder
+    )
+
+    favicon_path = (
+        static_folder / "favicon.svg"
+    )
+
+    if favicon_path.exists():
+
+        return send_from_directory(
+            static_folder,
+            "favicon.svg",
+            mimetype="image/svg+xml",
+        )
+
+    return "", 204
+
+
+# ============================================================
 # APPLICATION ENTRY POINT
 # ============================================================
 
-
 if __name__ == "__main__":
 
-    debug = (
-        os.getenv(
-            "FLASK_DEBUG",
-            "0",
-        ).lower()
-        in {
-            "1",
-            "true",
-            "yes",
-            "on",
-        }
-    )
-
-    host = os.getenv(
-        "FLASK_HOST",
-        "127.0.0.1",
-    )
-
-    port = int(
-        os.getenv(
-            "PORT",
-            "5000",
-        )
-    )
-
     app.run(
-        host=host,
-        port=port,
-        debug=debug,
+        debug=True
     )

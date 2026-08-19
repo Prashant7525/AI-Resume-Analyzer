@@ -10,14 +10,53 @@
         content="width=device-width, initial-scale=1.0"
     >
 
+    <meta
+        name="theme-color"
+        content="#5146e5"
+    >
+
     <title>
         Analysis History · AI Resume Analyzer
     </title>
 
     <link
+        rel="icon"
+        type="image/svg+xml"
+        href="{{ url_for('static', filename='favicon.svg') }}"
+    >
+
+    <link
         rel="stylesheet"
         href="{{ url_for('static', filename='style.css') }}"
     >
+
+
+    <!-- =========================================
+         PREVENT LIGHT/DARK MODE FLASH
+         ========================================= -->
+
+    <script>
+
+        (function () {
+
+            const savedTheme =
+                localStorage.getItem(
+                    "resume-analyzer-theme"
+                );
+
+            if (savedTheme === "dark") {
+
+                document.documentElement
+                    .setAttribute(
+                        "data-theme",
+                        "dark"
+                    );
+
+            }
+
+        })();
+
+    </script>
 
 </head>
 
@@ -25,34 +64,79 @@
 <body>
 
 
+<!-- =========================================
+     HEADER
+     ========================================= -->
+
 <header>
 
     <div class="container">
 
-        <div class="history-top-navigation">
+
+        <!-- =====================================
+             TOP NAVIGATION
+             ===================================== -->
+
+        <div class="top-navigation">
+
+
+            <!-- Brand -->
 
             <a
                 href="{{ url_for('index') }}"
-                class="brand-link"
+                class="brand-link badge"
             >
                 AI Resume Analyzer
             </a>
 
-            <span class="history-nav-divider">
-                /
-            </span>
 
-            <span class="history-current-page">
-                Analysis History
-            </span>
+            <!-- Navigation -->
+
+            <div class="top-navigation-actions">
+
+
+                <span class="history-current-page">
+
+                    📋 Analysis History
+
+                </span>
+
+
+                <!-- Theme Toggle -->
+
+                <button
+                    type="button"
+                    id="themeToggle"
+                    class="theme-toggle"
+                    aria-label="Toggle dark mode"
+                    title="Toggle dark mode"
+                >
+
+                    <span id="themeIcon">
+                        ☀️
+                    </span>
+
+                </button>
+
+
+            </div>
+
 
         </div>
 
 
+        <!-- =====================================
+             PAGE VERSION
+             ===================================== -->
+
         <span class="badge">
-            V2.4
+            V3.0
         </span>
 
+
+        <!-- =====================================
+             HERO
+             ===================================== -->
 
         <h1>
             Analysis History
@@ -65,6 +149,10 @@
         </p>
 
 
+        <!-- =====================================
+             NAVIGATION
+             ===================================== -->
+
         <div class="history-navigation">
 
             <a
@@ -76,10 +164,15 @@
 
         </div>
 
+
     </div>
 
 </header>
 
+
+<!-- =========================================
+     MAIN
+     ========================================= -->
 
 <main class="container">
 
@@ -113,13 +206,16 @@
 
         <div class="history-header-content">
 
+
             <span class="dashboard-badge">
-                V2.4 HISTORY
+                V3.0 HISTORY
             </span>
+
 
             <h2 class="section-title">
                 Saved Analyses
             </h2>
+
 
             <p class="dashboard-description">
                 Your recent resume analysis results are
@@ -127,14 +223,18 @@
                 SQLite database.
             </p>
 
+
         </div>
 
+
+        <!-- Analysis Count -->
 
         <div class="history-count">
 
             <strong>
                 {{ analyses|length }}
             </strong>
+
 
             <span>
 
@@ -152,6 +252,7 @@
 
         </div>
 
+
     </section>
 
 
@@ -163,18 +264,22 @@
 
     <section class="card history-empty-card">
 
+
         <div class="history-empty-icon">
             📄
         </div>
+
 
         <h2>
             No Analysis History Yet
         </h2>
 
+
         <p>
             Analyze a resume to create your first
             saved analysis.
         </p>
+
 
         <a
             href="{{ url_for('index') }}"
@@ -182,6 +287,7 @@
         >
             Analyze Resume
         </a>
+
 
     </section>
 
@@ -196,19 +302,22 @@
 
     <section class="history-list">
 
+
         {% for analysis in analyses %}
+
 
         <article class="card history-item">
 
 
-            <!-- =====================================
+            <!-- =================================
                  TOP SECTION
-                 ===================================== -->
+                 ================================= -->
 
             <div class="history-item-main">
 
 
                 <div class="history-item-title">
+
 
                     <span class="dashboard-badge">
                         ANALYSIS #{{ analysis.id }}
@@ -239,12 +348,16 @@
 
                     {% endif %}
 
+
                 </div>
 
 
-                <!-- Overall score -->
+                <!-- =================================
+                     OVERALL SCORE
+                     ================================= -->
 
                 <div class="history-score">
+
 
                     <span>
                         Overall Score
@@ -252,6 +365,7 @@
 
 
                     <strong>
+
 
                         {% if analysis.overall_score is not none %}
 
@@ -267,25 +381,31 @@
 
                         {% endif %}
 
+
                     </strong>
 
+
                 </div>
+
 
             </div>
 
 
-            <!-- =====================================
+            <!-- =================================
                  SCORE SUMMARY
-                 ===================================== -->
+                 ================================= -->
 
             <div class="history-metrics">
 
+
+                <!-- ATS -->
 
                 <div class="history-metric">
 
                     <span>
                         ATS Readiness
                     </span>
+
 
                     <strong
                         class="history-score-value"
@@ -306,11 +426,14 @@
                 </div>
 
 
+                <!-- Resume Quality -->
+
                 <div class="history-metric">
 
                     <span>
                         Resume Quality
                     </span>
+
 
                     <strong
                         class="history-score-value"
@@ -331,11 +454,14 @@
                 </div>
 
 
+                <!-- Improvements -->
+
                 <div class="history-metric">
 
                     <span>
                         Improvements
                     </span>
+
 
                     <strong
                         class="history-score-value"
@@ -356,11 +482,14 @@
                 </div>
 
 
+                <!-- Job Match -->
+
                 <div class="history-metric">
 
                     <span>
                         Job Match
                     </span>
+
 
                     <strong
                         class="history-score-value"
@@ -381,11 +510,14 @@
                 </div>
 
 
+                <!-- Keywords -->
+
                 <div class="history-metric">
 
                     <span>
                         Keywords
                     </span>
+
 
                     <strong
                         class="history-score-value"
@@ -405,37 +537,47 @@
 
                 </div>
 
+
             </div>
 
 
-            <!-- =====================================
+            <!-- =================================
                  JOB MATCH STATUS
-                 ===================================== -->
+                 ================================= -->
 
             <div class="history-status-row">
+
 
                 {% if analysis.has_job_match %}
 
                     <span class="history-status job-enabled">
+
                         ✓ Job description analyzed
+
                     </span>
 
                 {% else %}
 
                     <span class="history-status job-disabled">
+
                         No job description
+
                     </span>
 
                 {% endif %}
 
+
             </div>
 
 
-            <!-- =====================================
+            <!-- =================================
                  ACTIONS
-                 ===================================== -->
+                 ================================= -->
 
             <div class="history-actions">
+
+
+                <!-- View -->
 
                 <a
                     href="{{ url_for(
@@ -447,6 +589,8 @@
                     View Analysis
                 </a>
 
+
+                <!-- Delete -->
 
                 <form
                     method="POST"
@@ -468,11 +612,15 @@
 
                 </form>
 
+
             </div>
+
 
         </article>
 
+
         {% endfor %}
+
 
     </section>
 
@@ -482,15 +630,343 @@
 </main>
 
 
-<footer>
+<!-- =========================================
+     BACK TO TOP
+     ========================================= -->
+
+<button
+    type="button"
+    id="backToTop"
+    class="back-to-top"
+    aria-label="Back to top"
+    title="Back to top"
+>
+    ↑
+</button>
+
+
+<!-- =========================================
+     FOOTER
+     ========================================= -->
+
+<footer class="site-footer">
 
     <div class="container">
 
-        AI Resume Analyzer · Built with Flask and Python · V2.4
+        <div class="footer-brand">
+            <strong>
+                © 2026 Prashant Kumar · AI Resume Analyzer
+            </strong>
+        </div>
+
+
+        <div class="footer-built">
+            Built with Flask &amp; Python · V3.0
+        </div>
+
+
+        <nav
+            class="footer-links"
+            aria-label="Footer navigation"
+        >
+
+            <a
+                href="https://github.com/Prashant7525"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-social-link"
+                aria-label="GitHub"
+                title="GitHub"
+            >
+                <svg
+                    class="footer-social-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.2 9.2 0 0 1 12 7.16c.85 0 1.71.12 2.51.36 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
+                    />
+                </svg>
+
+                <span>
+                    GitHub
+                </span>
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <a
+                href="https://www.linkedin.com/in/prashant7525"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-social-link"
+                aria-label="LinkedIn"
+                title="LinkedIn"
+            >
+                <svg
+                    class="footer-social-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+                    <path
+                        d="M6.5 8.25A1.75 1.75 0 1 0 6.5 4.75a1.75 1.75 0 0 0 0 3.5ZM5 9.75h3v9H5v-9Zm5 0h2.88v1.23h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v4.73h-3v-4.2c0-1 0-2.28-1.39-2.28-1.39 0-1.6 1.09-1.6 2.2v4.28h-3v-9Z"
+                    />
+                </svg>
+
+                <span>
+                    LinkedIn
+                </span>
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <a
+                href="{{ url_for('privacy') }}"
+                class="footer-text-link"
+            >
+                Privacy
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <a
+                href="{{ url_for('terms') }}"
+                class="footer-text-link"
+            >
+                Terms
+            </a>
+
+        </nav>
 
     </div>
 
 </footer>
+
+
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
+
+<script>
+
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+
+            /* =====================================
+               THEME
+               ===================================== */
+
+            const themeToggle =
+                document.getElementById(
+                    "themeToggle"
+                );
+
+
+            const themeIcon =
+                document.getElementById(
+                    "themeIcon"
+                );
+
+
+            function updateThemeIcon() {
+
+
+                const isDark =
+                    document.documentElement
+                        .getAttribute(
+                            "data-theme"
+                        ) === "dark";
+
+
+                if (themeIcon) {
+
+                    themeIcon.textContent =
+                        isDark
+                            ? "🌙"
+                            : "☀️";
+
+                }
+
+
+                if (themeToggle) {
+
+                    themeToggle.setAttribute(
+                        "aria-label",
+                        isDark
+                            ? "Switch to light mode"
+                            : "Switch to dark mode"
+                    );
+
+
+                    themeToggle.setAttribute(
+                        "title",
+                        isDark
+                            ? "Switch to light mode"
+                            : "Switch to dark mode"
+                    );
+
+                }
+
+
+            }
+
+
+            updateThemeIcon();
+
+
+            if (themeToggle) {
+
+
+                themeToggle.addEventListener(
+                    "click",
+                    function () {
+
+
+                        const isDark =
+                            document.documentElement
+                                .getAttribute(
+                                    "data-theme"
+                                ) === "dark";
+
+
+                        if (isDark) {
+
+
+                            document.documentElement
+                                .removeAttribute(
+                                    "data-theme"
+                                );
+
+
+                            localStorage.setItem(
+                                "resume-analyzer-theme",
+                                "light"
+                            );
+
+
+                        } else {
+
+
+                            document.documentElement
+                                .setAttribute(
+                                    "data-theme",
+                                    "dark"
+                                );
+
+
+                            localStorage.setItem(
+                                "resume-analyzer-theme",
+                                "dark"
+                            );
+
+
+                        }
+
+
+                        updateThemeIcon();
+
+
+                    }
+                );
+
+
+            }
+
+
+            /* =====================================
+               BACK TO TOP
+               ===================================== */
+
+            const backToTop =
+                document.getElementById(
+                    "backToTop"
+                );
+
+
+            function updateBackToTop() {
+
+
+                if (!backToTop) {
+                    return;
+                }
+
+
+                if (window.scrollY > 500) {
+
+
+                    backToTop.classList.add(
+                        "visible"
+                    );
+
+
+                } else {
+
+
+                    backToTop.classList.remove(
+                        "visible"
+                    );
+
+
+                }
+
+
+            }
+
+
+            window.addEventListener(
+                "scroll",
+                updateBackToTop,
+                {
+                    passive: true
+                }
+            );
+
+
+            updateBackToTop();
+
+
+            if (backToTop) {
+
+
+                backToTop.addEventListener(
+                    "click",
+                    function () {
+
+
+                        window.scrollTo({
+
+                            top: 0,
+
+                            behavior: "smooth"
+
+                        });
+
+
+                    }
+                );
+
+
+            }
+
+
+        }
+    );
+
+</script>
 
 
 </body>
