@@ -21,6 +21,7 @@ V3.1
 - Secure upload validation
 - Input sanitization
 - CSRF protection
+- Production configuration
 """
 
 from __future__ import annotations
@@ -44,6 +45,7 @@ from flask import (
 )
 
 from flask_wtf.csrf import CSRFProtect
+
 
 from app.analytics import build_analytics
 from app.ats_analyzer import analyze_resume
@@ -76,36 +78,183 @@ app = Flask(__name__)
 
 
 # ============================================================
-# SECURITY CONFIGURATION
+# ENVIRONMENT HELPERS
 # ============================================================
 
-# Use an environment-provided secret in production.
-# The fallback keeps local development and tests working.
-app.config["SECRET_KEY"] = os.environ.get(
-    "SECRET_KEY",
-    "dev-only-change-this-secret-key",
+def _env_bool(
+    name: str,
+    default: bool = False,
+) -> bool:
+    """
+    Read a boolean environment variable safely.
+
+    Accepted true values:
+        1, true, yes, on
+
+    Accepted false values:
+        0, false, no, off
+    """
+
+    value = os.environ.get(
+        name
+    )
+
+    if value is None:
+        return default
+
+    return value.strip().lower() in {
+        "1",
+        "true",
+        "yes",
+        "on",
+    }
+
+
+def _env_int(
+    name: str,
+    default: int,
+) -> int:
+    """
+    Read an integer environment variable safely.
+    """
+
+    value = os.environ.get(
+        name
+    )
+
+    if value is None:
+        return default
+
+    try:
+        return int(value)
+
+    except ValueError:
+
+        return default
+
+
+# ============================================================
+# ENVIRONMENT / PRODUCTION CONFIGURATION
+# ============================================================
+
+APP_ENV = os.environ.get(
+    "APP_ENV",
+    "development",
+).strip().lower()
+
+
+IS_PRODUCTION = (
+    APP_ENV == "production"
 )
 
-# Maximum uploaded request size: 5 MB.
+
+# ------------------------------------------------------------
+# SECRET KEY
+# ------------------------------------------------------------
+
+SECRET_KEY = os.environ.get(
+    "SECRET_KEY"
+)
+
+if IS_PRODUCTION and not SECRET_KEY:
+
+    raise RuntimeError(
+        "SECRET_KEY must be configured "
+        "when APP_ENV=production."
+    )
+
+
+if not SECRET_KEY:
+
+    SECRET_KEY = (
+        "dev-only-change-this-secret-key"
+    )
+
+
+app.config["SECRET_KEY"] = (
+    SECRET_KEY
+)
+
+
+# ------------------------------------------------------------
+# File upload limit
+# ------------------------------------------------------------
+
 app.config["MAX_CONTENT_LENGTH"] = (
     5 * 1024 * 1024
 )
 
-# Enable CSRF protection.
+
+# ------------------------------------------------------------
+# CSRF
+# ------------------------------------------------------------
+
 app.config["WTF_CSRF_ENABLED"] = True
 
-# CSRF tokens expire after one hour.
 app.config["WTF_CSRF_TIME_LIMIT"] = 3600
 
 
-# Initialize CSRF protection.
-csrf = CSRFProtect(app)
+# ------------------------------------------------------------
+# Session cookie security
+# ------------------------------------------------------------
+
+app.config["SESSION_COOKIE_HTTPONLY"] = True
+
+app.config["SESSION_COOKIE_SAMESITE"] = "Lax"
+
+app.config["SESSION_COOKIE_SECURE"] = (
+    IS_PRODUCTION
+)
 
 
-ALLOWED_EXTENSIONS = {"pdf"}
+# ------------------------------------------------------------
+# Debug / testing
+# ------------------------------------------------------------
 
-# Maximum job-description length.
+app.config["DEBUG"] = _env_bool(
+    "FLASK_DEBUG",
+    default=not IS_PRODUCTION,
+)
+
+app.config["TESTING"] = _env_bool(
+    "FLASK_TESTING",
+    default=False,
+)
+
+
+# ------------------------------------------------------------
+# Host / port
+# ------------------------------------------------------------
+
+APP_HOST = os.environ.get(
+    "APP_HOST",
+    "127.0.0.1",
+)
+
+APP_PORT = _env_int(
+    "APP_PORT",
+    5000,
+)
+
+
+# ------------------------------------------------------------
+# Application limits
+# ------------------------------------------------------------
+
+ALLOWED_EXTENSIONS = {
+    "pdf"
+}
+
 MAX_JOB_DESCRIPTION_LENGTH = 20000
+
+
+# ============================================================
+# CSRF INITIALIZATION
+# ============================================================
+
+csrf = CSRFProtect(
+    app
+)
 
 
 # ============================================================
@@ -119,13 +268,16 @@ init_database()
 # TEMPLATE FILTERS
 # ============================================================
 
-@app.template_filter("format_history_date")
+@app.template_filter(
+    "format_history_date"
+)
 def format_history_date(value):
     """
     Format an ISO timestamp for the analysis history page.
     """
 
     if not value:
+
         return "Unknown date"
 
     try:
@@ -174,6 +326,7 @@ def sanitize_text(
         value,
         str,
     ):
+
         return ""
 
     # Remove the null character explicitly.
@@ -207,7 +360,9 @@ def sanitize_text(
         for line in value.split("\n")
     ]
 
-    value = "\n".join(lines).strip()
+    value = "\n".join(
+        lines
+    ).strip()
 
     # Enforce the maximum length.
     return value[:max_length]
@@ -225,10 +380,12 @@ def allowed_file(
     """
 
     if not filename:
+
         return False
 
     return (
-        "." in filename
+        "."
+        in filename
         and filename.rsplit(
             ".",
             1,
@@ -247,24 +404,31 @@ def is_valid_pdf(
     """
 
     if file is None:
+
         return False
 
     try:
 
-        file.stream.seek(0)
+        file.stream.seek(
+            0
+        )
 
         pdf_bytes = file.stream.read()
 
-        file.stream.seek(0)
+        file.stream.seek(
+            0
+        )
 
         # Empty upload.
         if not pdf_bytes:
+
             return False
 
         # PDF signature check.
         if not pdf_bytes.startswith(
             b"%PDF-"
         ):
+
             return False
 
         # Structural PDF validation.
@@ -293,8 +457,13 @@ def is_valid_pdf(
     finally:
 
         try:
-            file.stream.seek(0)
+
+            file.stream.seek(
+                0
+            )
+
         except Exception:
+
             pass
 
 
@@ -419,12 +588,19 @@ def _analyze_uploaded_resume(
     # V3.1 score explanations
     # --------------------------------------------------------
 
-    score_explanations = build_score_explanations(
-        dashboard_result,
-        ats_result,
-        quality_result,
-        job_result,
-        improvement_result,
+    score_explanations = (
+        build_score_explanations(
+
+            dashboard_result,
+
+            ats_result,
+
+            quality_result,
+
+            job_result,
+
+            improvement_result,
+        )
     )
 
     # --------------------------------------------------------
@@ -439,15 +615,29 @@ def _analyze_uploaded_resume(
     )
 
     return {
+
         "resume": resume,
+
         "ats_result": ats_result,
+
         "quality_result": quality_result,
-        "improvement_result": improvement_result,
+
+        "improvement_result":
+            improvement_result,
+
         "job_result": job_result,
-        "dashboard_result": dashboard_result,
-        "score_explanations": score_explanations,
-        "analytics_result": analytics_result,
-        "extracted_text": extracted_text,
+
+        "dashboard_result":
+            dashboard_result,
+
+        "score_explanations":
+            score_explanations,
+
+        "analytics_result":
+            analytics_result,
+
+        "extracted_text":
+            extracted_text,
     }
 
 
@@ -596,7 +786,8 @@ def index():
                 "",
             ),
 
-            max_length=MAX_JOB_DESCRIPTION_LENGTH,
+            max_length=
+                MAX_JOB_DESCRIPTION_LENGTH,
         )
 
         try:
@@ -694,7 +885,9 @@ def index():
 
         except ValueError as exc:
 
-            error = str(exc)
+            error = str(
+                exc
+            )
 
         except Exception as exc:
 
@@ -719,21 +912,27 @@ def index():
 
         quality_result=quality_result,
 
-        improvement_result=improvement_result,
+        improvement_result=
+            improvement_result,
 
         job_result=job_result,
 
-        dashboard_result=dashboard_result,
+        dashboard_result=
+            dashboard_result,
 
-        score_explanations=score_explanations,
+        score_explanations=
+            score_explanations,
 
-        analytics_result=analytics_result,
+        analytics_result=
+            analytics_result,
 
-        extracted_text=extracted_text,
+        extracted_text=
+            extracted_text,
 
         error=error,
 
-        job_description=job_description,
+        job_description=
+            job_description,
 
         history_view=False,
 
@@ -795,35 +994,39 @@ def view_history(
 
             "history.html",
 
-            analyses=get_analysis_history(
-                limit=50
-            ),
+            analyses=
+                get_analysis_history(
+                    limit=50
+                ),
 
-            error="Analysis not found.",
+            error=
+                "Analysis not found.",
 
         ), 404
 
-    score_explanations = build_score_explanations(
+    score_explanations = (
+        build_score_explanations(
 
-        analysis.get(
-            "dashboard_result"
-        ),
+            analysis.get(
+                "dashboard_result"
+            ),
 
-        analysis.get(
-            "ats_result"
-        ),
+            analysis.get(
+                "ats_result"
+            ),
 
-        analysis.get(
-            "quality_result"
-        ),
+            analysis.get(
+                "quality_result"
+            ),
 
-        analysis.get(
-            "job_result"
-        ),
+            analysis.get(
+                "job_result"
+            ),
 
-        analysis.get(
-            "improvement_result"
-        ),
+            analysis.get(
+                "improvement_result"
+            ),
+        )
     )
 
     return render_template(
@@ -842,32 +1045,37 @@ def view_history(
             "quality_result"
         ),
 
-        improvement_result=analysis.get(
-            "improvement_result"
-        ),
+        improvement_result=
+            analysis.get(
+                "improvement_result"
+            ),
 
         job_result=analysis.get(
             "job_result"
         ),
 
-        dashboard_result=analysis.get(
-            "dashboard_result"
-        ),
+        dashboard_result=
+            analysis.get(
+                "dashboard_result"
+            ),
 
-        score_explanations=score_explanations,
+        score_explanations=
+            score_explanations,
 
-        analytics_result=analysis.get(
-            "analytics_result"
-        ),
+        analytics_result=
+            analysis.get(
+                "analytics_result"
+            ),
 
         extracted_text=None,
 
         error=None,
 
-        job_description=analysis.get(
-            "job_description",
-            "",
-        ),
+        job_description=
+            analysis.get(
+                "job_description",
+                "",
+            ),
 
         history_view=True,
 
@@ -895,7 +1103,9 @@ def delete_history(
     )
 
     return redirect(
-        url_for("history")
+        url_for(
+            "history"
+        )
     )
 
 
@@ -923,7 +1133,8 @@ def download_report():
             "",
         ),
 
-        max_length=MAX_JOB_DESCRIPTION_LENGTH,
+        max_length=
+            MAX_JOB_DESCRIPTION_LENGTH,
     )
 
     try:
@@ -994,21 +1205,24 @@ def download_report():
                 "quality_result"
             ],
 
-            improvement_result=results[
-                "improvement_result"
-            ],
+            improvement_result=
+                results[
+                    "improvement_result"
+                ],
 
             job_result=results[
                 "job_result"
             ],
 
-            dashboard_result=results[
-                "dashboard_result"
-            ],
+            dashboard_result=
+                results[
+                    "dashboard_result"
+                ],
 
-            analytics_result=results[
-                "analytics_result"
-            ],
+            analytics_result=
+                results[
+                    "analytics_result"
+                ],
         )
 
         # ----------------------------------------------------
@@ -1021,7 +1235,8 @@ def download_report():
                 pdf_bytes
             ),
 
-            mimetype="application/pdf",
+            mimetype=
+                "application/pdf",
 
             as_attachment=True,
 
@@ -1108,7 +1323,8 @@ def favicon():
     )
 
     favicon_path = (
-        static_folder / "favicon.svg"
+        static_folder
+        / "favicon.svg"
     )
 
     if favicon_path.exists():
@@ -1132,5 +1348,12 @@ def favicon():
 if __name__ == "__main__":
 
     app.run(
-        debug=True
+
+        host=APP_HOST,
+
+        port=APP_PORT,
+
+        debug=app.config[
+            "DEBUG"
+        ],
     )
