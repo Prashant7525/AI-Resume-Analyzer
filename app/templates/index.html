@@ -130,8 +130,8 @@
             Upload your resume and optionally add a job
             description to evaluate ATS readiness,
             resume quality, job compatibility,
-            keyword coverage, analytics, and
-            improvement opportunities.
+            keyword coverage, analytics,
+            bullet quality, and improvement opportunities.
         </p>
 
 
@@ -197,6 +197,7 @@
 
 
             <div class="form-grid">
+
 
                 <div class="field">
 
@@ -1141,6 +1142,342 @@
 
 
             <!-- =================================================
+                 V3.2 BULLET QUALITY
+                 ================================================= -->
+
+            {% if quality_result and quality_result.bullet_intelligence %}
+
+            <section class="card full-width">
+
+                <div class="v3-recommendations-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V3.2 BULLET QUALITY
+                        </span>
+
+                        <h2 class="section-title">
+                            Bullet Quality Analysis
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Analyze individual resume bullets for
+                            action verbs, specificity, technical
+                            detail, measurable results, and impact.
+                        </p>
+
+                    </div>
+
+
+                    <div class="v3-readiness-score">
+
+                        <span>
+                            Average
+                        </span>
+
+                        <strong>
+                            {{ quality_result.bullet_intelligence.average_score }}/100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-summary-grid">
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Bullets Analyzed
+                        </span>
+
+                        <strong>
+                            {{ quality_result.bullet_intelligence.total_bullets }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Strong Bullets
+                        </span>
+
+                        <strong>
+                            {{ quality_result.bullet_intelligence.strong_bullets }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Needs Attention
+                        </span>
+
+                        <strong>
+                            {{ quality_result.bullet_intelligence.needs_attention_bullets }}
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                {% for section_name, section_data in quality_result.bullet_intelligence.sections.items() %}
+
+                {% if section_data.total > 0 %}
+
+                <div class="v3-check-card">
+
+
+                    <div class="v3-check-header">
+
+                        <h3>
+                            {{ section_name|title }}
+                        </h3>
+
+
+                        {% if section_data.average_score >= 85 %}
+
+                        <span class="v3-status v3-status-good">
+                            ✓ Strong · {{ section_data.average_score }}/100
+                        </span>
+
+                        {% elif section_data.average_score >= 70 %}
+
+                        <span class="v3-status v3-status-good">
+                            ✓ Good · {{ section_data.average_score }}/100
+                        </span>
+
+                        {% else %}
+
+                        <span class="v3-status v3-status-warning">
+                            Needs Attention · {{ section_data.average_score }}/100
+                        </span>
+
+                        {% endif %}
+
+                    </div>
+
+
+                    <div class="v3-check-detail">
+
+                        <span>
+                            Bullets
+                        </span>
+
+                        <strong>
+                            {{ section_data.total }}
+                        </strong>
+
+                    </div>
+
+
+                    {% for bullet in section_data.bullets %}
+
+                    <div class="score-factor">
+
+
+                        <div class="score-factor-header">
+
+                            <strong>
+                                {% if bullet.status == "strong" %}
+                                    ✓ Strong Bullet
+                                {% elif bullet.status == "good" %}
+                                    ✓ Good Bullet
+                                {% else %}
+                                    ⚠ Needs Attention
+                                {% endif %}
+                            </strong>
+
+
+                            <span>
+                                {{ bullet.score }}/{{ bullet.max_score }}
+                            </span>
+
+                        </div>
+
+
+                        <div class="score-factor-progress">
+
+                            <div
+                                class="score-factor-progress-bar"
+                                data-score="{{ bullet.score }}"
+                            ></div>
+
+                        </div>
+
+
+                        <p>
+                            {{ bullet.text }}
+                        </p>
+
+
+                        {% if bullet.strengths %}
+
+                        <div class="v3-missing-fields">
+
+                            <strong>
+                                Strengths:
+                            </strong>
+
+                            <ul>
+                                {% for strength in bullet.strengths %}
+                                <li>
+                                    {{ strength }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if bullet.improvements %}
+
+                        <div class="v3-missing-fields">
+
+                            <strong>
+                                Improvements:
+                            </strong>
+
+                            <ul>
+                                {% for improvement in bullet.improvements %}
+                                <li>
+                                    {{ improvement }}
+                                </li>
+                                {% endfor %}
+                            </ul>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <details>
+
+                            <summary>
+                                View scoring details
+                            </summary>
+
+                            <div class="v3-check-detail">
+
+                                <span>
+                                    Action Verb
+                                </span>
+
+                                <strong>
+                                    {{ bullet.action_verb.first_word or "Not detected" }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="v3-check-detail">
+
+                                <span>
+                                    Verb Quality
+                                </span>
+
+                                <strong>
+                                    {{ bullet.action_verb.quality|title }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="v3-check-detail">
+
+                                <span>
+                                    Word Count
+                                </span>
+
+                                <strong>
+                                    {{ bullet.specificity.word_count }}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="v3-check-detail">
+
+                                <span>
+                                    Technical Detail
+                                </span>
+
+                                <strong>
+                                    {% if bullet.specificity.technical_detail %}
+                                        Detected
+                                    {% else %}
+                                        Not detected
+                                    {% endif %}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="v3-check-detail">
+
+                                <span>
+                                    Metrics
+                                </span>
+
+                                <strong>
+                                    {% if bullet.metrics.has_metrics %}
+                                        {{ bullet.metrics.count }} detected
+                                    {% else %}
+                                        None detected
+                                    {% endif %}
+                                </strong>
+
+                            </div>
+
+
+                            <div class="v3-check-detail">
+
+                                <span>
+                                    Impact
+                                </span>
+
+                                <strong>
+                                    {% if bullet.impact.has_impact %}
+                                        Detected
+                                    {% else %}
+                                        Needs improvement
+                                    {% endif %}
+                                </strong>
+
+                            </div>
+
+
+                        </details>
+
+
+                    </div>
+
+                    {% endfor %}
+
+
+                </div>
+
+                {% endif %}
+
+                {% endfor %}
+
+
+            </section>
+
+            {% endif %}
+
+
+            <!-- =================================================
                  V3.0 RECOMMENDATIONS
                  ================================================= -->
 
@@ -1905,6 +2242,250 @@
 
             </section>
 
+
+            <!-- =================================================
+                 V3.2 SECTION INTELLIGENCE
+                 ================================================= -->
+
+            {% if quality_result.section_intelligence %}
+
+            <section class="card full-width">
+
+                <div class="v3-recommendations-header">
+
+                    <div>
+
+                        <span class="dashboard-badge">
+                            V3.2 SECTION INTELLIGENCE
+                        </span>
+
+                        <h2 class="section-title">
+                            Resume Section Intelligence
+                        </h2>
+
+                        <p class="dashboard-description">
+                            Detailed analysis of section quality,
+                            structure, bullet usage, and measurable
+                            information.
+                        </p>
+
+                    </div>
+
+
+                    <div class="v3-readiness-score">
+
+                        <span>
+                            Intelligence
+                        </span>
+
+                        <strong>
+                            {{ quality_result.section_intelligence.score }}/100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="quick-summary-grid">
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Sections Present
+                        </span>
+
+                        <strong>
+                            {{ quality_result.section_intelligence.section_count }}/{{ quality_result.section_intelligence.total_sections }}
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Coverage
+                        </span>
+
+                        <strong>
+                            {{ quality_result.section_intelligence.coverage_score }}/100
+                        </strong>
+
+                    </div>
+
+
+                    <div class="summary-item">
+
+                        <span>
+                            Average Section Score
+                        </span>
+
+                        <strong>
+                            {{ quality_result.section_intelligence.average_section_score }}/100
+                        </strong>
+
+                    </div>
+
+                </div>
+
+
+                <div class="v3-check-grid">
+
+
+                    {% for section_name, section_data in quality_result.section_intelligence.sections.items() %}
+
+                    <div class="v3-check-card">
+
+
+                        <div class="v3-check-header">
+
+                            <h3>
+                                {{ section_data.label }}
+                            </h3>
+
+
+                            {% if section_data.status == "strong" %}
+
+                            <span class="v3-status v3-status-good">
+                                ✓ Strong
+                            </span>
+
+                            {% elif section_data.status == "good" %}
+
+                            <span class="v3-status v3-status-good">
+                                ✓ Good
+                            </span>
+
+                            {% elif section_data.status == "missing" %}
+
+                            <span class="v3-status v3-status-warning">
+                                Missing
+                            </span>
+
+                            {% else %}
+
+                            <span class="v3-status v3-status-warning">
+                                Needs Attention
+                            </span>
+
+                            {% endif %}
+
+                        </div>
+
+
+                        <div class="score">
+                            {{ section_data.score }}/{{ section_data.max_score }}
+                        </div>
+
+
+                        {% if section_data.word_count > 0 %}
+
+                        <div class="v3-check-detail">
+
+                            <span>
+                                Words
+                            </span>
+
+                            <strong>
+                                {{ section_data.word_count }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if section_data.bullet_count > 0 %}
+
+                        <div class="v3-check-detail">
+
+                            <span>
+                                Bullets
+                            </span>
+
+                            <strong>
+                                {{ section_data.bullet_count }}
+                            </strong>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        <p class="v3-recommendation">
+
+                            <strong>
+                                Recommendation
+                            </strong>
+
+                            {{ section_data.recommendation }}
+
+                        </p>
+
+
+                        {% if section_data.strengths %}
+
+                        <div class="v3-missing-fields">
+
+                            <strong>
+                                Strengths
+                            </strong>
+
+                            <ul>
+
+                                {% for strength in section_data.strengths %}
+
+                                <li>
+                                    {{ strength }}
+                                </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        </div>
+
+                        {% endif %}
+
+
+                        {% if section_data.attention %}
+
+                        <div class="v3-missing-fields">
+
+                            <strong>
+                                Needs Attention
+                            </strong>
+
+                            <ul>
+
+                                {% for item in section_data.attention %}
+
+                                <li>
+                                    {{ item }}
+                                </li>
+
+                                {% endfor %}
+
+                            </ul>
+
+                        </div>
+
+                        {% endif %}
+
+
+                    </div>
+
+                    {% endfor %}
+
+
+                </div>
+
+            </section>
+
+            {% endif %}
+
             {% endif %}
 
 
@@ -2190,7 +2771,7 @@
 
 
         <div class="footer-built">
-            Built with Flask &amp; Python · V3.1
+            Built with Flask &amp; Python · V3.2
         </div>
 
 
@@ -2215,7 +2796,7 @@
                 >
 
                     <path
-                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75-.1-.26-.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.2 9.2 0 0 1 12 7.16c.85 0 1.71.12 2.51.36 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
+                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
                     />
 
                 </svg>
@@ -2517,7 +3098,9 @@
                 }
 
 
-                if (window.scrollY > 500) {
+                if (
+                    window.scrollY > 500
+                ) {
 
                     backToTop.classList.add(
                         "visible"
@@ -2555,8 +3138,11 @@
                     function () {
 
                         window.scrollTo({
+
                             top: 0,
+
                             behavior: "smooth"
+
                         });
 
                     }
