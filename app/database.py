@@ -1,7 +1,7 @@
 """
 SQLite database layer for the AI Resume Analyzer.
 
-V2.4
+V3.1
 - Analysis history storage
 - SQLite database
 - Save analysis results
@@ -9,6 +9,10 @@ V2.4
 - Retrieve individual analyses
 - Delete analyses
 - Configurable database location
+- Safe parameterized SQL
+- SQLite connection hardening
+- Input validation
+- Transaction safety
 """
 
 from __future__ import annotations
@@ -33,6 +37,12 @@ DEFAULT_DATABASE_PATH = (
     INSTANCE_DIR / "resume_analyzer.db"
 )
 
+# SQLite connection timeout in seconds.
+DATABASE_TIMEOUT = 10.0
+
+# Maximum number of history records that can be requested.
+MAX_HISTORY_LIMIT = 500
+
 
 def _get_database_path() -> Path:
     """
@@ -51,9 +61,13 @@ def _get_database_path() -> Path:
 
     if configured_path:
 
-        return Path(
-            configured_path
-        ).expanduser()
+        configured_path = configured_path.strip()
+
+        if configured_path:
+
+            return Path(
+                configured_path
+            ).expanduser()
 
     return DEFAULT_DATABASE_PATH
 
@@ -62,9 +76,86 @@ DATABASE_PATH = _get_database_path()
 
 
 # ============================================================
-# DATABASE CONNECTION
+# VALIDATION HELPERS
 # ============================================================
 
+def _validate_analysis_id(
+    analysis_id: int,
+) -> int:
+    """
+    Validate and normalize an analysis ID.
+    """
+
+    if isinstance(
+        analysis_id,
+        bool,
+    ):
+        raise ValueError(
+            "Analysis ID must be an integer."
+        )
+
+    try:
+
+        value = int(
+            analysis_id
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ) as exc:
+
+        raise ValueError(
+            "Analysis ID must be an integer."
+        ) from exc
+
+    if value <= 0:
+
+        raise ValueError(
+            "Analysis ID must be greater than zero."
+        )
+
+    return value
+
+
+def _validate_history_limit(
+    limit: int,
+) -> int:
+    """
+    Validate and clamp a history query limit.
+    """
+
+    if isinstance(
+        limit,
+        bool,
+    ):
+        return 1
+
+    try:
+
+        value = int(
+            limit
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ):
+
+        value = 50
+
+    return max(
+        1,
+        min(
+            value,
+            MAX_HISTORY_LIMIT,
+        ),
+    )
+
+
+# ============================================================
+# DATABASE CONNECTION
+# ============================================================
 
 def get_connection() -> sqlite3.Connection:
     """
@@ -75,6 +166,11 @@ def get_connection() -> sqlite3.Connection:
 
     The row factory allows database rows to be accessed
     using column names.
+
+    SQLite safety settings are enabled for:
+
+    - foreign key enforcement
+    - busy timeout
     """
 
     database_directory = (
@@ -87,10 +183,23 @@ def get_connection() -> sqlite3.Connection:
     )
 
     connection = sqlite3.connect(
-        DATABASE_PATH
+        DATABASE_PATH,
+        timeout=DATABASE_TIMEOUT,
     )
 
     connection.row_factory = sqlite3.Row
+
+    # --------------------------------------------------------
+    # SQLite safety / reliability settings
+    # --------------------------------------------------------
+
+    connection.execute(
+        "PRAGMA foreign_keys = ON"
+    )
+
+    connection.execute(
+        "PRAGMA busy_timeout = 10000"
+    )
 
     return connection
 
@@ -99,49 +208,63 @@ def get_connection() -> sqlite3.Connection:
 # DATABASE INITIALIZATION
 # ============================================================
 
-
 def init_database() -> None:
     """
     Create the database tables if they do not already exist.
     """
 
-    with get_connection() as connection:
+    try:
 
-        connection.execute(
-            """
-            CREATE TABLE IF NOT EXISTS analyses (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                created_at TEXT NOT NULL,
-                resume_name TEXT,
-                resume_email TEXT,
-                resume_phone TEXT,
-                job_description TEXT,
-                overall_score REAL,
-                ats_score REAL,
-                quality_score REAL,
-                improvement_score REAL,
-                job_match_score REAL,
-                keyword_coverage REAL,
-                has_job_match INTEGER NOT NULL DEFAULT 0,
-                results_json TEXT NOT NULL
+        with get_connection() as connection:
+
+            connection.execute(
+                """
+                CREATE TABLE IF NOT EXISTS analyses (
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
+                    created_at TEXT NOT NULL,
+                    resume_name TEXT,
+                    resume_email TEXT,
+                    resume_phone TEXT,
+                    job_description TEXT,
+                    overall_score REAL,
+                    ats_score REAL,
+                    quality_score REAL,
+                    improvement_score REAL,
+                    job_match_score REAL,
+                    keyword_coverage REAL,
+                    has_job_match INTEGER NOT NULL DEFAULT 0,
+                    results_json TEXT NOT NULL
+                )
+                """
             )
-            """
-        )
 
-        connection.commit()
+            connection.commit()
+
+    except sqlite3.Error as exc:
+
+        raise RuntimeError(
+            "Unable to initialize the analysis database."
+        ) from exc
 
 
 # ============================================================
 # VALUE HELPERS
 # ============================================================
 
-
 def _numeric_value(
     value: Any,
 ) -> float | None:
-    """Return a numeric value or None."""
+    """
+    Return a numeric value or None.
 
-    if isinstance(value, bool):
+    Boolean values are intentionally rejected because
+    bool is a subclass of int in Python.
+    """
+
+    if isinstance(
+        value,
+        bool,
+    ):
         return None
 
     if isinstance(
@@ -157,7 +280,9 @@ def _nested_score(
     result: dict | None,
     *keys: str,
 ) -> float | None:
-    """Safely retrieve a numeric nested value."""
+    """
+    Safely retrieve a numeric nested value.
+    """
 
     value = result
 
@@ -169,7 +294,9 @@ def _nested_score(
         ):
             return None
 
-        value = value.get(key)
+        value = value.get(
+            key
+        )
 
     return _numeric_value(
         value
@@ -179,7 +306,6 @@ def _nested_score(
 # ============================================================
 # SAVE ANALYSIS
 # ============================================================
-
 
 def save_analysis(
     *,
@@ -201,7 +327,28 @@ def save_analysis(
 
     init_database()
 
-    resume = resume or {}
+    # --------------------------------------------------------
+    # Normalize incoming values.
+    # --------------------------------------------------------
+
+    resume = (
+        resume
+        if isinstance(
+            resume,
+            dict,
+        )
+        else {}
+    )
+
+    if not isinstance(
+        job_description,
+        str,
+    ):
+        job_description = ""
+
+    # --------------------------------------------------------
+    # Extract summary scores.
+    # --------------------------------------------------------
 
     ats_score = _nested_score(
         ats_result,
@@ -235,12 +382,19 @@ def save_analysis(
     )
 
     has_job_match = bool(
-        job_result
+        isinstance(
+            job_result,
+            dict,
+        )
     )
 
     created_at = datetime.now(
         timezone.utc
     ).isoformat()
+
+    # --------------------------------------------------------
+    # Store the complete analysis payload as JSON.
+    # --------------------------------------------------------
 
     results = {
         "resume": resume,
@@ -253,13 +407,32 @@ def save_analysis(
         "job_description": job_description,
     }
 
-    results_json = json.dumps(
-        results,
-        ensure_ascii=False,
-        default=str,
-    )
+    try:
 
-    with get_connection() as connection:
+        results_json = json.dumps(
+            results,
+            ensure_ascii=False,
+            default=str,
+        )
+
+    except (
+        TypeError,
+        ValueError,
+    ) as exc:
+
+        raise ValueError(
+            "Unable to serialize analysis results."
+        ) from exc
+
+    # --------------------------------------------------------
+    # Database transaction.
+    # --------------------------------------------------------
+
+    connection = None
+
+    try:
+
+        connection = get_connection()
 
         cursor = connection.execute(
             """
@@ -296,9 +469,15 @@ def save_analysis(
             """,
             (
                 created_at,
-                resume.get("name"),
-                resume.get("email"),
-                resume.get("phone"),
+                resume.get(
+                    "name"
+                ),
+                resume.get(
+                    "email"
+                ),
+                resume.get(
+                    "phone"
+                ),
                 job_description,
                 overall_score,
                 ats_score,
@@ -306,22 +485,47 @@ def save_analysis(
                 improvement_score,
                 job_match_score,
                 keyword_coverage,
-                int(has_job_match),
+                int(
+                    has_job_match
+                ),
                 results_json,
             ),
         )
 
         connection.commit()
 
+        if cursor.lastrowid is None:
+            raise RuntimeError(
+                "Unable to determine saved analysis ID."
+            )
+
         return int(
             cursor.lastrowid
         )
+
+    except sqlite3.Error as exc:
+
+        if connection is not None:
+
+            try:
+                connection.rollback()
+            except sqlite3.Error:
+                pass
+
+        raise RuntimeError(
+            "Unable to save the analysis."
+        ) from exc
+
+    finally:
+
+        if connection is not None:
+
+            connection.close()
 
 
 # ============================================================
 # HISTORY
 # ============================================================
-
 
 def get_analysis_history(
     limit: int = 50,
@@ -334,48 +538,53 @@ def get_analysis_history(
 
     init_database()
 
-    limit = max(
-        1,
-        min(
-            int(limit),
-            500,
-        ),
+    safe_limit = _validate_history_limit(
+        limit
     )
 
-    with get_connection() as connection:
+    try:
 
-        rows = connection.execute(
-            """
-            SELECT
-                id,
-                created_at,
-                resume_name,
-                resume_email,
-                resume_phone,
-                overall_score,
-                ats_score,
-                quality_score,
-                improvement_score,
-                job_match_score,
-                keyword_coverage,
-                has_job_match
-            FROM analyses
-            ORDER BY id DESC
-            LIMIT ?
-            """,
-            (limit,),
-        ).fetchall()
+        with get_connection() as connection:
 
-    return [
-        dict(row)
-        for row in rows
-    ]
+            rows = connection.execute(
+                """
+                SELECT
+                    id,
+                    created_at,
+                    resume_name,
+                    resume_email,
+                    resume_phone,
+                    overall_score,
+                    ats_score,
+                    quality_score,
+                    improvement_score,
+                    job_match_score,
+                    keyword_coverage,
+                    has_job_match
+                FROM analyses
+                ORDER BY id DESC
+                LIMIT ?
+                """,
+                (
+                    safe_limit,
+                ),
+            ).fetchall()
+
+        return [
+            dict(row)
+            for row in rows
+        ]
+
+    except sqlite3.Error as exc:
+
+        raise RuntimeError(
+            "Unable to retrieve analysis history."
+        ) from exc
 
 
 # ============================================================
 # SINGLE ANALYSIS
 # ============================================================
-
 
 def get_analysis(
     analysis_id: int,
@@ -387,53 +596,79 @@ def get_analysis(
         Analysis dictionary or None when not found.
     """
 
+    safe_analysis_id = (
+        _validate_analysis_id(
+            analysis_id
+        )
+    )
+
     init_database()
-
-    with get_connection() as connection:
-
-        row = connection.execute(
-            """
-            SELECT *
-            FROM analyses
-            WHERE id = ?
-            """,
-            (analysis_id,),
-        ).fetchone()
-
-    if row is None:
-        return None
-
-    result = dict(row)
 
     try:
 
-        saved_results = json.loads(
-            result["results_json"]
+        with get_connection() as connection:
+
+            row = connection.execute(
+                """
+                SELECT *
+                FROM analyses
+                WHERE id = ?
+                """,
+                (
+                    safe_analysis_id,
+                ),
+            ).fetchone()
+
+        if row is None:
+            return None
+
+        result = dict(
+            row
         )
 
-    except (
-        TypeError,
-        json.JSONDecodeError,
-    ):
+        try:
 
-        saved_results = {}
+            saved_results = json.loads(
+                result.get(
+                    "results_json",
+                    "{}",
+                )
+            )
 
-    result.update(
-        saved_results
-    )
+        except (
+            TypeError,
+            json.JSONDecodeError,
+        ):
 
-    result.pop(
-        "results_json",
-        None,
-    )
+            saved_results = {}
 
-    return result
+        if not isinstance(
+            saved_results,
+            dict,
+        ):
+            saved_results = {}
+
+        result.update(
+            saved_results
+        )
+
+        result.pop(
+            "results_json",
+            None,
+        )
+
+        return result
+
+    except sqlite3.Error as exc:
+
+        raise RuntimeError(
+            "Unable to retrieve the analysis."
+        ) from exc
 
 
 # ============================================================
 # DELETE ANALYSIS
 # ============================================================
-
 
 def delete_analysis(
     analysis_id: int,
@@ -446,29 +681,61 @@ def delete_analysis(
         False when no matching analysis existed.
     """
 
+    safe_analysis_id = (
+        _validate_analysis_id(
+            analysis_id
+        )
+    )
+
     init_database()
 
-    with get_connection() as connection:
+    connection = None
+
+    try:
+
+        connection = get_connection()
 
         cursor = connection.execute(
             """
             DELETE FROM analyses
             WHERE id = ?
             """,
-            (analysis_id,),
+            (
+                safe_analysis_id,
+            ),
         )
 
         connection.commit()
 
         return cursor.rowcount > 0
 
+    except sqlite3.Error as exc:
+
+        if connection is not None:
+
+            try:
+                connection.rollback()
+            except sqlite3.Error:
+                pass
+
+        raise RuntimeError(
+            "Unable to delete the analysis."
+        ) from exc
+
+    finally:
+
+        if connection is not None:
+
+            connection.close()
+
 
 # ============================================================
 # DATABASE PATH
 # ============================================================
 
-
 def get_database_path() -> Path:
-    """Return the current SQLite database path."""
+    """
+    Return the current SQLite database path.
+    """
 
     return DATABASE_PATH
