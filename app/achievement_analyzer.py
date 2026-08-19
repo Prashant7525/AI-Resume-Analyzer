@@ -169,18 +169,10 @@ def extract_metrics(
     achievement: str,
 ) -> list[str]:
     """
-    Extract measurable values.
+    Extract measurable values from an achievement.
 
-    Examples:
-
-        35%
-        500+
-        2x
-        50K
-        $50K
-        ₹10L
-        15 hours
-        15 hours/week
+    Supports percentages, counts, scale, currency,
+    multipliers, and time measurements.
     """
 
     if not achievement:
@@ -188,67 +180,50 @@ def extract_metrics(
 
     patterns = [
 
-        # ----------------------------------------------------
         # Currency
-        # ----------------------------------------------------
-
         r"[$₹€£]\s*\d+(?:\.\d+)?\s*[kKmMbBlL]?\+?",
 
-        # ----------------------------------------------------
         # Percentage
-        # ----------------------------------------------------
-
         r"\d+(?:\.\d+)?\s*(?:%|percent)",
 
-        # ----------------------------------------------------
         # Time
-        #
-        # Keep the whitespace in the returned metric.
-        # ----------------------------------------------------
-
         r"\d+(?:\.\d+)?"
         r"\s+"
         r"(?:hours?|hrs?|days?|weeks?|months?)"
         r"(?:\s*/\s*(?:day|week|month|year))?",
 
-        # ----------------------------------------------------
-        # Multipliers
-        # ----------------------------------------------------
-
+        # Multiplier
         r"\d+(?:\.\d+)?\s*[xX]",
 
-        # ----------------------------------------------------
-        # Scaled values
-        # ----------------------------------------------------
-
+        # Scaled number
         r"\d+(?:\.\d+)?\s*[kKmMbB]\+?",
 
-        # ----------------------------------------------------
-        # Plain counts
-        # ----------------------------------------------------
+        # Number + optional plus sign followed by a word.
+        #
+        # Examples:
+        #   5 projects
+        #   500 users
+        #   20 applications
+        #
+        r"\b\d+(?:\.\d+)?\+?"
+        r"(?=\s+[A-Za-z])",
 
-        r"\d+(?:\.\d+)?\+",
+        # Standalone count with +
+        r"\b\d+(?:\.\d+)?\+",
     ]
 
     found: list[str] = []
 
     for pattern in patterns:
 
-        matches = re.finditer(
+        for match in re.finditer(
             pattern,
             achievement,
             flags=re.IGNORECASE,
-        )
+        ):
 
-        for match in matches:
+            value = match.group(0).strip()
 
-            value = match.group(
-                0
-            ).strip()
-
-            # Only normalize excessive whitespace around the
-            # metric. Keep the meaningful space in values such
-            # as "15 hours".
             value = re.sub(
                 r"[ \t]+",
                 " ",
@@ -256,9 +231,7 @@ def extract_metrics(
             )
 
             if value not in found:
-                found.append(
-                    value
-                )
+                found.append(value)
 
     return found
 

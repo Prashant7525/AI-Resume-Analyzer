@@ -12,12 +12,17 @@ V3.2
 - Quality suggestions
 - Section intelligence
 - Bullet intelligence
+- Achievement intelligence
 """
 
 from __future__ import annotations
 
 import re
 from typing import Any
+
+from app.achievement_analyzer import (
+    analyze_achievement_section,
+)
 
 from app.bullet_analyzer import (
     analyze_section_bullets,
@@ -56,14 +61,12 @@ def _text(
     """Convert a resume value into normalized text."""
 
     if value is None:
-
         return ""
 
     if isinstance(
         value,
         (list, tuple, set),
     ):
-
         return " ".join(
             str(item)
             for item in value
@@ -78,7 +81,6 @@ def count_words(
     """Count words in a piece of text."""
 
     if not text:
-
         return 0
 
     return len(
@@ -95,7 +97,6 @@ def count_bullets(
     """Count common bullet-point lines."""
 
     if not text:
-
         return 0
 
     count = 0
@@ -108,7 +109,6 @@ def count_bullets(
             r"^[•●▪◦\-*]\s+",
             stripped,
         ):
-
             count += 1
 
     return count
@@ -125,7 +125,6 @@ def count_quantifiable_achievements(
     """
 
     if not text:
-
         return 0
 
     count = 0
@@ -142,7 +141,6 @@ def count_quantifiable_achievements(
             stripped,
             re.IGNORECASE,
         ):
-
             count += 1
 
     return count
@@ -385,6 +383,31 @@ def analyze_bullet_intelligence(
 
 
 # ============================================================
+# V3.2 ACHIEVEMENT INTELLIGENCE
+# ============================================================
+
+def analyze_achievement_intelligence(
+    resume: dict,
+) -> dict:
+    """
+    Analyze achievement quality using the V3.2.3
+    achievement intelligence engine.
+
+    Existing quality scoring is intentionally not changed.
+    """
+
+    analysis = analyze_achievement_section(
+        _text(
+            resume.get(
+                "achievements"
+            )
+        )
+    )
+
+    return analysis
+
+
+# ============================================================
 # ACHIEVEMENTS
 # ============================================================
 
@@ -572,10 +595,8 @@ def calculate_quality_score(
     # --------------------------------------------------------
 
     section_ratio = (
-
         structure["present_count"]
         / structure["total_sections"]
-
         if structure["total_sections"]
         else 0
     )
@@ -622,10 +643,8 @@ def calculate_quality_score(
     # --------------------------------------------------------
 
     contact_ratio = (
-
         contact["passed"]
         / contact["total"]
-
         if contact["total"]
         else 0
     )
@@ -777,6 +796,7 @@ def analyze_resume_quality(
     - Existing quality analysis
     - Section intelligence
     - Bullet intelligence
+    - Achievement intelligence
 
     Existing score calculations remain unchanged.
     """
@@ -843,6 +863,16 @@ def analyze_resume_quality(
         )
     )
 
+    # --------------------------------------------------------
+    # V3.2 Achievement Intelligence
+    # --------------------------------------------------------
+
+    achievement_intelligence = (
+        analyze_achievement_intelligence(
+            resume
+        )
+    )
+
     return {
         "score": score["score"],
 
@@ -874,4 +904,7 @@ def analyze_resume_quality(
 
         "bullet_intelligence":
             bullet_intelligence,
+
+        "achievement_intelligence":
+            achievement_intelligence,
     }

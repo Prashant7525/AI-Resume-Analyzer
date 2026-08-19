@@ -286,3 +286,60 @@ def test_bullet_intelligence_does_not_change_quality_score():
     # Existing V3.0/V3.1 score must remain unchanged.
     assert result["score"] == 63
     assert result["max_score"] == 70
+
+def test_analyze_achievement_intelligence():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    assert (
+        "achievement_intelligence"
+        in result
+    )
+
+    intelligence = result[
+        "achievement_intelligence"
+    ]
+
+    assert intelligence[
+        "total"
+    ] == 2
+
+    assert (
+        intelligence["average_score"]
+        > 0
+    )
+
+
+def test_achievement_intelligence_detects_metrics():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    intelligence = result[
+        "achievement_intelligence"
+    ]
+
+    assert (
+        intelligence[
+            "measurable_count"
+        ] == 2
+    )
+
+    assert (
+        len(
+            intelligence[
+                "achievements"
+            ]
+        ) == 2
+    )
+
+
+def test_achievement_intelligence_does_not_change_quality_score():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    # Existing V3.0/V3.1 score must remain unchanged.
+    assert result["score"] == 63
+    assert result["max_score"] == 70
