@@ -2205,9 +2205,9 @@
 
                                 <strong>
 
-                                    {% if achievement.metrics.count %}
+                                    {% if achievement.metrics["count"] %}
 
-                                        {{ achievement.metrics.count }} detected
+                                        {{ achievement.metrics["count"] }} detected
 
                                     {% else %}
 
@@ -2220,7 +2220,7 @@
                             </div>
 
 
-                            {% if achievement.metrics.values %}
+                            {% if achievement.metrics["values"] %}
 
                             <div class="v3-missing-fields">
 
@@ -2230,7 +2230,7 @@
 
                                 <ul>
 
-                                    {% for metric in achievement.metrics.values %}
+                                    {% for metric in achievement.metrics["values"] %}
 
                                     <li>
                                         {{ metric }}
@@ -2245,7 +2245,7 @@
                             {% endif %}
 
 
-                            {% if achievement.classification.items %}
+                            {% if achievement.classification["items"] %}
 
                             <div class="v3-missing-fields">
 
@@ -2255,10 +2255,10 @@
 
                                 <ul>
 
-                                    {% for item in achievement.classification.items %}
+                                    {% for item in achievement.classification["items"] %}
 
                                     <li>
-                                        {{ item.value }} · {{ item.type|title }}
+                                        {{ item["value"] }} · {{ item["type"]|title }}
                                     </li>
 
                                     {% endfor %}

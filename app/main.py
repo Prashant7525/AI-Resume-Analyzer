@@ -1241,7 +1241,7 @@ def download_report():
             as_attachment=True,
 
             download_name=(
-                "AI_Resume_Analyzer_V3.1_Report.pdf"
+                "AI_Resume_Analyzer_V3.2_Report.pdf"
             ),
         )
 

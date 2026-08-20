@@ -378,3 +378,23 @@ def test_empty_achievement_section():
     assert result[
         "needs_attention_count"
     ] == 0
+
+def test_extract_comma_separated_metric():
+    result = extract_metrics(
+        "Solved 700+ problems on GeeksforGeeks and "
+        "1,200+ problems on LeetCode."
+    )
+
+    assert "700+" in result
+    assert "1,200+" in result
+
+def test_extract_multiple_metric_formats():
+    result = extract_metrics(
+        "Improved performance by 35%, "
+        "supported 1,200+ users, "
+        "and saved 15 hours per week."
+    )
+
+    assert "35%" in result
+    assert "1,200+" in result
+    assert "15 hours" in result

@@ -171,50 +171,123 @@ def extract_metrics(
     """
     Extract measurable values from an achievement.
 
-    Supports percentages, counts, scale, currency,
-    multipliers, and time measurements.
+    Supports:
+
+        35%
+        500+
+        1,200+
+        2x
+        15 hours
+        160 Days
+        $25,000
+        10k
     """
 
     if not achievement:
         return []
 
+    number = (
+        r"(?:\d{1,3}(?:,\d{3})+|\d+)"
+        r"(?:\.\d+)?"
+    )
+
     patterns = [
 
+        # ----------------------------------------------------
         # Currency
-        r"[$₹€£]\s*\d+(?:\.\d+)?\s*[kKmMbBlL]?\+?",
+        # ----------------------------------------------------
 
+        (
+            "currency",
+            rf"[$₹€£]\s*"
+            rf"{number}"
+            rf"\s*[kKmMbBlL]?\+?"
+        ),
+
+        # ----------------------------------------------------
         # Percentage
-        r"\d+(?:\.\d+)?\s*(?:%|percent)",
+        # ----------------------------------------------------
 
+        (
+            "percentage",
+            rf"{number}"
+            r"\s*(?:%|percent)"
+        ),
+
+        # ----------------------------------------------------
         # Time
-        r"\d+(?:\.\d+)?"
-        r"\s+"
-        r"(?:hours?|hrs?|days?|weeks?|months?)"
-        r"(?:\s*/\s*(?:day|week|month|year))?",
+        #
+        # Important: this appears before generic number
+        # extraction so "160 Days" is kept as one metric.
+        # ----------------------------------------------------
 
+        (
+            "time",
+            rf"{number}"
+            r"\s+"
+            r"(?:hours?|hrs?|days?|weeks?|months?)"
+            r"(?:\s*/\s*(?:day|week|month|year))?"
+        ),
+
+        # ----------------------------------------------------
         # Multiplier
-        r"\d+(?:\.\d+)?\s*[xX]",
+        # ----------------------------------------------------
 
+        (
+            "multiplier",
+            rf"{number}\s*[xX]"
+        ),
+
+        # ----------------------------------------------------
         # Scaled number
-        r"\d+(?:\.\d+)?\s*[kKmMbB]\+?",
+        # ----------------------------------------------------
 
-        # Number + optional plus sign followed by a word.
+        (
+            "scale",
+            rf"{number}"
+            r"\s*[kKmMbB]\+?"
+        ),
+
+        # ----------------------------------------------------
+        # Number + optional plus sign + following word
         #
         # Examples:
         #   5 projects
         #   500 users
-        #   20 applications
-        #
-        r"\b\d+(?:\.\d+)?\+?"
-        r"(?=\s+[A-Za-z])",
+        #   500+ users
+        #   1,200+ users
+        # ----------------------------------------------------
 
+        (
+            "count",
+            rf"\b{number}\+?"
+            r"(?=\s+[A-Za-z])"
+        ),
+
+        # ----------------------------------------------------
         # Standalone count with +
-        r"\b\d+(?:\.\d+)?\+",
+        #
+        # Examples:
+        #   500+
+        #   1,200+
+        # ----------------------------------------------------
+
+        (
+            "count_plus",
+            rf"\b{number}\+"
+        ),
     ]
 
-    found: list[str] = []
+    matches = []
 
-    for pattern in patterns:
+    # --------------------------------------------------------
+    # Collect every match with its position.
+    # --------------------------------------------------------
+
+    for pattern_order, (
+        _pattern_name,
+        pattern,
+    ) in enumerate(patterns):
 
         for match in re.finditer(
             pattern,
@@ -222,7 +295,9 @@ def extract_metrics(
             flags=re.IGNORECASE,
         ):
 
-            value = match.group(0).strip()
+            value = match.group(
+                0
+            ).strip()
 
             value = re.sub(
                 r"[ \t]+",
@@ -230,8 +305,91 @@ def extract_metrics(
                 value,
             )
 
-            if value not in found:
-                found.append(value)
+            matches.append(
+                {
+                    "start": match.start(),
+                    "end": match.end(),
+                    "value": value,
+                    "length": match.end()
+                    - match.start(),
+                    "pattern_order":
+                        pattern_order,
+                }
+            )
+
+    # --------------------------------------------------------
+    # Prefer the longest metric occupying the same position.
+    #
+    # Example:
+    #
+    #   "160 Days"
+    #
+    # can produce both:
+    #
+    #   "160 Days"
+    #   "160"
+    #
+    # Keep only "160 Days".
+    # --------------------------------------------------------
+
+    matches.sort(
+        key=lambda item: (
+            item["start"],
+            -item["length"],
+            item["pattern_order"],
+        )
+    )
+
+    selected = []
+
+    for candidate in matches:
+
+        overlaps = False
+
+        for existing in selected:
+
+            if (
+                candidate["start"]
+                < existing["end"]
+                and candidate["end"]
+                > existing["start"]
+            ):
+
+                overlaps = True
+                break
+
+        if overlaps:
+            continue
+
+        selected.append(
+            candidate
+        )
+
+    # --------------------------------------------------------
+    # Preserve the original text order.
+    # --------------------------------------------------------
+
+    selected.sort(
+        key=lambda item: item["start"]
+    )
+
+    # --------------------------------------------------------
+    # Remove exact duplicate values.
+    # --------------------------------------------------------
+
+    found = []
+
+    for item in selected:
+
+        value = item[
+            "value"
+        ]
+
+        if value not in found:
+
+            found.append(
+                value
+            )
 
     return found
 
@@ -287,7 +445,7 @@ def classify_metric(
         return METRIC_TYPE_COUNT
 
     if re.fullmatch(
-        r"\d+(?:\.\d+)?",
+        r"(?:\d{1,3}(?:,\d{3})+|\d+)(?:\.\d+)?",
         value,
     ):
         return METRIC_TYPE_COUNT
