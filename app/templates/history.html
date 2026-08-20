@@ -175,6 +175,18 @@
 
 <main class="container">
 
+    <!-- =========================================================
+     CSRF TOKEN
+     Keep a CSRF token in the history page even when there
+     are no saved analyses yet.
+     ========================================================= -->
+
+<input
+    type="hidden"
+    name="csrf_token"
+    value="{{ csrf_token() }}"
+>
+
 
     <!-- =========================================
          ERROR
@@ -670,7 +682,7 @@
 
 
         <div class="footer-built">
-            Built with Flask &amp; Python · V3.1
+            Built with Flask &amp; Python · V3.2
         </div>
 
 
