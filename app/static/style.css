@@ -3895,26 +3895,71 @@ html.dark-theme .theme-toggle {
    MOBILE
    ========================================================= */
 
-@media (max-width: 600px) {
+@media (max-width: 700px) {
 
-    .policy-page .card,
-    .legal-page .card {
-        margin-bottom: 16px;
+    .top-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
+    .top-navigation-actions {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex-shrink: 0;
+    }
+
+    .top-navigation-actions .history-nav-button {
+        display: inline-flex !important;
+        align-items: center;
+        font-size: 13px !important;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .brand-link {
+        font-size: 12px;
+        line-height: 1;
+        padding: 8px 10px;
+        white-space: nowrap;
+        flex-shrink: 1;
+        min-width: 0;
     }
 
     .theme-toggle {
-        width: 40px;
-        height: 40px;
-        font-size: 18px;
+        flex-shrink: 0;
     }
 
-    .back-to-top {
-        right: 16px;
-        bottom: 16px;
+}
 
+
+@media (max-width: 420px) {
+
+    .top-navigation {
+        gap: 6px;
+    }
+
+    .top-navigation-actions {
+        gap: 5px;
+    }
+
+    .top-navigation-actions .history-nav-button {
+        font-size: 12px !important;
+    }
+
+    .brand-link {
+        font-size: 11px;
+        padding: 7px 9px;
+    }
+
+    .theme-toggle {
         width: 42px;
         height: 42px;
+        flex-shrink: 0;
     }
+
 }
 
 /* =========================================================
@@ -3968,35 +4013,73 @@ html.dark-theme .theme-toggle {
     margin-right: auto;
 }
 
-
 /* =========================================================
    MOBILE
    ========================================================= */
 
 @media (max-width: 700px) {
 
+    .top-navigation {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 8px;
+    }
+
     .top-navigation-actions {
-        gap: 10px;
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex-shrink: 0;
     }
 
     .top-navigation-actions .history-nav-button {
-        font-size: 14px;
+        display: inline-flex !important;
+        align-items: center;
+        font-size: 13px !important;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    .brand-link {
+        font-size: 12px;
+        line-height: 1;
+        padding: 8px 10px;
+        white-space: nowrap;
+        flex-shrink: 1;
+        min-width: 0;
+    }
+
+    .theme-toggle {
+        flex-shrink: 0;
     }
 
 }
 
-@media (max-width: 560px) {
 
-    .top-navigation-actions .history-nav-button {
-        font-size: 0;
-    }
-
-    .top-navigation-actions .history-nav-button::first-letter {
-        font-size: 18px;
-    }
+@media (max-width: 420px) {
 
     .top-navigation {
-        gap: 10px;
+        gap: 6px;
+    }
+
+    .top-navigation-actions {
+        gap: 5px;
+    }
+
+    .top-navigation-actions .history-nav-button {
+        font-size: 12px !important;
+    }
+
+    .brand-link {
+        font-size: 11px;
+        padding: 7px 9px;
+    }
+
+    .theme-toggle {
+        width: 42px;
+        height: 42px;
+        flex-shrink: 0;
     }
 
 }
@@ -4670,4 +4753,129 @@ html[data-theme="dark"] .site-footer .footer-links a:hover {
 
 [data-theme="dark"] .score-factor-header strong {
     color: #e2e8f0;
+}
+
+/* =========================================================
+   MOBILE HISTORY NAVIGATION
+   Keep Analysis History visible on small screens.
+   ========================================================= */
+
+@media (max-width: 560px) {
+
+    .top-navigation-actions a[href*="/history"] {
+        display: inline-flex !important;
+        align-items: center;
+        white-space: nowrap;
+        font-size: 13px !important;
+        flex-shrink: 0;
+    }
+
+    .top-navigation-actions {
+        display: flex;
+        align-items: center;
+        gap: 7px;
+        flex-shrink: 0;
+    }
+
+}/* =========================================================
+   FINAL MOBILE HEADER OVERRIDE
+   Keep the full brand, Analysis History, and theme toggle
+   visible at narrow mobile widths. This intentionally comes
+   last so it wins over earlier responsive cascade rules.
+   ========================================================= */
+
+@media (max-width: 600px) {
+
+    .top-navigation {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        width: 100%;
+    }
+
+    .top-navigation .brand-link {
+        display: inline-flex !important;
+        align-items: center;
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        width: auto !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+        line-height: 1 !important;
+        letter-spacing: 0 !important;
+        padding: 8px 9px !important;
+    }
+
+    .top-navigation-actions {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-end !important;
+        gap: 6px !important;
+        width: auto !important;
+        margin-left: auto !important;
+        flex: 0 0 auto !important;
+        flex-shrink: 0 !important;
+    }
+
+    .top-navigation-actions .history-nav-button,
+    .top-navigation-actions a[href*="/history"] {
+        display: inline-flex !important;
+        align-items: center;
+        justify-content: center;
+        flex: 0 0 auto !important;
+        flex-shrink: 0 !important;
+        min-width: 0 !important;
+        width: auto !important;
+        white-space: nowrap !important;
+        font-size: 12px !important;
+        line-height: 1.2 !important;
+        padding: 8px 4px !important;
+    }
+
+    .top-navigation .theme-toggle {
+        flex: 0 0 42px !important;
+        width: 42px !important;
+        height: 42px !important;
+        min-width: 42px !important;
+        min-height: 42px !important;
+    }
+
+}
+
+@media (max-width: 420px) {
+
+    .top-navigation {
+        gap: 5px !important;
+        padding-left: 8px !important;
+        padding-right: 8px !important;
+    }
+
+    .top-navigation .brand-link {
+        font-size: 11px !important;
+        padding: 7px 8px !important;
+    }
+
+    .top-navigation-actions {
+        gap: 4px !important;
+    }
+
+    .top-navigation-actions .history-nav-button,
+    .top-navigation-actions a[href*="/history"] {
+        font-size: 11px !important;
+        padding: 7px 3px !important;
+    }
+
+    .top-navigation .theme-toggle {
+        flex-basis: 40px !important;
+        width: 40px !important;
+        height: 40px !important;
+        min-width: 40px !important;
+        min-height: 40px !important;
+    }
+
 }
