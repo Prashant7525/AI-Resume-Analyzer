@@ -256,6 +256,73 @@ csrf = CSRFProtect(
     app
 )
 
+# ============================================================
+# GLOBAL HTTP ERROR HANDLERS
+# ============================================================
+
+@app.errorhandler(400)
+def handle_bad_request(error):
+    """Return a safe response for malformed requests."""
+
+    return render_template(
+        "error.html",
+        error_message=(
+            "The request could not be processed."
+        ),
+    ), 400
+
+
+@app.errorhandler(403)
+def handle_forbidden(error):
+    """Return a safe response for forbidden requests."""
+
+    return render_template(
+        "error.html",
+        error_message=(
+            "You do not have permission to access this page."
+        ),
+    ), 403
+
+
+@app.errorhandler(404)
+def handle_not_found(error):
+    """Return a safe response for missing pages."""
+
+    return render_template(
+        "error.html",
+        error_message=(
+            "The page you requested was not found."
+        ),
+    ), 404
+
+
+@app.errorhandler(413)
+def handle_file_too_large(error):
+    """Return a safe response when an upload exceeds the limit."""
+
+    return render_template(
+        "error.html",
+        error_message=(
+            "The uploaded file is too large. "
+            "Please upload a PDF smaller than 5 MB."
+        ),
+    ), 413
+
+
+@app.errorhandler(500)
+def handle_internal_error(error):
+    """Return a generic response for unexpected server errors."""
+
+    app.logger.exception(
+        "Unhandled internal server error."
+    )
+
+    return render_template(
+        "error.html",
+        error_message=(
+            "Something went wrong while processing your request."
+        ),
+    ), 500
 
 # ============================================================
 # DATABASE INITIALIZATION

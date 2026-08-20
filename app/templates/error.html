@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#5146e5"
+    >
+
+    <title>
+        Error · AI Resume Analyzer
+    </title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="{{ url_for('static', filename='favicon.svg') }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+<header>
+
+    <div class="container">
+
+        <div class="top-navigation">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="brand-link badge"
+            >
+                AI Resume Analyzer
+            </a>
+
+            <div class="top-navigation-actions">
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="history-nav-button"
+                >
+                    📋 Analysis History
+                </a>
+
+            </div>
+
+        </div>
+
+        <span class="badge">
+            Error
+        </span>
+
+        <h1>
+            Something went wrong
+        </h1>
+
+        <p class="hero-text">
+            We could not complete your request.
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container">
+
+    <section class="card error">
+
+        <h2>
+            Request could not be completed
+        </h2>
+
+        <p>
+            {{ error_message }}
+        </p>
+
+        <div
+            class="button-row"
+            style="justify-content: flex-start; gap: 10px;"
+        >
+
+            <a
+                href="{{ url_for('index') }}"
+                class="history-primary-button"
+            >
+                Return to Analyzer
+            </a>
+
+            <a
+                href="{{ url_for('history') }}"
+                class="secondary-button"
+            >
+                Analysis History
+            </a>
+
+        </div>
+
+    </section>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="container">
+
+        <div class="footer-brand">
+
+            <strong>
+                © 2026 Prashant Kumar · AI Resume Analyzer
+            </strong>
+
+        </div>
+
+
+        <div class="footer-built">
+            Built with Flask &amp; Python
+        </div>
+
+    </div>
+
+</footer>
+
+
+</body>
+
+</html>
