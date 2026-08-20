@@ -13,6 +13,7 @@ V3.2
 - Section intelligence
 - Bullet intelligence
 - Achievement intelligence
+- Resume-level intelligence summary
 """
 
 from __future__ import annotations
@@ -26,6 +27,10 @@ from app.achievement_analyzer import (
 
 from app.bullet_analyzer import (
     analyze_section_bullets,
+)
+
+from app.resume_intelligence import (
+    analyze_resume_intelligence,
 )
 
 from app.section_intelligence import (
@@ -405,6 +410,30 @@ def analyze_achievement_intelligence(
     )
 
     return analysis
+
+
+# ============================================================
+# V3.2.4 RESUME-LEVEL INTELLIGENCE
+# ============================================================
+
+def analyze_intelligence_summary(
+    section_intelligence: dict,
+    bullet_intelligence: dict,
+    achievement_intelligence: dict,
+) -> dict:
+    """
+    Combine section, bullet, and achievement intelligence
+    into a separate resume-level intelligence summary.
+
+    This is intentionally independent from the existing
+    70-point resume quality score.
+    """
+
+    return analyze_resume_intelligence(
+        section_intelligence=section_intelligence,
+        bullet_intelligence=bullet_intelligence,
+        achievement_intelligence=achievement_intelligence,
+    )
 
 
 # ============================================================
@@ -797,6 +826,7 @@ def analyze_resume_quality(
     - Section intelligence
     - Bullet intelligence
     - Achievement intelligence
+    - Resume-level intelligence summary
 
     Existing score calculations remain unchanged.
     """
@@ -873,6 +903,18 @@ def analyze_resume_quality(
         )
     )
 
+    # --------------------------------------------------------
+    # V3.2.4 Resume-Level Intelligence
+    # --------------------------------------------------------
+
+    intelligence_summary = (
+        analyze_intelligence_summary(
+            section_intelligence,
+            bullet_intelligence,
+            achievement_intelligence,
+        )
+    )
+
     return {
         "score": score["score"],
 
@@ -907,4 +949,8 @@ def analyze_resume_quality(
 
         "achievement_intelligence":
             achievement_intelligence,
+
+        # V3.2.4
+        "intelligence_summary":
+            intelligence_summary,
     }

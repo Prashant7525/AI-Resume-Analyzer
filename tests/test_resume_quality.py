@@ -343,3 +343,131 @@ def test_achievement_intelligence_does_not_change_quality_score():
     # Existing V3.0/V3.1 score must remain unchanged.
     assert result["score"] == 63
     assert result["max_score"] == 70
+
+def test_resume_intelligence_summary_is_present():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    assert (
+        "intelligence_summary"
+        in result
+    )
+
+    summary = result[
+        "intelligence_summary"
+    ]
+
+    assert summary[
+        "max_score"
+    ] == 100
+
+    assert (
+        summary["score"]
+        >= 0
+    )
+
+    assert (
+        summary["score"]
+        <= 100
+    )
+
+
+def test_resume_intelligence_summary_contains_components():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    components = result[
+        "intelligence_summary"
+    ][
+        "components"
+    ]
+
+    assert "sections" in components
+    assert "bullets" in components
+    assert "achievements" in components
+
+
+def test_resume_intelligence_summary_preserves_component_scores():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    summary = result[
+        "intelligence_summary"
+    ]
+
+    assert (
+        summary[
+            "components"
+        ][
+            "sections"
+        ][
+            "score"
+        ]
+        == result[
+            "section_intelligence"
+        ][
+            "score"
+        ]
+    )
+
+    assert (
+        summary[
+            "components"
+        ][
+            "bullets"
+        ][
+            "score"
+        ]
+        == result[
+            "bullet_intelligence"
+        ][
+            "average_score"
+        ]
+    )
+
+    assert (
+        summary[
+            "components"
+        ][
+            "achievements"
+        ][
+            "score"
+        ]
+        == result[
+            "achievement_intelligence"
+        ][
+            "average_score"
+        ]
+    )
+
+
+def test_resume_intelligence_summary_has_summary_text():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    summary = result[
+        "intelligence_summary"
+    ]
+
+    assert summary[
+        "summary"
+    ]
+
+    assert isinstance(
+        summary["summary"],
+        str,
+    )
+
+
+def test_resume_intelligence_summary_does_not_change_quality_score():
+    result = analyze_resume_quality(
+        RESUME
+    )
+
+    # Existing V3.0/V3.1 score remains unchanged.
+    assert result["score"] == 63
+    assert result["max_score"] == 70
