@@ -1693,6 +1693,83 @@ def ai_rewrite_experience():
             "Unable to rewrite the experience bullet."
         )
 
+# ============================================================
+# V3.4 AI JOB TAILORING
+# ============================================================
+
+from app.ai.tailoring.service import (
+    AITailoringError,
+    tailor_resume_to_job,
+)
+
+
+@app.route(
+    "/api/ai/tailor-job",
+    methods=["POST"],
+)
+def ai_tailor_job():
+
+    try:
+
+        resume_text = sanitize_text(
+            request.form.get(
+                "resume_text",
+                "",
+            ),
+            max_length=50000,
+        )
+
+        job_description = sanitize_text(
+            request.form.get(
+                "job_description",
+                "",
+            ),
+            max_length=MAX_JOB_DESCRIPTION_LENGTH,
+        )
+
+        result = tailor_resume_to_job(
+            resume_text=resume_text,
+            job_description=job_description,
+        )
+
+        return {
+            "success": True,
+            "result": result,
+        }
+
+    except ValueError as exc:
+
+        return {
+            "success": False,
+            "error": str(exc),
+        }, 400
+
+    except AITailoringError as exc:
+
+        app.logger.warning(
+            "AI job tailoring failed: %s",
+            exc,
+        )
+
+        return {
+            "success": False,
+            "error": str(exc),
+        }, 400
+
+    except Exception as exc:
+
+        app.logger.exception(
+            "Unexpected AI job tailoring error: %s",
+            exc,
+        )
+
+        return {
+            "success": False,
+            "error": (
+                "Unable to generate job-tailoring "
+                "recommendations."
+            ),
+        }, 500
 
 # ============================================================
 # AI PROVIDER STATUS
