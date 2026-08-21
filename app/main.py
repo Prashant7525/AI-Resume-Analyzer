@@ -69,6 +69,21 @@ from app.resume_parser import (
 from app.resume_quality import analyze_resume_quality
 from app.score_explanation import build_score_explanations
 
+from app.ai.prompts import (
+    BULLET_REWRITE_SYSTEM_PROMPT,
+    EXPERIENCE_REWRITE_SYSTEM_PROMPT,
+    PROJECT_REWRITE_SYSTEM_PROMPT,
+    SUMMARY_REWRITE_SYSTEM_PROMPT,
+    build_bullet_rewrite_prompt,
+    build_experience_rewrite_prompt,
+    build_project_rewrite_prompt,
+    build_summary_rewrite_prompt,
+)
+from app.ai.provider import (
+    AIProviderError,
+    generate_text,
+    is_ai_configured,
+)
 
 # ============================================================
 # APPLICATION
@@ -1336,6 +1351,366 @@ def download_report():
             job_description,
         )
 
+# ============================================================
+# V3.3 AI WRITING ASSISTANT
+# ============================================================
+
+def _ai_error_response(message: str):
+    """
+    Return a safe JSON response for AI writing errors.
+    """
+
+    return {
+        "success": False,
+        "error": message,
+    }, 400
+
+
+def _validate_ai_input(
+    value: str,
+    field_name: str,
+    max_length: int = 5000,
+) -> str:
+    """
+    Validate and sanitize AI writing input.
+    """
+
+    if not isinstance(value, str):
+        raise ValueError(
+            f"{field_name} must be text."
+        )
+
+    value = sanitize_text(
+        value,
+        max_length=max_length,
+    )
+
+    if not value:
+        raise ValueError(
+            f"{field_name} cannot be empty."
+        )
+
+    return value
+
+
+def _generate_ai_writing(
+    *,
+    system_prompt: str,
+    user_prompt: str,
+) -> str:
+    """
+    Generate AI-written resume content through the
+    centralized provider abstraction.
+    """
+
+    if not is_ai_configured():
+        raise AIProviderError(
+            "AI writing is not configured."
+        )
+
+    result = generate_text(
+        system_prompt=system_prompt,
+        user_prompt=user_prompt,
+    )
+
+    result = sanitize_text(
+        result,
+        max_length=5000,
+    )
+
+    if not result:
+        raise AIProviderError(
+            "AI provider returned empty content."
+        )
+
+    return result
+
+
+@app.route(
+    "/api/ai/rewrite-bullet",
+    methods=["POST"],
+)
+def ai_rewrite_bullet():
+    """
+    Rewrite one resume bullet using AI.
+    """
+
+    try:
+
+        bullet = _validate_ai_input(
+            request.form.get(
+                "bullet",
+                "",
+            ),
+            "Bullet",
+            max_length=3000,
+        )
+
+        rewritten = _generate_ai_writing(
+
+            system_prompt=
+                BULLET_REWRITE_SYSTEM_PROMPT,
+
+            user_prompt=
+                build_bullet_rewrite_prompt(
+                    bullet
+                ),
+        )
+
+        return {
+            "success": True,
+            "type": "bullet",
+            "original": bullet,
+            "rewritten": rewritten,
+        }
+
+    except ValueError as exc:
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except AIProviderError as exc:
+
+        app.logger.warning(
+            "AI bullet rewrite failed: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except Exception as exc:
+
+        app.logger.exception(
+            "Unexpected AI bullet rewrite error: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            "Unable to rewrite the bullet."
+        )
+
+
+@app.route(
+    "/api/ai/rewrite-summary",
+    methods=["POST"],
+)
+def ai_rewrite_summary():
+    """
+    Improve a professional summary using AI.
+    """
+
+    try:
+
+        summary = _validate_ai_input(
+            request.form.get(
+                "summary",
+                "",
+            ),
+            "Summary",
+            max_length=5000,
+        )
+
+        rewritten = _generate_ai_writing(
+
+            system_prompt=
+                SUMMARY_REWRITE_SYSTEM_PROMPT,
+
+            user_prompt=
+                build_summary_rewrite_prompt(
+                    summary
+                ),
+        )
+
+        return {
+            "success": True,
+            "type": "summary",
+            "original": summary,
+            "rewritten": rewritten,
+        }
+
+    except ValueError as exc:
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except AIProviderError as exc:
+
+        app.logger.warning(
+            "AI summary rewrite failed: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except Exception as exc:
+
+        app.logger.exception(
+            "Unexpected AI summary rewrite error: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            "Unable to rewrite the summary."
+        )
+
+
+@app.route(
+    "/api/ai/rewrite-project",
+    methods=["POST"],
+)
+def ai_rewrite_project():
+    """
+    Improve a project description using AI.
+    """
+
+    try:
+
+        project = _validate_ai_input(
+            request.form.get(
+                "project",
+                "",
+            ),
+            "Project description",
+            max_length=5000,
+        )
+
+        rewritten = _generate_ai_writing(
+
+            system_prompt=
+                PROJECT_REWRITE_SYSTEM_PROMPT,
+
+            user_prompt=
+                build_project_rewrite_prompt(
+                    project
+                ),
+        )
+
+        return {
+            "success": True,
+            "type": "project",
+            "original": project,
+            "rewritten": rewritten,
+        }
+
+    except ValueError as exc:
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except AIProviderError as exc:
+
+        app.logger.warning(
+            "AI project rewrite failed: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except Exception as exc:
+
+        app.logger.exception(
+            "Unexpected AI project rewrite error: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            "Unable to rewrite the project description."
+        )
+
+
+@app.route(
+    "/api/ai/rewrite-experience",
+    methods=["POST"],
+)
+def ai_rewrite_experience():
+    """
+    Improve an experience bullet using AI.
+    """
+
+    try:
+
+        bullet = _validate_ai_input(
+            request.form.get(
+                "bullet",
+                "",
+            ),
+            "Experience bullet",
+            max_length=3000,
+        )
+
+        rewritten = _generate_ai_writing(
+
+            system_prompt=
+                EXPERIENCE_REWRITE_SYSTEM_PROMPT,
+
+            user_prompt=
+                build_experience_rewrite_prompt(
+                    bullet
+                ),
+        )
+
+        return {
+            "success": True,
+            "type": "experience",
+            "original": bullet,
+            "rewritten": rewritten,
+        }
+
+    except ValueError as exc:
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except AIProviderError as exc:
+
+        app.logger.warning(
+            "AI experience rewrite failed: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            str(exc)
+        )
+
+    except Exception as exc:
+
+        app.logger.exception(
+            "Unexpected AI experience rewrite error: %s",
+            exc,
+        )
+
+        return _ai_error_response(
+            "Unable to rewrite the experience bullet."
+        )
+
+
+# ============================================================
+# AI PROVIDER STATUS
+# ============================================================
+
+@app.route(
+    "/api/ai/status",
+    methods=["GET"],
+)
+def ai_status():
+    """
+    Return non-sensitive AI provider status.
+    """
+
+    return {
+        "success": True,
+        "configured": is_ai_configured(),
+    }
 
 # ============================================================
 # PRIVACY PAGE
