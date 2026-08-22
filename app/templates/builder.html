@@ -1,0 +1,952 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="theme-color"
+        content="#5146e5"
+    >
+
+    <title>
+        Resume Builder · AI Resume Analyzer
+    </title>
+
+    <link
+        rel="icon"
+        type="image/svg+xml"
+        href="{{ url_for(
+            'static',
+            filename='favicon.svg'
+        ) }}"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for(
+            'static',
+            filename='style.css'
+        ) }}"
+    >
+
+    <style>
+
+        .builder-page {
+            padding-bottom: 80px;
+        }
+
+        .builder-grid {
+            display: grid;
+            grid-template-columns:
+                minmax(0, 1fr)
+                minmax(0, 1fr);
+            gap: 28px;
+            align-items: start;
+        }
+
+        .builder-form {
+            display: grid;
+            gap: 18px;
+        }
+
+        .builder-group {
+            display: grid;
+            gap: 8px;
+        }
+
+        .builder-group h3 {
+            margin-bottom: 2px;
+        }
+
+        .builder-group label {
+            font-weight: 700;
+        }
+
+        .builder-group input,
+        .builder-group textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1px solid #dfe3ef;
+            border-radius: 14px;
+            font: inherit;
+            box-sizing: border-box;
+            background: #fff;
+        }
+
+        .builder-group textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .builder-preview-wrap {
+            position: sticky;
+            top: 20px;
+        }
+
+        .resume-preview {
+            background: #fff;
+            color: #1f2937;
+            min-height: 900px;
+            padding: 44px;
+            border-radius: 6px;
+            box-shadow:
+                0 20px 60px rgba(
+                    30,
+                    41,
+                    59,
+                    0.10
+                );
+        }
+
+        .resume-preview h1 {
+            margin: 0;
+            font-size: 34px;
+            line-height: 1.1;
+        }
+
+        .resume-preview .contact {
+            margin-top: 8px;
+            color: #64748b;
+            line-height: 1.6;
+            font-size: 14px;
+        }
+
+        .resume-preview section {
+            margin-top: 28px;
+        }
+
+        .resume-preview section h2 {
+            margin: 0 0 10px;
+            padding-bottom: 6px;
+            border-bottom: 2px solid #e5e7eb;
+            font-size: 15px;
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .resume-preview p {
+            line-height: 1.65;
+            margin: 6px 0;
+        }
+
+        .resume-preview ul {
+            margin: 8px 0 0 18px;
+            padding: 0;
+        }
+
+        .resume-preview li {
+            margin-bottom: 6px;
+            line-height: 1.55;
+        }
+
+        .builder-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .builder-button {
+            border: 0;
+            cursor: pointer;
+            padding: 13px 18px;
+            border-radius: 12px;
+            font: inherit;
+            font-weight: 700;
+        }
+
+        .builder-primary {
+            background: #5146e5;
+            color: white;
+        }
+
+        .builder-secondary {
+            background: #eef0ff;
+            color: #4338ca;
+        }
+
+        @media (max-width: 900px) {
+
+            .builder-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .builder-preview-wrap {
+                position: static;
+            }
+
+            .resume-preview {
+                padding: 28px;
+            }
+        }
+
+    </style>
+
+</head>
+
+
+<body>
+
+<header>
+
+    <div class="container">
+
+        <div class="top-navigation">
+
+            <a
+                href="{{ url_for('index') }}"
+                class="brand-link badge"
+            >
+                AI Resume Analyzer
+            </a>
+
+            <div class="top-navigation-actions">
+
+                <a
+                    href="{{ url_for('history') }}"
+                    class="history-nav-button"
+                >
+                    📋 Analysis History
+                </a>
+
+            </div>
+
+        </div>
+
+        <span class="badge">
+            V4.0 RESUME BUILDER
+        </span>
+
+        <h1>
+            Build Your Resume
+        </h1>
+
+        <p class="hero-text">
+            Create, edit, preview, and refine a professional
+            ATS-friendly resume.
+        </p>
+
+    </div>
+
+</header>
+
+
+<main class="container builder-page">
+
+    <div class="builder-grid">
+
+        <!-- =================================================
+             EDITOR
+             ================================================= -->
+
+        <section class="card">
+
+            <div class="builder-actions">
+
+                <button
+                    type="button"
+                    class="builder-button builder-secondary"
+                    id="loadDemo"
+                >
+                    Load Demo
+                </button>
+
+                <button
+                    type="button"
+                    class="builder-button builder-secondary"
+                    id="clearBuilder"
+                >
+                    Clear
+                </button>
+
+            </div>
+
+            <br>
+
+            <div class="builder-form">
+
+                <div class="builder-group">
+
+                    <h3>
+                        Personal Information
+                    </h3>
+
+                    <input
+                        id="name"
+                        placeholder="Full name"
+                    >
+
+                    <input
+                        id="email"
+                        type="email"
+                        placeholder="Email"
+                    >
+
+                    <input
+                        id="phone"
+                        placeholder="Phone"
+                    >
+
+                    <input
+                        id="location"
+                        placeholder="Location"
+                    >
+
+                    <input
+                        id="linkedin"
+                        placeholder="LinkedIn URL"
+                    >
+
+                    <input
+                        id="github"
+                        placeholder="GitHub URL"
+                    >
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Professional Summary
+                    </h3>
+
+                    <textarea
+                        id="summary"
+                        placeholder="Write a concise professional summary..."
+                    ></textarea>
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Skills
+                    </h3>
+
+                    <input
+                        id="skills"
+                        placeholder="Python, Flask, SQL, Git, Docker"
+                    >
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Experience
+                    </h3>
+
+                    <textarea
+                        id="experience"
+                        placeholder="Role | Company | Dates&#10;Bullet 1&#10;Bullet 2"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Projects
+                    </h3>
+
+                    <textarea
+                        id="projects"
+                        placeholder="Project Name | Technologies&#10;Description&#10;Achievement"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Education
+                    </h3>
+
+                    <textarea
+                        id="education"
+                        placeholder="Degree | Institution | Year"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Certifications
+                    </h3>
+
+                    <textarea
+                        id="certifications"
+                        placeholder="Certification 1&#10;Certification 2"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="builder-group">
+
+                    <h3>
+                        Achievements
+                    </h3>
+
+                    <textarea
+                        id="achievements"
+                        placeholder="Achievement 1&#10;Achievement 2"
+                    ></textarea>
+
+                </div>
+
+
+                <div class="builder-actions">
+
+                    <button
+                        type="button"
+                        class="builder-button builder-primary"
+                        id="printResume"
+                    >
+                        Print / Save PDF
+                    </button>
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+        <!-- =================================================
+             LIVE PREVIEW
+             ================================================= -->
+
+        <div class="builder-preview-wrap">
+
+            <section
+                class="resume-preview"
+                id="resumePreview"
+            >
+
+                <h1 id="previewName">
+                    Your Name
+                </h1>
+
+                <div
+                    class="contact"
+                    id="previewContact"
+                >
+                    Email · Phone · Location
+                </div>
+
+
+                <section id="previewSummarySection">
+
+                    <h2>
+                        Professional Summary
+                    </h2>
+
+                    <p id="previewSummary">
+                        Your professional summary will appear here.
+                    </p>
+
+                </section>
+
+
+                <section id="previewSkillsSection">
+
+                    <h2>
+                        Skills
+                    </h2>
+
+                    <p id="previewSkills">
+                        Add your skills.
+                    </p>
+
+                </section>
+
+
+                <section id="previewExperienceSection">
+
+                    <h2>
+                        Experience
+                    </h2>
+
+                    <div id="previewExperience">
+                        Add your experience.
+                    </div>
+
+                </section>
+
+
+                <section id="previewProjectsSection">
+
+                    <h2>
+                        Projects
+                    </h2>
+
+                    <div id="previewProjects">
+                        Add your projects.
+                    </div>
+
+                </section>
+
+
+                <section id="previewEducationSection">
+
+                    <h2>
+                        Education
+                    </h2>
+
+                    <div id="previewEducation">
+                        Add your education.
+                    </div>
+
+                </section>
+
+
+                <section id="previewCertificationsSection">
+
+                    <h2>
+                        Certifications
+                    </h2>
+
+                    <ul id="previewCertifications"></ul>
+
+                </section>
+
+
+                <section id="previewAchievementsSection">
+
+                    <h2>
+                        Achievements
+                    </h2>
+
+                    <ul id="previewAchievements"></ul>
+
+                </section>
+
+            </section>
+
+        </div>
+
+    </div>
+
+</main>
+
+
+<footer class="site-footer">
+
+    <div class="container">
+
+        <div class="footer-brand">
+
+            <strong>
+                © 2026 Prashant Kumar · AI Resume Analyzer
+            </strong>
+
+        </div>
+
+        <div class="footer-built">
+            Built with Flask &amp; Python · V4.0
+        </div>
+
+    </div>
+
+</footer>
+
+
+<script>
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const fieldIds = [
+            "name",
+            "email",
+            "phone",
+            "location",
+            "linkedin",
+            "github",
+            "summary",
+            "skills",
+            "experience",
+            "projects",
+            "education",
+            "certifications",
+            "achievements",
+        ];
+
+
+        function value(id) {
+
+            const element =
+                document.getElementById(id);
+
+            return element
+                ? element.value.trim()
+                : "";
+
+        }
+
+
+        function escapeHtml(text) {
+
+            return String(text)
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#039;");
+        }
+
+
+        function splitLines(text) {
+
+            return text
+                .split("\n")
+                .map(
+                    function (line) {
+                        return line.trim();
+                    }
+                )
+                .filter(Boolean);
+        }
+
+
+        function renderList(
+            element,
+            items,
+        ) {
+
+            if (!items.length) {
+
+                element.innerHTML = "";
+
+                return;
+            }
+
+            element.innerHTML =
+                items
+                    .map(
+                        function (item) {
+                            return (
+                                "<li>" +
+                                escapeHtml(item) +
+                                "</li>"
+                            );
+                        }
+                    )
+                    .join("");
+        }
+
+
+        function render() {
+
+            const name =
+                value("name");
+
+            const email =
+                value("email");
+
+            const phone =
+                value("phone");
+
+            const location =
+                value("location");
+
+            const linkedin =
+                value("linkedin");
+
+            const github =
+                value("github");
+
+            const summary =
+                value("summary");
+
+            const skills =
+                value("skills");
+
+            const experience =
+                value("experience");
+
+            const projects =
+                value("projects");
+
+            const education =
+                value("education");
+
+            const certifications =
+                splitLines(
+                    value("certifications")
+                );
+
+            const achievements =
+                splitLines(
+                    value("achievements")
+                );
+
+
+            document.getElementById(
+                "previewName"
+            ).textContent =
+                name ||
+                "Your Name";
+
+
+            const contactParts = [
+                email,
+                phone,
+                location,
+                linkedin,
+                github,
+            ].filter(Boolean);
+
+
+            document.getElementById(
+                "previewContact"
+            ).textContent =
+                contactParts.length
+                    ? contactParts.join(" · ")
+                    : "Email · Phone · Location";
+
+
+            document.getElementById(
+                "previewSummary"
+            ).textContent =
+                summary ||
+                "Your professional summary will appear here.";
+
+
+            document.getElementById(
+                "previewSkills"
+            ).textContent =
+                skills ||
+                "Add your skills.";
+
+
+            renderBlocks(
+                document.getElementById(
+                    "previewExperience"
+                ),
+                experience
+            );
+
+            renderBlocks(
+                document.getElementById(
+                    "previewProjects"
+                ),
+                projects
+            );
+
+            renderBlocks(
+                document.getElementById(
+                    "previewEducation"
+                ),
+                education
+            );
+
+
+            renderList(
+                document.getElementById(
+                    "previewCertifications"
+                ),
+                certifications
+            );
+
+            renderList(
+                document.getElementById(
+                    "previewAchievements"
+                ),
+                achievements
+            );
+
+        }
+
+
+        function renderBlocks(
+            element,
+            text,
+        ) {
+
+            const lines =
+                splitLines(text);
+
+            if (!lines.length) {
+
+                element.innerHTML =
+                    "<p>Add content.</p>";
+
+                return;
+            }
+
+            element.innerHTML =
+                lines
+                    .map(
+                        function (line) {
+
+                            return (
+                                "<p>" +
+                                escapeHtml(line) +
+                                "</p>"
+                            );
+                        }
+                    )
+                    .join("");
+        }
+
+
+        fieldIds.forEach(
+            function (id) {
+
+                const element =
+                    document.getElementById(
+                        id
+                    );
+
+                if (!element) {
+                    return;
+                }
+
+                element.addEventListener(
+                    "input",
+                    render
+                );
+            }
+        );
+
+
+        document.getElementById(
+            "clearBuilder"
+        ).addEventListener(
+            "click",
+            function () {
+
+                fieldIds.forEach(
+                    function (id) {
+
+                        const element =
+                            document.getElementById(
+                                id
+                            );
+
+                        if (element) {
+                            element.value = "";
+                        }
+
+                    }
+                );
+
+                render();
+            }
+        );
+
+
+        document.getElementById(
+            "loadDemo"
+        ).addEventListener(
+            "click",
+            function () {
+
+                document.getElementById(
+                    "name"
+                ).value =
+                    "Alex Johnson";
+
+                document.getElementById(
+                    "email"
+                ).value =
+                    "alex@example.com";
+
+                document.getElementById(
+                    "phone"
+                ).value =
+                    "+91 98765 43210";
+
+                document.getElementById(
+                    "location"
+                ).value =
+                    "India";
+
+                document.getElementById(
+                    "linkedin"
+                ).value =
+                    "linkedin.com/in/alex";
+
+                document.getElementById(
+                    "github"
+                ).value =
+                    "github.com/alex";
+
+                document.getElementById(
+                    "summary"
+                ).value =
+                    "Software developer focused on Python, Flask, backend development, and practical application engineering.";
+
+                document.getElementById(
+                    "skills"
+                ).value =
+                    "Python, Flask, SQL, Git, REST APIs, JavaScript";
+
+                document.getElementById(
+                    "experience"
+                ).value =
+                    "Software Developer | Example Company | 2025–Present\nDeveloped backend applications using Python and Flask.\nImproved application reliability through testing and debugging.";
+
+                document.getElementById(
+                    "projects"
+                ).value =
+                    "AI Resume Analyzer | Python, Flask, SQLite\nBuilt a resume analysis platform with ATS scoring, job matching, analytics, and AI-powered tailoring.";
+
+                document.getElementById(
+                    "education"
+                ).value =
+                    "Bachelor of Computer Science | University | 2026";
+
+                document.getElementById(
+                    "certifications"
+                ).value =
+                    "Python Programming\nCloud Fundamentals";
+
+                document.getElementById(
+                    "achievements"
+                ).value =
+                    "Solved 700+ coding problems.\nCompleted a structured problem-solving challenge.";
+
+                render();
+            }
+        );
+
+
+        document.getElementById(
+            "printResume"
+        ).addEventListener(
+            "click",
+            function () {
+
+                window.print();
+
+            }
+        );
+
+
+        render();
+
+    }
+);
+
+</script>
+
+</body>
+
+</html>

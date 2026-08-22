@@ -85,6 +85,10 @@ from app.ai.provider import (
     is_ai_configured,
 )
 
+from app.builder.service import (
+    normalize_builder_data,
+)
+
 # ============================================================
 # APPLICATION
 # ============================================================
@@ -1860,6 +1864,70 @@ def favicon():
 
     return "", 204
 
+# ============================================================
+# V4.0 RESUME BUILDER
+# ============================================================
+
+@app.route(
+    "/builder",
+    methods=["GET", "POST"],
+)
+def builder():
+    """
+    V4.0 Professional Resume Builder.
+    """
+
+    builder_data = {}
+
+    if request.method == "POST":
+
+        builder_data = {
+            "name": request.form.get(
+                "name",
+                "",
+            ),
+            "email": request.form.get(
+                "email",
+                "",
+            ),
+            "phone": request.form.get(
+                "phone",
+                "",
+            ),
+            "location": request.form.get(
+                "location",
+                "",
+            ),
+            "linkedin": request.form.get(
+                "linkedin",
+                "",
+            ),
+            "github": request.form.get(
+                "github",
+                "",
+            ),
+            "summary": request.form.get(
+                "summary",
+                "",
+            ),
+            "skills": [
+                item
+                for item in request.form.get(
+                    "skills",
+                    "",
+                ).split(",")
+                if item.strip()
+            ],
+        }
+
+    normalized_data = normalize_builder_data(
+        builder_data
+    )
+
+    return render_template(
+        "builder.html",
+        resume=normalized_data.to_dict(),
+    )
 
 # ============================================================
 # APPLICATION ENTRY POINT
