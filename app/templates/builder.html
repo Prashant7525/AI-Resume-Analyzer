@@ -30,6 +30,73 @@
 
     <style>
 
+        /* =================================================
+           BACK TO TOP
+           ================================================= */
+
+        #backToTop {
+            position: fixed;
+            right: 28px;
+            bottom: 28px;
+
+            width: 48px;
+            height: 48px;
+
+            border: none;
+            border-radius: 50%;
+
+            background: #4f46e5;
+            color: #ffffff;
+
+            font-size: 24px;
+            font-weight: 700;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+
+            cursor: pointer;
+
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+
+            transform: translateY(10px);
+
+            transition:
+                opacity 0.25s ease,
+                visibility 0.25s ease,
+                transform 0.25s ease,
+                background 0.25s ease;
+
+            z-index: 9999;
+
+            box-shadow:
+                0 8px 24px rgba(79, 70, 229, 0.35);
+        }
+
+
+        #backToTop.visible {
+            opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
+
+            transform: translateY(0);
+        }
+
+
+        #backToTop:hover {
+            background: #4338ca;
+            transform: translateY(-3px);
+        }
+
+
+        #backToTop:focus-visible {
+            outline: 3px solid rgba(99, 102, 241, 0.45);
+            outline-offset: 3px;
+        }
+
+
         /* =====================================================
            BUILDER PAGE
            ===================================================== */
@@ -41,10 +108,13 @@
 
         .builder-grid {
             display: grid;
+
             grid-template-columns:
                 minmax(0, 1fr)
                 minmax(0, 1fr);
+
             gap: 28px;
+
             align-items: start;
         }
 
@@ -74,11 +144,16 @@
         .builder-group input,
         .builder-group textarea {
             width: 100%;
+
             padding: 14px 16px;
+
             border: 1px solid #dfe3ef;
             border-radius: 14px;
+
             font: inherit;
+
             box-sizing: border-box;
+
             background: #fff;
         }
 
@@ -96,15 +171,131 @@
 
 
         /* =====================================================
+           BUILDER VALIDATION
+           ===================================================== */
+
+        .builder-group input.invalid,
+        .builder-group textarea.invalid {
+            border-color: #dc2626;
+            background: #fff7f7;
+        }
+
+
+        .builder-validation-message {
+            display: none;
+
+            margin-top: 4px;
+
+            color: #dc2626;
+
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+
+        .builder-validation-message.visible {
+            display: block;
+        }
+
+
+        /* Dark mode validation */
+
+        html[data-theme="dark"]
+        .builder-group input.invalid,
+        html[data-theme="dark"]
+        .builder-group textarea.invalid {
+            border-color: #f87171;
+            background: #2a1518;
+        }
+
+
+        html[data-theme="dark"]
+        .builder-validation-message {
+            color: #fca5a5;
+        }
+
+
+        /* =====================================================
+           TEMPLATE SELECTOR
+           ===================================================== */
+
+        .template-selector {
+            display: grid;
+            gap: 10px;
+
+            margin-bottom: 18px;
+        }
+
+
+        .template-selector-title {
+            font-weight: 800;
+            color: #1e293b;
+        }
+
+
+        .template-options {
+            display: grid;
+
+            grid-template-columns:
+                repeat(5, minmax(0, 1fr));
+
+            gap: 8px;
+        }
+
+
+        .template-button {
+            border: 1px solid #dfe3ef;
+
+            background: #fff;
+            color: #334155;
+
+            border-radius: 10px;
+
+            padding: 10px 8px;
+
+            cursor: pointer;
+
+            font: inherit;
+            font-size: 12px;
+            font-weight: 700;
+
+            transition:
+                background 0.2s ease,
+                border-color 0.2s ease,
+                color 0.2s ease,
+                transform 0.2s ease;
+        }
+
+
+        .template-button:hover {
+            transform: translateY(-1px);
+
+            border-color: #5146e5;
+        }
+
+
+        .template-button.active {
+            background: #5146e5;
+            color: #fff;
+
+            border-color: #5146e5;
+        }
+
+
+        /* =====================================================
            RESUME PREVIEW
            ===================================================== */
 
         .resume-preview {
             background: #fff;
             color: #1f2937;
+
             min-height: 900px;
+
             padding: 44px;
+
             border-radius: 6px;
+
             box-shadow:
                 0 20px 60px rgba(
                     30,
@@ -112,11 +303,16 @@
                     59,
                     0.10
                 );
+
+            box-sizing: border-box;
+
+            overflow-wrap: anywhere;
         }
 
 
         .resume-preview h1 {
             margin: 0;
+
             font-size: 34px;
             line-height: 1.1;
         }
@@ -124,8 +320,11 @@
 
         .resume-preview .contact {
             margin-top: 8px;
+
             color: #64748b;
+
             line-height: 1.6;
+
             font-size: 14px;
         }
 
@@ -137,10 +336,15 @@
 
         .resume-preview section h2 {
             margin: 0 0 10px;
+
             padding-bottom: 6px;
+
             border-bottom: 2px solid #e5e7eb;
+
             font-size: 15px;
+
             text-transform: uppercase;
+
             letter-spacing: 0.08em;
         }
 
@@ -159,7 +363,236 @@
 
         .resume-preview li {
             margin-bottom: 6px;
+
             line-height: 1.55;
+        }
+
+
+        /* =====================================================
+           TEMPLATE 1 — CLASSIC ATS
+           ===================================================== */
+
+        .resume-preview.template-classic {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+        }
+
+
+        .template-classic h1 {
+            color: #111827;
+        }
+
+
+        .template-classic .contact {
+            border-bottom: 1px solid #d1d5db;
+
+            padding-bottom: 12px;
+        }
+
+
+        .template-classic section h2 {
+            color: #111827;
+        }
+
+
+        /* =====================================================
+           TEMPLATE 2 — MODERN
+           ===================================================== */
+
+        .resume-preview.template-modern {
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
+
+
+        .template-modern h1 {
+            color: #5146e5;
+            font-size: 38px;
+        }
+
+
+        .template-modern .contact {
+            color: #64748b;
+
+            border-left: 4px solid #5146e5;
+
+            padding-left: 12px;
+        }
+
+
+        .template-modern section {
+            margin-top: 24px;
+        }
+
+
+        .template-modern section h2 {
+            color: #5146e5;
+
+            border-bottom: 1px solid #c7d2fe;
+        }
+
+
+        /* =====================================================
+           TEMPLATE 3 — MINIMAL
+           ===================================================== */
+
+        .resume-preview.template-minimal {
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #27272a;
+        }
+
+
+        .template-minimal h1 {
+            font-size: 32px;
+
+            font-weight: 600;
+
+            letter-spacing: -0.02em;
+        }
+
+
+        .template-minimal .contact {
+            color: #71717a;
+
+            font-size: 13px;
+        }
+
+
+        .template-minimal section {
+            margin-top: 22px;
+        }
+
+
+        .template-minimal section h2 {
+            font-size: 13px;
+
+            letter-spacing: 0.12em;
+
+            color: #52525b;
+
+            border-bottom: 1px solid #e4e4e7;
+        }
+
+
+        .template-minimal p,
+        .template-minimal li {
+            line-height: 1.6;
+        }
+
+
+        /* =====================================================
+           TEMPLATE 4 — EXECUTIVE
+           ===================================================== */
+
+        .resume-preview.template-executive {
+            font-family:
+                Georgia,
+                "Times New Roman",
+                serif;
+
+            color: #292524;
+        }
+
+
+        .template-executive h1 {
+            font-size: 36px;
+
+            color: #292524;
+
+            letter-spacing: 0.01em;
+        }
+
+
+        .template-executive .contact {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #78716c;
+
+            border-bottom: 2px solid #292524;
+
+            padding-bottom: 12px;
+        }
+
+
+        .template-executive section h2 {
+            font-family:
+                Arial,
+                Helvetica,
+                sans-serif;
+
+            color: #292524;
+
+            border-bottom: 1px solid #a8a29e;
+        }
+
+
+        .template-executive p,
+        .template-executive li {
+            line-height: 1.55;
+        }
+
+
+        /* =====================================================
+           TEMPLATE 5 — DEVELOPER / TECHNICAL
+           ===================================================== */
+
+        .resume-preview.template-developer {
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+
+            color: #172033;
+        }
+
+
+        .template-developer h1 {
+            color: #0f172a;
+
+            font-size: 35px;
+        }
+
+
+        .template-developer .contact {
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 12px;
+
+            color: #475569;
+        }
+
+
+        .template-developer section h2 {
+            color: #0f172a;
+
+            border-bottom: 2px solid #94a3b8;
+
+            font-family:
+                "Segoe UI",
+                Arial,
+                sans-serif;
+        }
+
+
+        .template-developer #previewSkills {
+            font-family:
+                "Courier New",
+                monospace;
+
+            font-size: 13px;
         }
 
 
@@ -169,17 +602,24 @@
 
         .builder-actions {
             display: flex;
+
             gap: 10px;
+
             flex-wrap: wrap;
         }
 
 
         .builder-button {
             border: 0;
+
             cursor: pointer;
+
             padding: 13px 18px;
+
             border-radius: 12px;
+
             font: inherit;
+
             font-weight: 700;
         }
 
@@ -200,6 +640,16 @@
            RESPONSIVE
            ===================================================== */
 
+        @media (max-width: 1100px) {
+
+            .template-options {
+                grid-template-columns:
+                    repeat(3, minmax(0, 1fr));
+            }
+
+        }
+
+
         @media (max-width: 900px) {
 
             .builder-grid {
@@ -219,168 +669,254 @@
         }
 
 
+        @media (max-width: 520px) {
+
+            .template-options {
+                grid-template-columns:
+                    repeat(2, minmax(0, 1fr));
+            }
+
+
+            #backToTop {
+                right: 18px;
+                bottom: 18px;
+
+                width: 44px;
+                height: 44px;
+            }
+
+        }
+
+
         /* =====================================================
            PRINT / SAVE PDF
-
-           IMPORTANT:
-           Only the resume itself is printed.
-           Website header, footer, buttons, background,
-           editor and other UI elements are hidden.
            ===================================================== */
 
         @media print {
 
-            /*
-             * Remove browser page margins where supported.
-             * This gives the resume the maximum printable area.
-             */
+            /* =================================================
+               A4 PDF
+               ================================================= */
+
             @page {
-                margin: 0;
                 size: A4;
+                margin: 12mm;
             }
 
 
-            /*
-             * Hide the entire website UI.
-             */
+            /* =================================================
+               RESET PRINT DOCUMENT
+               ================================================= */
+
             html,
             body {
                 margin: 0 !important;
                 padding: 0 !important;
-                background: #fff !important;
+
+                width: auto !important;
+                height: auto !important;
+
                 min-height: 0 !important;
+
+                background: #ffffff !important;
+
+                overflow: visible !important;
             }
 
 
-            /*
-             * Hide website header.
-             */
-            header {
-                display: none !important;
-            }
+            /* =================================================
+               HIDE WEBSITE UI
+               ================================================= */
 
-
-            /*
-             * Hide website footer.
-             */
-            footer {
-                display: none !important;
-            }
-
-
-            /*
-             * Hide the editor completely.
-             */
+            header,
+            footer,
             .builder-form,
             .builder-actions,
-            .builder-button,
-            .builder-grid > section.card {
+            .builder-page > .builder-grid > section.card,
+            #backToTop {
                 display: none !important;
             }
 
 
-            /*
-             * Remove the normal page/container layout.
-             */
-            main.builder-page,
+            /* =================================================
+               REMOVE BUILDER LAYOUT
+               ================================================= */
+
             .builder-page,
-            .container,
             .builder-grid,
             .builder-preview-wrap {
                 display: block !important;
-                width: 100% !important;
+
+                width: auto !important;
                 max-width: none !important;
+
+                height: auto !important;
+                min-height: 0 !important;
+
                 margin: 0 !important;
                 padding: 0 !important;
-                box-sizing: border-box !important;
-            }
 
-
-            /*
-             * Make the resume itself the only visible content.
-             */
-            .builder-preview-wrap {
                 position: static !important;
+
+                overflow: visible !important;
             }
 
+
+            /* Hide resume template selector from PDF */
+
+            .builder-preview-wrap > *:not(.resume-preview) {
+                display: none !important;
+            }
+
+
+            /* =================================================
+               RESUME
+               ================================================= */
 
             .resume-preview {
                 display: block !important;
 
-                width: 100% !important;
+                width: auto !important;
+                height: auto !important;
+
                 min-height: 0 !important;
 
                 margin: 0 !important;
+                padding: 0 !important;
 
-                padding: 18mm 16mm !important;
-
-                background: #fff !important;
-
+                background: #ffffff !important;
                 color: #1f2937 !important;
 
                 border: 0 !important;
                 border-radius: 0 !important;
+
                 box-shadow: none !important;
 
-                box-sizing: border-box !important;
+                overflow: visible !important;
+
+                break-before: auto !important;
+                break-after: auto !important;
+
+                page-break-before: auto !important;
+                page-break-after: auto !important;
             }
 
 
-            /*
-             * Keep resume text and sections together where possible.
-             */
+            /* =================================================
+               RESUME TYPOGRAPHY
+               ================================================= */
+
+            .resume-preview h1 {
+                margin-top: 0 !important;
+
+                color: #111827 !important;
+            }
+
+
+            .resume-preview .contact {
+                color: #475569 !important;
+            }
+
+
             .resume-preview section {
-                break-inside: avoid;
-                page-break-inside: avoid;
+                break-before: auto !important;
+                break-after: auto !important;
+
+                page-break-before: auto !important;
+                page-break-after: auto !important;
+
+                break-inside: avoid !important;
+                page-break-inside: avoid !important;
             }
 
 
-            .resume-preview h1,
-            .resume-preview h2 {
-                break-after: avoid;
-                page-break-after: avoid;
+            .resume-preview section h2 {
+                color: #111827 !important;
+
+                border-bottom-color:
+                    #d1d5db !important;
+
+                break-after: avoid !important;
+                page-break-after: avoid !important;
             }
 
 
-            /*
-             * Prevent links from displaying browser-generated
-             * URL text inside the resume.
-             */
-            .resume-preview a {
-                color: inherit !important;
-                text-decoration: none !important;
+            .resume-preview p,
+            .resume-preview li,
+            .resume-preview div {
+                color: #1f2937 !important;
             }
 
 
-            /*
-             * Do not print empty placeholder sections.
-             */
-            #previewSummarySection:has(
-                #previewSummary:empty
-            ),
-            #previewSkillsSection:has(
-                #previewSkills:empty
-            ),
-            #previewExperienceSection:has(
-                #previewExperience:empty
-            ),
-            #previewProjectsSection:has(
-                #previewProjects:empty
-            ),
-            #previewEducationSection:has(
-                #previewEducation:empty
-            ) {
-                display: none !important;
+            /* =================================================
+               PREVENT UNNECESSARY PAGE BREAKS
+               ================================================= */
+
+            h1,
+            h2,
+            h3 {
+                break-before: auto !important;
+                break-after: avoid !important;
+
+                page-break-before: auto !important;
+                page-break-after: avoid !important;
+            }
+
+
+            p,
+            li {
+                orphans: 2;
+                widows: 2;
+            }
+
+
+            /* =================================================
+               REMOVE VISUAL EFFECTS
+               ================================================= */
+
+            * {
+                box-shadow: none !important;
+                text-shadow: none !important;
             }
 
         }
 
     </style>
 
+
+    <!-- =========================================================
+         PREVENT LIGHT/DARK MODE FLASH
+         ========================================================= -->
+
+    <script>
+
+        (function () {
+
+            const savedTheme =
+                localStorage.getItem(
+                    "resume-analyzer-theme"
+                );
+
+
+            if (savedTheme === "dark") {
+
+                document.documentElement
+                    .setAttribute(
+                        "data-theme",
+                        "dark"
+                    );
+
+            }
+
+        })();
+
+    </script>
+
 </head>
 
 
 <body>
+
 
 <header>
 
@@ -404,6 +940,23 @@
                 >
                     📋 Analysis History
                 </a>
+
+
+                <!-- Theme Toggle -->
+
+                <button
+                    type="button"
+                    id="themeToggle"
+                    class="theme-toggle"
+                    aria-label="Toggle dark mode"
+                    title="Toggle dark mode"
+                >
+
+                    <span id="themeIcon">
+                        ☀️
+                    </span>
+
+                </button>
 
             </div>
 
@@ -433,6 +986,7 @@
 <main class="container builder-page">
 
     <div class="builder-grid">
+
 
         <!-- =================================================
              EDITOR
@@ -467,7 +1021,6 @@
 
             <div class="builder-form">
 
-                <!-- PERSONAL INFORMATION -->
 
                 <div class="builder-group">
 
@@ -479,6 +1032,7 @@
                     <input
                         id="name"
                         placeholder="Full name"
+                        autocomplete="name"
                     >
 
 
@@ -486,36 +1040,39 @@
                         id="email"
                         type="email"
                         placeholder="Email"
+                        autocomplete="email"
                     >
 
 
                     <input
                         id="phone"
                         placeholder="Phone"
+                        autocomplete="tel"
                     >
 
 
                     <input
                         id="location"
                         placeholder="Location"
+                        autocomplete="address-level2"
                     >
 
 
                     <input
                         id="linkedin"
                         placeholder="LinkedIn URL"
+                        autocomplete="url"
                     >
 
 
                     <input
                         id="github"
                         placeholder="GitHub URL"
+                        autocomplete="url"
                     >
 
                 </div>
 
-
-                <!-- PROFESSIONAL SUMMARY -->
 
                 <div class="builder-group">
 
@@ -532,8 +1089,6 @@
                 </div>
 
 
-                <!-- SKILLS -->
-
                 <div class="builder-group">
 
                     <h3>
@@ -548,8 +1103,6 @@
 
                 </div>
 
-
-                <!-- EXPERIENCE -->
 
                 <div class="builder-group">
 
@@ -566,8 +1119,6 @@
                 </div>
 
 
-                <!-- PROJECTS -->
-
                 <div class="builder-group">
 
                     <h3>
@@ -582,8 +1133,6 @@
 
                 </div>
 
-
-                <!-- EDUCATION -->
 
                 <div class="builder-group">
 
@@ -600,8 +1149,6 @@
                 </div>
 
 
-                <!-- CERTIFICATIONS -->
-
                 <div class="builder-group">
 
                     <h3>
@@ -617,8 +1164,6 @@
                 </div>
 
 
-                <!-- ACHIEVEMENTS -->
-
                 <div class="builder-group">
 
                     <h3>
@@ -633,8 +1178,6 @@
 
                 </div>
 
-
-                <!-- PRINT BUTTON -->
 
                 <div class="builder-actions">
 
@@ -654,13 +1197,72 @@
 
 
         <!-- =================================================
-             LIVE RESUME PREVIEW
+             LIVE PREVIEW
              ================================================= -->
 
         <div class="builder-preview-wrap">
 
+
+            <div class="template-selector">
+
+                <div class="template-selector-title">
+                    Resume Template
+                </div>
+
+
+                <div class="template-options">
+
+                    <button
+                        type="button"
+                        class="template-button active"
+                        data-template="classic"
+                    >
+                        Classic ATS
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="template-button"
+                        data-template="modern"
+                    >
+                        Modern
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="template-button"
+                        data-template="minimal"
+                    >
+                        Minimal
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="template-button"
+                        data-template="executive"
+                    >
+                        Executive
+                    </button>
+
+
+                    <button
+                        type="button"
+                        class="template-button"
+                        data-template="developer"
+                    >
+                        Developer
+                    </button>
+
+                </div>
+
+            </div>
+
+
             <section
-                class="resume-preview"
+                class="resume-preview template-classic"
                 id="resumePreview"
             >
 
@@ -677,8 +1279,6 @@
                 </div>
 
 
-                <!-- SUMMARY -->
-
                 <section id="previewSummarySection">
 
                     <h2>
@@ -692,8 +1292,6 @@
 
                 </section>
 
-
-                <!-- SKILLS -->
 
                 <section id="previewSkillsSection">
 
@@ -709,8 +1307,6 @@
                 </section>
 
 
-                <!-- EXPERIENCE -->
-
                 <section id="previewExperienceSection">
 
                     <h2>
@@ -724,8 +1320,6 @@
 
                 </section>
 
-
-                <!-- PROJECTS -->
 
                 <section id="previewProjectsSection">
 
@@ -741,8 +1335,6 @@
                 </section>
 
 
-                <!-- EDUCATION -->
-
                 <section id="previewEducationSection">
 
                     <h2>
@@ -757,8 +1349,6 @@
                 </section>
 
 
-                <!-- CERTIFICATIONS -->
-
                 <section id="previewCertificationsSection">
 
                     <h2>
@@ -770,8 +1360,6 @@
 
                 </section>
 
-
-                <!-- ACHIEVEMENTS -->
 
                 <section id="previewAchievementsSection">
 
@@ -792,11 +1380,6 @@
 
 </main>
 
-
-<!-- =========================================================
-     WEBSITE FOOTER
-     Hidden automatically during printing.
-     ========================================================= -->
 
 <footer class="site-footer">
 
@@ -916,415 +1499,1078 @@
 </footer>
 
 
+<!-- =========================================================
+     BACK TO TOP
+     ========================================================= -->
+
+<button
+    id="backToTop"
+    type="button"
+    aria-label="Back to top"
+    title="Back to top"
+>
+    ↑
+</button>
+
+
 <script>
 
-document.addEventListener(
-    "DOMContentLoaded",
-    function () {
-
-        const fieldIds = [
-            "name",
-            "email",
-            "phone",
-            "location",
-            "linkedin",
-            "github",
-            "summary",
-            "skills",
-            "experience",
-            "projects",
-            "education",
-            "certifications",
-            "achievements",
-        ];
-
-
-        function value(id) {
-
-            const element =
-                document.getElementById(id);
-
-            return element
-                ? element.value.trim()
-                : "";
-
-        }
-
-
-        function escapeHtml(text) {
-
-            return String(text)
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll('"', "&quot;")
-                .replaceAll("'", "&#039;");
-
-        }
-
-
-        function splitLines(text) {
-
-            return text
-                .split("\n")
-                .map(
-                    function (line) {
-                        return line.trim();
-                    }
-                )
-                .filter(Boolean);
-
-        }
-
-
-        function renderList(
-            element,
-            items,
-        ) {
-
-            if (!items.length) {
-
-                element.innerHTML = "";
-
-                return;
-            }
-
-
-            element.innerHTML =
-                items
-                    .map(
-                        function (item) {
-
-                            return (
-                                "<li>" +
-                                escapeHtml(item) +
-                                "</li>"
-                            );
-
-                        }
-                    )
-                    .join("");
-
-        }
-
-
-        function renderBlocks(
-            element,
-            text,
-        ) {
-
-            const lines =
-                splitLines(text);
-
-
-            if (!lines.length) {
-
-                element.innerHTML =
-                    "<p>Add content.</p>";
-
-                return;
-
-            }
-
-
-            element.innerHTML =
-                lines
-                    .map(
-                        function (line) {
-
-                            return (
-                                "<p>" +
-                                escapeHtml(line) +
-                                "</p>"
-                            );
-
-                        }
-                    )
-                    .join("");
-
-        }
-
-
-        function render() {
-
-            const name =
-                value("name");
-
-            const email =
-                value("email");
-
-            const phone =
-                value("phone");
-
-            const location =
-                value("location");
-
-            const linkedin =
-                value("linkedin");
-
-            const github =
-                value("github");
-
-            const summary =
-                value("summary");
-
-            const skills =
-                value("skills");
-
-            const experience =
-                value("experience");
-
-            const projects =
-                value("projects");
-
-            const education =
-                value("education");
-
-            const certifications =
-                splitLines(
-                    value("certifications")
-                );
-
-            const achievements =
-                splitLines(
-                    value("achievements")
-                );
-
-
-            document.getElementById(
-                "previewName"
-            ).textContent =
-                name ||
-                "Your Name";
-
-
-            const contactParts = [
-                email,
-                phone,
-                location,
-                linkedin,
-                github,
-            ].filter(Boolean);
-
-
-            document.getElementById(
-                "previewContact"
-            ).textContent =
-                contactParts.length
-                    ? contactParts.join(" · ")
-                    : "Email · Phone · Location";
-
-
-            document.getElementById(
-                "previewSummary"
-            ).textContent =
-                summary ||
-                "Your professional summary will appear here.";
-
-
-            document.getElementById(
-                "previewSkills"
-            ).textContent =
-                skills ||
-                "Add your skills.";
-
-
-            renderBlocks(
-                document.getElementById(
-                    "previewExperience"
-                ),
-                experience
-            );
-
-
-            renderBlocks(
-                document.getElementById(
-                    "previewProjects"
-                ),
-                projects
-            );
-
-
-            renderBlocks(
-                document.getElementById(
-                    "previewEducation"
-                ),
-                education
-            );
-
-
-            renderList(
-                document.getElementById(
-                    "previewCertifications"
-                ),
-                certifications
-            );
-
-
-            renderList(
-                document.getElementById(
-                    "previewAchievements"
-                ),
-                achievements
-            );
-
-        }
-
-
-        fieldIds.forEach(
-            function (id) {
+    document.addEventListener(
+        "DOMContentLoaded",
+        function () {
+
+
+            /* =================================================
+               FIELD DEFINITIONS
+               ================================================= */
+
+            const fieldIds = [
+                "name",
+                "email",
+                "phone",
+                "location",
+                "linkedin",
+                "github",
+                "summary",
+                "skills",
+                "experience",
+                "projects",
+                "education",
+                "certifications",
+                "achievements",
+            ];
+
+
+            /* =================================================
+               HELPERS
+               ================================================= */
+
+            function value(id) {
 
                 const element =
                     document.getElementById(id);
 
+                return element
+                    ? element.value.trim()
+                    : "";
+
+            }
+
+
+            function escapeHtml(text) {
+
+                return String(text)
+                    .replaceAll("&", "&amp;")
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll('"', "&quot;")
+                    .replaceAll("'", "&#039;");
+
+            }
+
+
+            function splitLines(text) {
+
+                return text
+                    .split("\n")
+                    .map(
+                        function (line) {
+                            return line.trim();
+                        }
+                    )
+                    .filter(Boolean);
+
+            }
+
+
+            /* =================================================
+               VALIDATION
+               ================================================= */
+
+            function clearValidation(element) {
 
                 if (!element) {
                     return;
                 }
 
 
-                element.addEventListener(
-                    "input",
-                    render
+                element.classList.remove("invalid");
+
+
+                const message =
+                    element.parentElement
+                        ? element.parentElement.querySelector(
+                            ".builder-validation-message"
+                        )
+                        : null;
+
+
+                if (message) {
+
+                    message.textContent = "";
+
+                    message.classList.remove(
+                        "visible"
+                    );
+
+                }
+
+            }
+
+
+            function showValidation(
+                element,
+                messageText
+            ) {
+
+                if (!element) {
+                    return false;
+                }
+
+
+                element.classList.add("invalid");
+
+
+                let message =
+                    element.parentElement
+                        ? element.parentElement.querySelector(
+                            ".builder-validation-message"
+                        )
+                        : null;
+
+
+                if (!message) {
+
+                    message =
+                        document.createElement("div");
+
+                    message.className =
+                        "builder-validation-message";
+
+                    message.setAttribute(
+                        "role",
+                        "alert"
+                    );
+
+
+                    element.parentElement.appendChild(
+                        message
+                    );
+
+                }
+
+
+                message.textContent =
+                    messageText;
+
+
+                message.classList.add(
+                    "visible"
+                );
+
+
+                return false;
+
+            }
+
+
+            function isValidEmail(email) {
+
+                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+                    .test(email);
+
+            }
+
+
+            function isValidUrl(url) {
+
+                try {
+
+                    const normalizedUrl =
+                        /^https?:\/\//i.test(url)
+                            ? url
+                            : "https://" + url;
+
+
+                    new URL(normalizedUrl);
+
+
+                    return true;
+
+                } catch (error) {
+
+                    return false;
+
+                }
+
+            }
+
+
+            function validateBuilder() {
+
+                let valid = true;
+
+
+                const name =
+                    document.getElementById("name");
+
+                const email =
+                    document.getElementById("email");
+
+                const phone =
+                    document.getElementById("phone");
+
+                const linkedin =
+                    document.getElementById("linkedin");
+
+                const github =
+                    document.getElementById("github");
+
+                const skills =
+                    document.getElementById("skills");
+
+                const summary =
+                    document.getElementById("summary");
+
+
+                /* Clear previous validation */
+
+                [
+                    name,
+                    email,
+                    phone,
+                    linkedin,
+                    github,
+                    skills,
+                    summary
+                ].forEach(clearValidation);
+
+
+                /* Name */
+
+                if (!value("name")) {
+
+                    showValidation(
+                        name,
+                        "Please enter your full name."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Email */
+
+                if (!value("email")) {
+
+                    showValidation(
+                        email,
+                        "Please enter your email address."
+                    );
+
+                    valid = false;
+
+                } else if (
+                    !isValidEmail(value("email"))
+                ) {
+
+                    showValidation(
+                        email,
+                        "Please enter a valid email address."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Phone */
+
+                if (value("phone")) {
+
+                    const digits =
+                        value("phone")
+                            .replace(/\D/g, "");
+
+
+                    if (
+                        digits.length < 7 ||
+                        digits.length > 15
+                    ) {
+
+                        showValidation(
+                            phone,
+                            "Please enter a valid phone number."
+                        );
+
+                        valid = false;
+
+                    }
+
+                }
+
+
+                /* LinkedIn */
+
+                if (
+                    value("linkedin") &&
+                    !isValidUrl(value("linkedin"))
+                ) {
+
+                    showValidation(
+                        linkedin,
+                        "Please enter a valid LinkedIn URL."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* GitHub */
+
+                if (
+                    value("github") &&
+                    !isValidUrl(value("github"))
+                ) {
+
+                    showValidation(
+                        github,
+                        "Please enter a valid GitHub URL."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Professional Summary */
+
+                if (
+                    value("summary").length > 1000
+                ) {
+
+                    showValidation(
+                        summary,
+                        "Professional summary must be 1000 characters or less."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                /* Skills */
+
+                if (!value("skills")) {
+
+                    showValidation(
+                        skills,
+                        "Please add at least one skill."
+                    );
+
+                    valid = false;
+
+                }
+
+
+                return valid;
+
+            }
+
+
+            /* =================================================
+               RENDER LIST
+               ================================================= */
+
+            function renderList(
+                element,
+                items
+            ) {
+
+                if (!items.length) {
+
+                    element.innerHTML = "";
+
+                    return;
+                }
+
+
+                element.innerHTML =
+                    items
+                        .map(
+                            function (item) {
+
+                                return (
+                                    "<li>" +
+                                    escapeHtml(item) +
+                                    "</li>"
+                                );
+
+                            }
+                        )
+                        .join("");
+
+            }
+
+
+            /* =================================================
+               RENDER BLOCKS
+               ================================================= */
+
+            function renderBlocks(
+                element,
+                text
+            ) {
+
+                const lines =
+                    splitLines(text);
+
+
+                if (!lines.length) {
+
+                    element.innerHTML =
+                        "<p>Add content.</p>";
+
+                    return;
+                }
+
+
+                element.innerHTML =
+                    lines
+                        .map(
+                            function (line) {
+
+                                return (
+                                    "<p>" +
+                                    escapeHtml(line) +
+                                    "</p>"
+                                );
+
+                            }
+                        )
+                        .join("");
+
+            }
+
+
+            /* =================================================
+               RENDER RESUME
+               ================================================= */
+
+            function render() {
+
+                const name =
+                    value("name");
+
+
+                const email =
+                    value("email");
+
+
+                const phone =
+                    value("phone");
+
+
+                const location =
+                    value("location");
+
+
+                const linkedin =
+                    value("linkedin");
+
+
+                const github =
+                    value("github");
+
+
+                const summary =
+                    value("summary");
+
+
+                const skills =
+                    value("skills");
+
+
+                const experience =
+                    value("experience");
+
+
+                const projects =
+                    value("projects");
+
+
+                const education =
+                    value("education");
+
+
+                const certifications =
+                    splitLines(
+                        value("certifications")
+                    );
+
+
+                const achievements =
+                    splitLines(
+                        value("achievements")
+                    );
+
+
+                document.getElementById(
+                    "previewName"
+                ).textContent =
+                    name ||
+                    "Your Name";
+
+
+                const contactParts = [
+                    email,
+                    phone,
+                    location,
+                    linkedin,
+                    github,
+                ].filter(Boolean);
+
+
+                document.getElementById(
+                    "previewContact"
+                ).textContent =
+                    contactParts.length
+                        ? contactParts.join(" · ")
+                        : "Email · Phone · Location";
+
+
+                document.getElementById(
+                    "previewSummary"
+                ).textContent =
+                    summary ||
+                    "Your professional summary will appear here.";
+
+
+                document.getElementById(
+                    "previewSkills"
+                ).textContent =
+                    skills ||
+                    "Add your skills.";
+
+
+                renderBlocks(
+                    document.getElementById(
+                        "previewExperience"
+                    ),
+                    experience
+                );
+
+
+                renderBlocks(
+                    document.getElementById(
+                        "previewProjects"
+                    ),
+                    projects
+                );
+
+
+                renderBlocks(
+                    document.getElementById(
+                        "previewEducation"
+                    ),
+                    education
+                );
+
+
+                renderList(
+                    document.getElementById(
+                        "previewCertifications"
+                    ),
+                    certifications
+                );
+
+
+                renderList(
+                    document.getElementById(
+                        "previewAchievements"
+                    ),
+                    achievements
                 );
 
             }
-        );
 
 
-        document.getElementById(
-            "clearBuilder"
-        ).addEventListener(
-            "click",
-            function () {
+            /* =================================================
+               TEMPLATE SWITCHING
+               ================================================= */
 
-                fieldIds.forEach(
-                    function (id) {
-
-                        const element =
-                            document.getElementById(id);
+            const resumePreview =
+                document.getElementById(
+                    "resumePreview"
+                );
 
 
-                        if (element) {
-                            element.value = "";
-                        }
+            const templateButtons =
+                document.querySelectorAll(
+                    ".template-button"
+                );
+
+
+            function setTemplate(template) {
+
+                resumePreview.classList.remove(
+                    "template-classic",
+                    "template-modern",
+                    "template-minimal",
+                    "template-executive",
+                    "template-developer"
+                );
+
+
+                resumePreview.classList.add(
+                    "template-" + template
+                );
+
+
+                templateButtons.forEach(
+                    function (button) {
+
+                        button.classList.toggle(
+                            "active",
+                            button.dataset.template ===
+                                template
+                        );
 
                     }
                 );
 
 
-                render();
+                localStorage.setItem(
+                    "resumeBuilderTemplate",
+                    template
+                );
 
             }
-        );
 
 
-        document.getElementById(
-            "loadDemo"
-        ).addEventListener(
-            "click",
-            function () {
+            templateButtons.forEach(
+                function (button) {
 
-                document.getElementById(
-                    "name"
-                ).value =
-                    "Alex Johnson";
+                    button.addEventListener(
+                        "click",
+                        function () {
 
+                            setTemplate(
+                                button.dataset.template
+                            );
 
-                document.getElementById(
-                    "email"
-                ).value =
-                    "alex@example.com";
+                        }
+                    );
 
-
-                document.getElementById(
-                    "phone"
-                ).value =
-                    "+91 98765 43210";
+                }
+            );
 
 
-                document.getElementById(
-                    "location"
-                ).value =
-                    "India";
+            const savedTemplate =
+                localStorage.getItem(
+                    "resumeBuilderTemplate"
+                );
 
 
-                document.getElementById(
-                    "linkedin"
-                ).value =
-                    "linkedin.com/in/alex";
+            if (
+                savedTemplate &&
+                [
+                    "classic",
+                    "modern",
+                    "minimal",
+                    "executive",
+                    "developer",
+                ].includes(savedTemplate)
+            ) {
 
+                setTemplate(savedTemplate);
 
-                document.getElementById(
-                    "github"
-                ).value =
-                    "github.com/alex";
+            } else {
 
-
-                document.getElementById(
-                    "summary"
-                ).value =
-                    "Software developer focused on Python, Flask, backend development, and practical application engineering.";
-
-
-                document.getElementById(
-                    "skills"
-                ).value =
-                    "Python, Flask, SQL, Git, REST APIs, JavaScript";
-
-
-                document.getElementById(
-                    "experience"
-                ).value =
-                    "Software Developer | Example Company | 2025–Present\nDeveloped backend applications using Python and Flask.\nImproved application reliability through testing and debugging.";
-
-
-                document.getElementById(
-                    "projects"
-                ).value =
-                    "AI Resume Analyzer | Python, Flask, SQLite\nBuilt a resume analysis platform with ATS scoring, job matching, analytics, and AI-powered tailoring.";
-
-
-                document.getElementById(
-                    "education"
-                ).value =
-                    "Bachelor of Computer Science | University | 2026";
-
-
-                document.getElementById(
-                    "certifications"
-                ).value =
-                    "Python Programming\nCloud Fundamentals";
-
-
-                document.getElementById(
-                    "achievements"
-                ).value =
-                    "Solved 700+ coding problems.\nCompleted a structured problem-solving challenge.";
-
-
-                render();
+                setTemplate("classic");
 
             }
-        );
 
 
-        document.getElementById(
-            "printResume"
-        ).addEventListener(
-            "click",
-            function () {
+            /* =================================================
+               LIVE INPUT
+               ================================================= */
 
-                window.print();
+            fieldIds.forEach(
+                function (id) {
+
+                    const element =
+                        document.getElementById(id);
+
+
+                    if (!element) {
+                        return;
+                    }
+
+
+                    element.addEventListener(
+                        "input",
+                        function () {
+
+                            clearValidation(element);
+
+                            render();
+
+                        }
+                    );
+
+                }
+            );
+
+
+            /* =================================================
+               CLEAR BUILDER
+               ================================================= */
+
+            document.getElementById(
+                "clearBuilder"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    fieldIds.forEach(
+                        function (id) {
+
+                            const element =
+                                document.getElementById(id);
+
+
+                            if (element) {
+
+                                element.value = "";
+
+                                clearValidation(
+                                    element
+                                );
+
+                            }
+
+                        }
+                    );
+
+
+                    render();
+
+                }
+            );
+
+
+            /* =================================================
+               LOAD DEMO
+               ================================================= */
+
+            document.getElementById(
+                "loadDemo"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    document.getElementById(
+                        "name"
+                    ).value =
+                        "Alex Johnson";
+
+
+                    document.getElementById(
+                        "email"
+                    ).value =
+                        "alex@example.com";
+
+
+                    document.getElementById(
+                        "phone"
+                    ).value =
+                        "+91 98765 43210";
+
+
+                    document.getElementById(
+                        "location"
+                    ).value =
+                        "India";
+
+
+                    document.getElementById(
+                        "linkedin"
+                    ).value =
+                        "linkedin.com/in/alex";
+
+
+                    document.getElementById(
+                        "github"
+                    ).value =
+                        "github.com/alex";
+
+
+                    document.getElementById(
+                        "summary"
+                    ).value =
+                        "Software developer focused on Python, Flask, backend development, and practical application engineering.";
+
+
+                    document.getElementById(
+                        "skills"
+                    ).value =
+                        "Python, Flask, SQL, Git, REST APIs, JavaScript";
+
+
+                    document.getElementById(
+                        "experience"
+                    ).value =
+                        "Software Developer | Example Company | 2025–Present\nDeveloped backend applications using Python and Flask.\nImproved application reliability through testing and debugging.";
+
+
+                    document.getElementById(
+                        "projects"
+                    ).value =
+                        "AI Resume Analyzer | Python, Flask, SQLite\nBuilt a resume analysis platform with ATS scoring, job matching, analytics, and AI-powered tailoring.";
+
+
+                    document.getElementById(
+                        "education"
+                    ).value =
+                        "Bachelor of Computer Science | University | 2026";
+
+
+                    document.getElementById(
+                        "certifications"
+                    ).value =
+                        "Python Programming\nCloud Fundamentals";
+
+
+                    document.getElementById(
+                        "achievements"
+                    ).value =
+                        "Solved 700+ coding problems.\nCompleted a structured problem-solving challenge.";
+
+
+                    fieldIds.forEach(
+                        function (id) {
+
+                            const element =
+                                document.getElementById(id);
+
+                            clearValidation(element);
+
+                        }
+                    );
+
+
+                    render();
+
+                }
+            );
+
+
+            /* =================================================
+               PRINT / SAVE PDF
+               ================================================= */
+
+            document.getElementById(
+                "printResume"
+            ).addEventListener(
+                "click",
+                function () {
+
+                    if (!validateBuilder()) {
+                        return;
+                    }
+
+
+                    window.print();
+
+                }
+            );
+
+
+            /* =================================================
+               INITIAL RENDER
+               ================================================= */
+
+            render();
+
+
+            /* =================================================
+               DARK MODE
+               ================================================= */
+
+            const themeToggle =
+                document.getElementById(
+                    "themeToggle"
+                );
+
+
+            const themeIcon =
+                document.getElementById(
+                    "themeIcon"
+                );
+
+
+            function updateThemeIcon() {
+
+                const isDark =
+                    document.documentElement
+                        .getAttribute(
+                            "data-theme"
+                        ) === "dark";
+
+
+                if (themeIcon) {
+
+                    themeIcon.textContent =
+                        isDark
+                            ? "🌙"
+                            : "☀️";
+
+                }
+
+
+                if (themeToggle) {
+
+                    themeToggle.setAttribute(
+                        "aria-label",
+                        isDark
+                            ? "Switch to light mode"
+                            : "Switch to dark mode"
+                    );
+
+
+                    themeToggle.setAttribute(
+                        "title",
+                        isDark
+                            ? "Switch to light mode"
+                            : "Switch to dark mode"
+                    );
+
+                }
 
             }
-        );
 
 
-        render();
+            updateThemeIcon();
 
-    }
-);
+
+            if (themeToggle) {
+
+                themeToggle.addEventListener(
+                    "click",
+                    function () {
+
+                        const isDark =
+                            document.documentElement
+                                .getAttribute(
+                                    "data-theme"
+                                ) === "dark";
+
+
+                        if (isDark) {
+
+                            document.documentElement
+                                .removeAttribute(
+                                    "data-theme"
+                                );
+
+
+                            localStorage.setItem(
+                                "resume-analyzer-theme",
+                                "light"
+                            );
+
+                        } else {
+
+                            document.documentElement
+                                .setAttribute(
+                                    "data-theme",
+                                    "dark"
+                                );
+
+
+                            localStorage.setItem(
+                                "resume-analyzer-theme",
+                                "dark"
+                            );
+
+                        }
+
+
+                        updateThemeIcon();
+
+                    }
+                );
+
+            }
+
+
+            /* =================================================
+               BACK TO TOP
+               ================================================= */
+
+            const backToTop =
+                document.getElementById(
+                    "backToTop"
+                );
+
+
+            function updateBackToTop() {
+
+                if (!backToTop) {
+                    return;
+                }
+
+
+                if (window.scrollY > 500) {
+
+                    backToTop.classList.add(
+                        "visible"
+                    );
+
+                } else {
+
+                    backToTop.classList.remove(
+                        "visible"
+                    );
+
+                }
+
+            }
+
+
+            window.addEventListener(
+                "scroll",
+                updateBackToTop,
+                {
+                    passive: true
+                }
+            );
+
+
+            updateBackToTop();
+
+
+            if (backToTop) {
+
+                backToTop.addEventListener(
+                    "click",
+                    function () {
+
+                        window.scrollTo({
+                            top: 0,
+                            behavior: "smooth"
+                        });
+
+                    }
+                );
+
+            }
+
+        }
+    );
 
 </script>
 
