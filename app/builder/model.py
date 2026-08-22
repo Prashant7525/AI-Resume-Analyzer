@@ -14,6 +14,10 @@ class ResumeBuilderData:
     Structured resume data used by the V4.0 builder.
     """
 
+    # ========================================================
+    # PERSONAL INFORMATION
+    # ========================================================
+
     name: str = ""
     email: str = ""
     phone: str = ""
@@ -21,31 +25,63 @@ class ResumeBuilderData:
     linkedin: str = ""
     github: str = ""
 
+    # ========================================================
+    # PROFESSIONAL SUMMARY
+    # ========================================================
+
     summary: str = ""
+
+    # ========================================================
+    # SKILLS
+    # ========================================================
 
     skills: list[str] = field(
         default_factory=list
     )
 
-    experience: list[dict[str, str]] = field(
+    # ========================================================
+    # EXPERIENCE
+    # ========================================================
+
+    experience: list[dict[str, Any]] = field(
         default_factory=list
     )
 
-    projects: list[dict[str, str]] = field(
+    # ========================================================
+    # PROJECTS
+    # ========================================================
+
+    projects: list[dict[str, Any]] = field(
         default_factory=list
     )
 
-    education: list[dict[str, str]] = field(
+    # ========================================================
+    # EDUCATION
+    # ========================================================
+
+    education: list[dict[str, Any]] = field(
         default_factory=list
     )
+
+    # ========================================================
+    # CERTIFICATIONS
+    # ========================================================
 
     certifications: list[str] = field(
         default_factory=list
     )
 
+    # ========================================================
+    # ACHIEVEMENTS
+    # ========================================================
+
     achievements: list[str] = field(
         default_factory=list
     )
+
+    # ========================================================
+    # SERIALIZATION
+    # ========================================================
 
     def to_dict(self) -> dict[str, Any]:
         """
@@ -54,6 +90,10 @@ class ResumeBuilderData:
 
         return asdict(self)
 
+    # ========================================================
+    # DESERIALIZATION
+    # ========================================================
+
     @classmethod
     def from_dict(
         cls,
@@ -61,6 +101,9 @@ class ResumeBuilderData:
     ) -> "ResumeBuilderData":
         """
         Build a resume model safely from a dictionary.
+
+        Existing V4.0 data remains compatible while
+        structured repeatable sections are supported.
         """
 
         if not isinstance(
@@ -70,6 +113,10 @@ class ResumeBuilderData:
             return cls()
 
         return cls(
+            # ------------------------------------------------
+            # Personal information
+            # ------------------------------------------------
+
             name=str(
                 data.get(
                     "name",
@@ -77,6 +124,7 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
             email=str(
                 data.get(
                     "email",
@@ -84,6 +132,7 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
             phone=str(
                 data.get(
                     "phone",
@@ -91,6 +140,7 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
             location=str(
                 data.get(
                     "location",
@@ -98,6 +148,7 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
             linkedin=str(
                 data.get(
                     "linkedin",
@@ -105,6 +156,7 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
             github=str(
                 data.get(
                     "github",
@@ -112,6 +164,11 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
+            # ------------------------------------------------
+            # Summary
+            # ------------------------------------------------
+
             summary=str(
                 data.get(
                     "summary",
@@ -119,60 +176,302 @@ class ResumeBuilderData:
                 )
                 or ""
             ),
+
+            # ------------------------------------------------
+            # Skills
+            # ------------------------------------------------
+
             skills=[
                 str(item)
                 for item in _safe_list(
                     data.get("skills")
                 )
+                if str(item).strip()
             ],
+
+            # ------------------------------------------------
+            # Experience
+            # ------------------------------------------------
+
             experience=[
-                _safe_entry(item)
+                _normalize_experience_entry(
+                    item
+                )
                 for item in _safe_list(
                     data.get("experience")
                 )
+                if isinstance(
+                    item,
+                    dict,
+                )
             ],
+
+            # ------------------------------------------------
+            # Projects
+            # ------------------------------------------------
+
             projects=[
-                _safe_entry(item)
+                _normalize_project_entry(
+                    item
+                )
                 for item in _safe_list(
                     data.get("projects")
                 )
+                if isinstance(
+                    item,
+                    dict,
+                )
             ],
+
+            # ------------------------------------------------
+            # Education
+            # ------------------------------------------------
+
             education=[
-                _safe_entry(item)
+                _normalize_education_entry(
+                    item
+                )
                 for item in _safe_list(
                     data.get("education")
                 )
+                if isinstance(
+                    item,
+                    dict,
+                )
             ],
+
+            # ------------------------------------------------
+            # Certifications
+            # ------------------------------------------------
+
             certifications=[
-                str(item)
+                str(item).strip()
                 for item in _safe_list(
                     data.get("certifications")
                 )
+                if str(item).strip()
             ],
+
+            # ------------------------------------------------
+            # Achievements
+            # ------------------------------------------------
+
             achievements=[
-                str(item)
+                str(item).strip()
                 for item in _safe_list(
                     data.get("achievements")
                 )
+                if str(item).strip()
             ],
         )
 
 
-def _safe_list(value: Any) -> list:
+# ============================================================
+# SAFE DATA HELPERS
+# ============================================================
+
+def _safe_list(
+    value: Any,
+) -> list[Any]:
     """
     Return a list or an empty list.
     """
 
     return (
         value
-        if isinstance(value, list)
+        if isinstance(
+            value,
+            list,
+        )
         else []
     )
 
 
-def _safe_entry(value: Any) -> dict[str, str]:
+def _safe_string(
+    value: Any,
+) -> str:
     """
-    Normalize a builder entry.
+    Convert a value safely to a stripped string.
+    """
+
+    if value is None:
+        return ""
+
+    return str(
+        value
+    ).strip()
+
+
+def _safe_string_list(
+    value: Any,
+) -> list[str]:
+    """
+    Convert a value into a clean list of strings.
+    """
+
+    return [
+        _safe_string(item)
+        for item in _safe_list(value)
+        if _safe_string(item)
+    ]
+
+
+# ============================================================
+# EXPERIENCE
+# ============================================================
+
+def _normalize_experience_entry(
+    value: Any,
+) -> dict[str, Any]:
+    """
+    Normalize one experience entry.
+
+    Supported fields:
+
+        job_title
+        company
+        location
+        start_date
+        end_date
+        bullets
+    """
+
+    if not isinstance(
+        value,
+        dict,
+    ):
+        return {}
+
+    return {
+        "job_title": _safe_string(
+            value.get("job_title")
+        ),
+        "company": _safe_string(
+            value.get("company")
+        ),
+        "location": _safe_string(
+            value.get("location")
+        ),
+        "start_date": _safe_string(
+            value.get("start_date")
+        ),
+        "end_date": _safe_string(
+            value.get("end_date")
+        ),
+        "bullets": _safe_string_list(
+            value.get("bullets")
+        ),
+    }
+
+
+# ============================================================
+# PROJECTS
+# ============================================================
+
+def _normalize_project_entry(
+    value: Any,
+) -> dict[str, Any]:
+    """
+    Normalize one project entry.
+
+    Supported fields:
+
+        name
+        technologies
+        description
+        bullets
+        url
+    """
+
+    if not isinstance(
+        value,
+        dict,
+    ):
+        return {}
+
+    return {
+        "name": _safe_string(
+            value.get("name")
+        ),
+        "technologies": _safe_string(
+            value.get("technologies")
+        ),
+        "description": _safe_string(
+            value.get("description")
+        ),
+        "bullets": _safe_string_list(
+            value.get("bullets")
+        ),
+        "url": _safe_string(
+            value.get("url")
+        ),
+    }
+
+
+# ============================================================
+# EDUCATION
+# ============================================================
+
+def _normalize_education_entry(
+    value: Any,
+) -> dict[str, Any]:
+    """
+    Normalize one education entry.
+
+    Supported fields:
+
+        degree
+        institution
+        location
+        start_date
+        end_date
+        year
+        details
+    """
+
+    if not isinstance(
+        value,
+        dict,
+    ):
+        return {}
+
+    return {
+        "degree": _safe_string(
+            value.get("degree")
+        ),
+        "institution": _safe_string(
+            value.get("institution")
+        ),
+        "location": _safe_string(
+            value.get("location")
+        ),
+        "start_date": _safe_string(
+            value.get("start_date")
+        ),
+        "end_date": _safe_string(
+            value.get("end_date")
+        ),
+        "year": _safe_string(
+            value.get("year")
+        ),
+        "details": _safe_string(
+            value.get("details")
+        ),
+    }
+
+
+# ============================================================
+# GENERIC BACKWARD-COMPATIBILITY HELPER
+# ============================================================
+
+def _safe_entry(
+    value: Any,
+) -> dict[str, str]:
+    """
+    Normalize a generic builder entry.
+
+    Kept for backward compatibility with existing
+    V4.0 code and tests.
     """
 
     if not isinstance(

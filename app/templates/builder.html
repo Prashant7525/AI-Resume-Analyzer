@@ -38,6 +38,10 @@
 
     <style>
 
+        /* =========================================================
+           BUILDER LAYOUT
+           ========================================================= */
+
         .builder-page {
             padding-bottom: 80px;
         }
@@ -89,6 +93,11 @@
             position: sticky;
             top: 20px;
         }
+
+
+        /* =========================================================
+           RESUME PREVIEW
+           ========================================================= */
 
         .resume-preview {
             background: #fff;
@@ -146,6 +155,11 @@
             line-height: 1.55;
         }
 
+
+        /* =========================================================
+           BUILDER BUTTONS
+           ========================================================= */
+
         .builder-actions {
             display: flex;
             gap: 10px;
@@ -171,6 +185,11 @@
             color: #4338ca;
         }
 
+
+        /* =========================================================
+           RESPONSIVE
+           ========================================================= */
+
         @media (max-width: 900px) {
 
             .builder-grid {
@@ -184,6 +203,148 @@
             .resume-preview {
                 padding: 28px;
             }
+
+        }
+
+
+        /* =========================================================
+           PRINT / PDF EXPORT
+
+           IMPORTANT:
+           Only the resume itself is printed.
+           Website navigation, editor, buttons and footer
+           are removed from the printed document.
+           ========================================================= */
+
+        @media print {
+
+            /* A4 paper */
+            @page {
+                size: A4;
+                margin: 12mm;
+            }
+
+
+            /* -----------------------------------------------------
+               Reset page
+               ----------------------------------------------------- */
+
+            html,
+            body {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                background: #ffffff !important;
+            }
+
+
+            /* -----------------------------------------------------
+               Hide website interface
+               ----------------------------------------------------- */
+
+            header,
+            footer,
+            .builder-actions,
+            .builder-form,
+            .builder-page > .builder-grid > section.card {
+                display: none !important;
+            }
+
+
+            /* -----------------------------------------------------
+               Remove builder layout
+               ----------------------------------------------------- */
+
+            .builder-page,
+            .builder-grid,
+            .builder-preview-wrap {
+                display: block !important;
+                width: 100% !important;
+                max-width: none !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                position: static !important;
+            }
+
+
+            /* -----------------------------------------------------
+               Printable resume
+               ----------------------------------------------------- */
+
+            .resume-preview {
+                display: block !important;
+
+                width: 100% !important;
+                min-height: 0 !important;
+
+                margin: 0 !important;
+                padding: 0 !important;
+
+                background: #ffffff !important;
+                color: #1f2937 !important;
+
+                border-radius: 0 !important;
+                box-shadow: none !important;
+            }
+
+
+            /* -----------------------------------------------------
+               Resume typography
+               ----------------------------------------------------- */
+
+            .resume-preview h1 {
+                margin-top: 0 !important;
+                color: #111827 !important;
+            }
+
+            .resume-preview .contact {
+                color: #475569 !important;
+            }
+
+            .resume-preview section {
+                break-inside: avoid;
+                page-break-inside: avoid;
+            }
+
+            .resume-preview section h2 {
+                color: #111827 !important;
+                border-bottom-color: #d1d5db !important;
+            }
+
+            .resume-preview p,
+            .resume-preview li,
+            .resume-preview div {
+                color: #1f2937 !important;
+            }
+
+
+            /* -----------------------------------------------------
+               Prevent visual effects in PDF
+               ----------------------------------------------------- */
+
+            * {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+
+
+            /* -----------------------------------------------------
+               Avoid awkward page splitting
+               ----------------------------------------------------- */
+
+            h1,
+            h2,
+            h3 {
+                break-after: avoid;
+                page-break-after: avoid;
+            }
+
+            p,
+            li {
+                orphans: 3;
+                widows: 3;
+            }
+
         }
 
     </style>
@@ -192,6 +353,11 @@
 
 
 <body>
+
+
+<!-- =============================================================
+     WEBSITE HEADER
+     ============================================================= -->
 
 <header>
 
@@ -219,13 +385,16 @@
 
         </div>
 
+
         <span class="badge">
             V4.0 RESUME BUILDER
         </span>
 
+
         <h1>
             Build Your Resume
         </h1>
+
 
         <p class="hero-text">
             Create, edit, preview, and refine a professional
@@ -237,13 +406,18 @@
 </header>
 
 
+<!-- =============================================================
+     MAIN BUILDER
+     ============================================================= -->
+
 <main class="container builder-page">
 
     <div class="builder-grid">
 
-        <!-- =================================================
+
+        <!-- =====================================================
              EDITOR
-             ================================================= -->
+             ===================================================== -->
 
         <section class="card">
 
@@ -257,6 +431,7 @@
                     Load Demo
                 </button>
 
+
                 <button
                     type="button"
                     class="builder-button builder-secondary"
@@ -267,9 +442,16 @@
 
             </div>
 
+
             <br>
 
+
             <div class="builder-form">
+
+
+                <!-- =================================================
+                     PERSONAL INFORMATION
+                     ================================================= -->
 
                 <div class="builder-group">
 
@@ -277,10 +459,12 @@
                         Personal Information
                     </h3>
 
+
                     <input
                         id="name"
                         placeholder="Full name"
                     >
+
 
                     <input
                         id="email"
@@ -288,20 +472,24 @@
                         placeholder="Email"
                     >
 
+
                     <input
                         id="phone"
                         placeholder="Phone"
                     >
+
 
                     <input
                         id="location"
                         placeholder="Location"
                     >
 
+
                     <input
                         id="linkedin"
                         placeholder="LinkedIn URL"
                     >
+
 
                     <input
                         id="github"
@@ -311,11 +499,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     PROFESSIONAL SUMMARY
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Professional Summary
                     </h3>
+
 
                     <textarea
                         id="summary"
@@ -325,11 +518,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     SKILLS
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Skills
                     </h3>
+
 
                     <input
                         id="skills"
@@ -339,11 +537,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     EXPERIENCE
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Experience
                     </h3>
+
 
                     <textarea
                         id="experience"
@@ -353,11 +556,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     PROJECTS
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Projects
                     </h3>
+
 
                     <textarea
                         id="projects"
@@ -367,11 +575,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     EDUCATION
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Education
                     </h3>
+
 
                     <textarea
                         id="education"
@@ -381,11 +594,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     CERTIFICATIONS
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Certifications
                     </h3>
+
 
                     <textarea
                         id="certifications"
@@ -395,11 +613,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     ACHIEVEMENTS
+                     ================================================= -->
+
                 <div class="builder-group">
 
                     <h3>
                         Achievements
                     </h3>
+
 
                     <textarea
                         id="achievements"
@@ -408,6 +631,10 @@
 
                 </div>
 
+
+                <!-- =================================================
+                     PRINT BUTTON
+                     ================================================= -->
 
                 <div class="builder-actions">
 
@@ -426,9 +653,9 @@
         </section>
 
 
-        <!-- =================================================
-             LIVE PREVIEW
-             ================================================= -->
+        <!-- =====================================================
+             LIVE RESUME PREVIEW
+             ===================================================== -->
 
         <div class="builder-preview-wrap">
 
@@ -437,9 +664,15 @@
                 id="resumePreview"
             >
 
+
+                <!-- =================================================
+                     NAME / CONTACT
+                     ================================================= -->
+
                 <h1 id="previewName">
                     Your Name
                 </h1>
+
 
                 <div
                     class="contact"
@@ -449,11 +682,16 @@
                 </div>
 
 
+                <!-- =================================================
+                     PROFESSIONAL SUMMARY
+                     ================================================= -->
+
                 <section id="previewSummarySection">
 
                     <h2>
                         Professional Summary
                     </h2>
+
 
                     <p id="previewSummary">
                         Your professional summary will appear here.
@@ -462,11 +700,16 @@
                 </section>
 
 
+                <!-- =================================================
+                     SKILLS
+                     ================================================= -->
+
                 <section id="previewSkillsSection">
 
                     <h2>
                         Skills
                     </h2>
+
 
                     <p id="previewSkills">
                         Add your skills.
@@ -475,11 +718,16 @@
                 </section>
 
 
+                <!-- =================================================
+                     EXPERIENCE
+                     ================================================= -->
+
                 <section id="previewExperienceSection">
 
                     <h2>
                         Experience
                     </h2>
+
 
                     <div id="previewExperience">
                         Add your experience.
@@ -488,11 +736,16 @@
                 </section>
 
 
+                <!-- =================================================
+                     PROJECTS
+                     ================================================= -->
+
                 <section id="previewProjectsSection">
 
                     <h2>
                         Projects
                     </h2>
+
 
                     <div id="previewProjects">
                         Add your projects.
@@ -501,11 +754,16 @@
                 </section>
 
 
+                <!-- =================================================
+                     EDUCATION
+                     ================================================= -->
+
                 <section id="previewEducationSection">
 
                     <h2>
                         Education
                     </h2>
+
 
                     <div id="previewEducation">
                         Add your education.
@@ -514,22 +772,32 @@
                 </section>
 
 
+                <!-- =================================================
+                     CERTIFICATIONS
+                     ================================================= -->
+
                 <section id="previewCertificationsSection">
 
                     <h2>
                         Certifications
                     </h2>
 
+
                     <ul id="previewCertifications"></ul>
 
                 </section>
 
+
+                <!-- =================================================
+                     ACHIEVEMENTS
+                     ================================================= -->
 
                 <section id="previewAchievementsSection">
 
                     <h2>
                         Achievements
                     </h2>
+
 
                     <ul id="previewAchievements"></ul>
 
@@ -544,6 +812,10 @@
 </main>
 
 
+<!-- =============================================================
+     WEBSITE FOOTER
+     ============================================================= -->
+
 <footer class="site-footer">
 
     <div class="container">
@@ -556,20 +828,134 @@
 
         </div>
 
+
         <div class="footer-built">
             Built with Flask &amp; Python · V4.0
         </div>
+
+
+        <nav
+            class="footer-links"
+            aria-label="Footer navigation"
+        >
+
+            <!-- GitHub -->
+
+            <a
+                href="https://github.com/Prashant7525"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-social-link"
+                aria-label="GitHub"
+                title="GitHub"
+            >
+
+                <svg
+                    class="footer-social-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M12 2C6.48 2 2 6.58 2 12.26c0 4.54 2.87 8.39 6.84 9.75.5.1.68-.22.68-.49v-1.71c-2.78.62-3.37-1.22-3.37-1.22-.46-1.2-1.11-1.52-1.11-1.52-.91-.64.07-.63.07-.63 1.01.07 1.54 1.07 1.54 1.07.9 1.58 2.36 1.12 2.94.86.09-.67.35-1.12.64-1.38-2.22-.26-4.55-1.15-4.55-5.08 0-1.12.39-2.03 1.03-2.75.1-.26.45-1.31.1-2.72 0 0 .84-.28 2.75 1.05A9.2 9.2 0 0 1 12 7.16c.85 0 1.71.12 2.51.36 1.91-1.33 2.75-1.05 2.75-1.05.55 1.41.2 2.46.1 2.72.64.72 1.03 1.63 1.03 2.75 0 3.94-2.34 4.81-4.57 5.07.36.32.68.94.68 1.9v2.61c0 .27.18.59.69.49A10.27 10.27 0 0 0 22 12.26C22 6.58 17.52 2 12 2Z"
+                    />
+
+                </svg>
+
+
+                <span>
+                    GitHub
+                </span>
+
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <!-- LinkedIn -->
+
+            <a
+                href="https://www.linkedin.com/in/prashant7525"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="footer-social-link"
+                aria-label="LinkedIn"
+                title="LinkedIn"
+            >
+
+                <svg
+                    class="footer-social-icon"
+                    viewBox="0 0 24 24"
+                    aria-hidden="true"
+                >
+
+                    <path
+                        d="M6.5 8.25A1.75 1.75 0 1 0 6.5 4.75a1.75 1.75 0 0 0 0 3.5ZM5 9.75h3v9H5v-9Zm5 0h2.88v1.23h.04c.4-.76 1.38-1.56 2.84-1.56 3.04 0 3.6 2 3.6 4.6v4.73h-3v-4.2c0-1 0-2.28-1.39-2.28-1.39 0-1.6 1.09-1.6 2.2v4.28h-3v-9Z"
+                    />
+
+                </svg>
+
+
+                <span>
+                    LinkedIn
+                </span>
+
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <!-- Privacy -->
+
+            <a
+                href="{{ url_for('privacy') }}"
+                class="footer-text-link"
+            >
+                Privacy
+            </a>
+
+
+            <span class="footer-separator">
+                ·
+            </span>
+
+
+            <!-- Terms -->
+
+            <a
+                href="{{ url_for('terms') }}"
+                class="footer-text-link"
+            >
+                Terms
+            </a>
+
+        </nav>
 
     </div>
 
 </footer>
 
 
+<!-- =============================================================
+     BUILDER JAVASCRIPT
+     ============================================================= -->
+
 <script>
 
 document.addEventListener(
     "DOMContentLoaded",
     function () {
+
+
+        /* =========================================================
+           FIELD LIST
+           ========================================================= */
 
         const fieldIds = [
             "name",
@@ -588,6 +974,10 @@ document.addEventListener(
         ];
 
 
+        /* =========================================================
+           GET FIELD VALUE
+           ========================================================= */
+
         function value(id) {
 
             const element =
@@ -600,6 +990,10 @@ document.addEventListener(
         }
 
 
+        /* =========================================================
+           HTML ESCAPING
+           ========================================================= */
+
         function escapeHtml(text) {
 
             return String(text)
@@ -608,8 +1002,13 @@ document.addEventListener(
                 .replaceAll(">", "&gt;")
                 .replaceAll('"', "&quot;")
                 .replaceAll("'", "&#039;");
+
         }
 
+
+        /* =========================================================
+           SPLIT MULTI-LINE CONTENT
+           ========================================================= */
 
         function splitLines(text) {
 
@@ -621,8 +1020,13 @@ document.addEventListener(
                     }
                 )
                 .filter(Boolean);
+
         }
 
+
+        /* =========================================================
+           RENDER LIST
+           ========================================================= */
 
         function renderList(
             element,
@@ -636,20 +1040,68 @@ document.addEventListener(
                 return;
             }
 
+
             element.innerHTML =
                 items
                     .map(
                         function (item) {
+
                             return (
                                 "<li>" +
                                 escapeHtml(item) +
                                 "</li>"
                             );
+
                         }
                     )
                     .join("");
+
         }
 
+
+        /* =========================================================
+           RENDER TEXT BLOCKS
+           ========================================================= */
+
+        function renderBlocks(
+            element,
+            text,
+        ) {
+
+            const lines =
+                splitLines(text);
+
+
+            if (!lines.length) {
+
+                element.innerHTML =
+                    "<p>Add content.</p>";
+
+                return;
+            }
+
+
+            element.innerHTML =
+                lines
+                    .map(
+                        function (line) {
+
+                            return (
+                                "<p>" +
+                                escapeHtml(line) +
+                                "</p>"
+                            );
+
+                        }
+                    )
+                    .join("");
+
+        }
+
+
+        /* =========================================================
+           RENDER RESUME
+           ========================================================= */
 
         function render() {
 
@@ -697,12 +1149,20 @@ document.addEventListener(
                 );
 
 
+            /* -----------------------------------------------------
+               Name
+               ----------------------------------------------------- */
+
             document.getElementById(
                 "previewName"
             ).textContent =
                 name ||
                 "Your Name";
 
+
+            /* -----------------------------------------------------
+               Contact information
+               ----------------------------------------------------- */
 
             const contactParts = [
                 email,
@@ -721,12 +1181,20 @@ document.addEventListener(
                     : "Email · Phone · Location";
 
 
+            /* -----------------------------------------------------
+               Summary
+               ----------------------------------------------------- */
+
             document.getElementById(
                 "previewSummary"
             ).textContent =
                 summary ||
                 "Your professional summary will appear here.";
 
+
+            /* -----------------------------------------------------
+               Skills
+               ----------------------------------------------------- */
 
             document.getElementById(
                 "previewSkills"
@@ -735,6 +1203,10 @@ document.addEventListener(
                 "Add your skills.";
 
 
+            /* -----------------------------------------------------
+               Experience
+               ----------------------------------------------------- */
+
             renderBlocks(
                 document.getElementById(
                     "previewExperience"
@@ -742,12 +1214,22 @@ document.addEventListener(
                 experience
             );
 
+
+            /* -----------------------------------------------------
+               Projects
+               ----------------------------------------------------- */
+
             renderBlocks(
                 document.getElementById(
                     "previewProjects"
                 ),
                 projects
             );
+
+
+            /* -----------------------------------------------------
+               Education
+               ----------------------------------------------------- */
 
             renderBlocks(
                 document.getElementById(
@@ -757,12 +1239,21 @@ document.addEventListener(
             );
 
 
+            /* -----------------------------------------------------
+               Certifications
+               ----------------------------------------------------- */
+
             renderList(
                 document.getElementById(
                     "previewCertifications"
                 ),
                 certifications
             );
+
+
+            /* -----------------------------------------------------
+               Achievements
+               ----------------------------------------------------- */
 
             renderList(
                 document.getElementById(
@@ -774,57 +1265,34 @@ document.addEventListener(
         }
 
 
-        function renderBlocks(
-            element,
-            text,
-        ) {
-
-            const lines =
-                splitLines(text);
-
-            if (!lines.length) {
-
-                element.innerHTML =
-                    "<p>Add content.</p>";
-
-                return;
-            }
-
-            element.innerHTML =
-                lines
-                    .map(
-                        function (line) {
-
-                            return (
-                                "<p>" +
-                                escapeHtml(line) +
-                                "</p>"
-                            );
-                        }
-                    )
-                    .join("");
-        }
-
+        /* =========================================================
+           LIVE INPUT UPDATES
+           ========================================================= */
 
         fieldIds.forEach(
             function (id) {
 
                 const element =
-                    document.getElementById(
-                        id
-                    );
+                    document.getElementById(id);
+
 
                 if (!element) {
                     return;
                 }
 
+
                 element.addEventListener(
                     "input",
                     render
                 );
+
             }
         );
 
+
+        /* =========================================================
+           CLEAR BUILDER
+           ========================================================= */
 
         document.getElementById(
             "clearBuilder"
@@ -836,9 +1304,8 @@ document.addEventListener(
                     function (id) {
 
                         const element =
-                            document.getElementById(
-                                id
-                            );
+                            document.getElementById(id);
+
 
                         if (element) {
                             element.value = "";
@@ -847,10 +1314,16 @@ document.addEventListener(
                     }
                 );
 
+
                 render();
+
             }
         );
 
+
+        /* =========================================================
+           LOAD DEMO
+           ========================================================= */
 
         document.getElementById(
             "loadDemo"
@@ -858,75 +1331,94 @@ document.addEventListener(
             "click",
             function () {
 
+
                 document.getElementById(
                     "name"
                 ).value =
                     "Alex Johnson";
+
 
                 document.getElementById(
                     "email"
                 ).value =
                     "alex@example.com";
 
+
                 document.getElementById(
                     "phone"
                 ).value =
                     "+91 98765 43210";
+
 
                 document.getElementById(
                     "location"
                 ).value =
                     "India";
 
+
                 document.getElementById(
                     "linkedin"
                 ).value =
                     "linkedin.com/in/alex";
+
 
                 document.getElementById(
                     "github"
                 ).value =
                     "github.com/alex";
 
+
                 document.getElementById(
                     "summary"
                 ).value =
                     "Software developer focused on Python, Flask, backend development, and practical application engineering.";
+
 
                 document.getElementById(
                     "skills"
                 ).value =
                     "Python, Flask, SQL, Git, REST APIs, JavaScript";
 
+
                 document.getElementById(
                     "experience"
                 ).value =
                     "Software Developer | Example Company | 2025–Present\nDeveloped backend applications using Python and Flask.\nImproved application reliability through testing and debugging.";
+
 
                 document.getElementById(
                     "projects"
                 ).value =
                     "AI Resume Analyzer | Python, Flask, SQLite\nBuilt a resume analysis platform with ATS scoring, job matching, analytics, and AI-powered tailoring.";
 
+
                 document.getElementById(
                     "education"
                 ).value =
                     "Bachelor of Computer Science | University | 2026";
+
 
                 document.getElementById(
                     "certifications"
                 ).value =
                     "Python Programming\nCloud Fundamentals";
 
+
                 document.getElementById(
                     "achievements"
                 ).value =
                     "Solved 700+ coding problems.\nCompleted a structured problem-solving challenge.";
 
+
                 render();
+
             }
         );
 
+
+        /* =========================================================
+           PRINT / SAVE PDF
+           ========================================================= */
 
         document.getElementById(
             "printResume"
@@ -940,12 +1432,17 @@ document.addEventListener(
         );
 
 
+        /* =========================================================
+           INITIAL RENDER
+           ========================================================= */
+
         render();
 
     }
 );
 
 </script>
+
 
 </body>
 
