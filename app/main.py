@@ -1707,6 +1707,7 @@ from app.ai.tailoring.service import (
     "/api/ai/tailor-job",
     methods=["POST"],
 )
+@csrf.exempt
 def ai_tailor_job():
 
     try:

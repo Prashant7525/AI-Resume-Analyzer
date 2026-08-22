@@ -3648,6 +3648,121 @@
 
             {% endif %}
 
+            <!-- ============================================================
+     V3.4 AI JOB TAILORING
+     ============================================================ -->
+
+{% if job_result and job_description %}
+
+<section class="card full-width">
+
+    <span class="dashboard-badge">
+        V3.4 AI JOB TAILORING
+    </span>
+
+    <h2 class="section-title">
+        AI Job Tailoring
+    </h2>
+
+    <p class="dashboard-description">
+        Generate tailored recommendations based on your resume
+        and the supplied job description.
+    </p>
+
+    <button
+        type="button"
+        id="tailorJobButton"
+        class="history-primary-button"
+    >
+        ✨ Tailor Resume to Job
+    </button>
+
+    <!-- V3.4 AI TAILORING DATA -->
+<textarea
+    id="tailoringResumeText"
+    hidden
+>{{ extracted_text|default("", true) }}</textarea>
+
+<textarea
+    id="tailoringJobDescription"
+    hidden
+>{{ job_description|default("", true) }}</textarea>
+
+<input
+    type="hidden"
+    id="tailoringEndpoint"
+    value="{{ url_for('ai_tailor_job') }}"
+>
+
+<input
+    type="hidden"
+    id="tailoringCsrfToken"
+    value="{{ csrf_token() }}"
+>
+
+    <div
+        id="tailoringLoading"
+        style="display:none; margin-top:20px;"
+    >
+        Analyzing your resume against the job description...
+    </div>
+
+    <div
+        id="tailoringError"
+        class="error"
+        style="display:none; margin-top:20px;"
+    ></div>
+
+    <div
+        id="tailoringResult"
+        style="display:none; margin-top:25px;"
+    >
+
+        <div class="v3-check-grid">
+
+            <div class="v3-check-card">
+
+                <h3>Match Summary</h3>
+
+                <p id="tailoringMatchSummary"></p>
+
+            </div>
+
+
+            <div class="v3-check-card">
+
+                <h3>Missing Skills</h3>
+
+                <ul id="tailoringMissingSkills"></ul>
+
+            </div>
+
+
+            <div class="v3-check-card">
+
+                <h3>Important Keywords</h3>
+
+                <ul id="tailoringKeywords"></ul>
+
+            </div>
+
+
+            <div class="v3-check-card">
+
+                <h3>Tailored Recommendations</h3>
+
+                <ul id="tailoringRecommendations"></ul>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+{% endif %}
+
 
             <!-- =================================================
                  EXTRACTED TEXT
@@ -4098,6 +4213,288 @@
 
 </script>
 
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const button =
+            document.getElementById(
+                "tailorJobButton"
+            );
+
+        if (!button) {
+            return;
+        }
+
+        const loading =
+            document.getElementById(
+                "tailoringLoading"
+            );
+
+        const errorBox =
+            document.getElementById(
+                "tailoringError"
+            );
+
+        const resultBox =
+            document.getElementById(
+                "tailoringResult"
+            );
+
+        const summary =
+            document.getElementById(
+                "tailoringMatchSummary"
+            );
+
+        const missingSkills =
+            document.getElementById(
+                "tailoringMissingSkills"
+            );
+
+        const keywords =
+            document.getElementById(
+                "tailoringKeywords"
+            );
+
+        const recommendations =
+            document.getElementById(
+                "tailoringRecommendations"
+            );
+
+        const resumeTextElement =
+            document.getElementById(
+                "tailoringResumeText"
+            );
+
+        const jobDescriptionElement =
+            document.getElementById(
+                "tailoringJobDescription"
+            );
+
+        const endpointElement =
+            document.getElementById(
+                "tailoringEndpoint"
+            );
+
+        const csrfElement =
+            document.getElementById(
+                "tailoringCsrfToken"
+            );
+
+        button.addEventListener(
+            "click",
+            async function () {
+
+                button.disabled = true;
+
+                loading.style.display =
+                    "block";
+
+                errorBox.style.display =
+                    "none";
+
+                resultBox.style.display =
+                    "none";
+
+                try {
+
+                    const resumeText =
+                        resumeTextElement
+                            ? resumeTextElement.value
+                            : "";
+
+                    const jobDescription =
+                        jobDescriptionElement
+                            ? jobDescriptionElement.value
+                            : "";
+
+                    const endpoint =
+                        endpointElement
+                            ? endpointElement.value
+                            : "";
+
+                    const csrfToken =
+                        csrfElement
+                            ? csrfElement.value
+                            : "";
+
+                    if (!resumeText.trim()) {
+                        throw new Error(
+                            "Resume text is not available."
+                        );
+                    }
+
+                    if (!jobDescription.trim()) {
+                        throw new Error(
+                            "Job description is not available."
+                        );
+                    }
+
+                    if (!endpoint) {
+                        throw new Error(
+                            "AI tailoring endpoint is not configured."
+                        );
+                    }
+
+                    const formData =
+                        new FormData();
+
+                    formData.append(
+                        "resume_text",
+                        resumeText
+                    );
+
+                    formData.append(
+                        "job_description",
+                        jobDescription
+                    );
+
+                    const response =
+                        await fetch(
+                            endpoint,
+                            {
+                                method: "POST",
+                                body: formData,
+                                headers: csrfToken
+                                    ? {
+                                        "X-CSRFToken":
+                                            csrfToken
+                                    }
+                                    : {}
+                            }
+                        );
+
+                    let data;
+
+                    try {
+                        data =
+                            await response.json();
+                    }
+                    catch (jsonError) {
+                        throw new Error(
+                            "The server returned an invalid response."
+                        );
+                    }
+
+                    if (!response.ok) {
+                        throw new Error(
+                            data.error ||
+                            "AI tailoring request failed."
+                        );
+                    }
+
+                    if (!data.success) {
+                        throw new Error(
+                            data.error ||
+                            "Unable to generate recommendations."
+                        );
+                    }
+
+                    const result =
+                        data.result || {};
+
+                    summary.textContent =
+                        result.match_summary || "";
+
+                    renderList(
+                        missingSkills,
+                        result.missing_skills
+                    );
+
+                    renderList(
+                        keywords,
+                        result.important_keywords
+                    );
+
+                    renderList(
+                        recommendations,
+                        result.tailored_recommendations
+                    );
+
+                    resultBox.style.display =
+                        "block";
+
+                }
+                catch (error) {
+
+                    console.error(
+                        "AI Job Tailoring Error:",
+                        error
+                    );
+
+                    errorBox.textContent =
+                        error.message ||
+                        "Unable to generate job-tailoring recommendations.";
+
+                    errorBox.style.display =
+                        "block";
+
+                }
+                finally {
+
+                    loading.style.display =
+                        "none";
+
+                    button.disabled =
+                        false;
+                }
+            }
+        );
+
+        function renderList(
+            element,
+            values
+        ) {
+
+            if (!element) {
+                return;
+            }
+
+            element.innerHTML = "";
+
+            if (
+                !Array.isArray(values) ||
+                values.length === 0
+            ) {
+
+                const item =
+                    document.createElement(
+                        "li"
+                    );
+
+                item.textContent =
+                    "None identified.";
+
+                element.appendChild(
+                    item
+                );
+
+                return;
+            }
+
+            values.forEach(
+                function (value) {
+
+                    const item =
+                        document.createElement(
+                            "li"
+                        );
+
+                    item.textContent =
+                        String(value);
+
+                    element.appendChild(
+                        item
+                    );
+
+                }
+            );
+        }
+
+    }
+);
+</script>
 
 </body>
 
