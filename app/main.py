@@ -26,6 +26,7 @@ V3.1
 
 from __future__ import annotations
 
+import json
 import os
 import re
 from datetime import datetime
@@ -1711,7 +1712,6 @@ from app.ai.tailoring.service import (
     "/api/ai/tailor-job",
     methods=["POST"],
 )
-@csrf.exempt
 def ai_tailor_job():
 
     try:
@@ -1875,50 +1875,81 @@ def favicon():
 def builder():
     """
     V4.0 Professional Resume Builder.
+
+    GET renders a fresh builder. POST accepts either a complete JSON
+    builder payload or the legacy flat form fields, then normalizes
+    everything through the V4.0 service layer.
     """
 
-    builder_data = {}
+    builder_data: dict = {}
 
     if request.method == "POST":
 
-        builder_data = {
-            "name": request.form.get(
-                "name",
+        if request.is_json:
+            payload = request.get_json(silent=True)
+
+            if isinstance(payload, dict):
+                builder_data = payload
+
+        else:
+            raw_payload = request.form.get(
+                "builder_json",
                 "",
-            ),
-            "email": request.form.get(
-                "email",
-                "",
-            ),
-            "phone": request.form.get(
-                "phone",
-                "",
-            ),
-            "location": request.form.get(
-                "location",
-                "",
-            ),
-            "linkedin": request.form.get(
-                "linkedin",
-                "",
-            ),
-            "github": request.form.get(
-                "github",
-                "",
-            ),
-            "summary": request.form.get(
-                "summary",
-                "",
-            ),
-            "skills": [
-                item
-                for item in request.form.get(
-                    "skills",
-                    "",
-                ).split(",")
-                if item.strip()
-            ],
-        }
+            ).strip()
+
+            if raw_payload:
+                try:
+                    parsed_payload = json.loads(
+                        raw_payload
+                    )
+                except (TypeError, ValueError):
+                    parsed_payload = None
+
+                if isinstance(
+                    parsed_payload,
+                    dict,
+                ):
+                    builder_data = parsed_payload
+
+            if not builder_data:
+                builder_data = {
+                    "name": request.form.get(
+                        "name",
+                        "",
+                    ),
+                    "email": request.form.get(
+                        "email",
+                        "",
+                    ),
+                    "phone": request.form.get(
+                        "phone",
+                        "",
+                    ),
+                    "location": request.form.get(
+                        "location",
+                        "",
+                    ),
+                    "linkedin": request.form.get(
+                        "linkedin",
+                        "",
+                    ),
+                    "github": request.form.get(
+                        "github",
+                        "",
+                    ),
+                    "summary": request.form.get(
+                        "summary",
+                        "",
+                    ),
+                    "skills": [
+                        item.strip()
+                        for item in request.form.get(
+                            "skills",
+                            "",
+                        ).split(",")
+                        if item.strip()
+                    ],
+                }
 
     normalized_data = normalize_builder_data(
         builder_data

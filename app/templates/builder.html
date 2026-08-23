@@ -688,6 +688,446 @@
         }
 
 
+
+        /* =====================================================
+           V4.0 STRUCTURED BUILDER
+           ===================================================== */
+
+        .builder-editor-card {
+            overflow: hidden;
+        }
+
+        .builder-editor-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 18px;
+            padding-bottom: 18px;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .builder-toolbar-label {
+            display: block;
+            margin-bottom: 4px;
+            color: #64748b;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+        }
+
+        .builder-save-status {
+            color: #475569;
+            font-size: 13px;
+            font-weight: 700;
+        }
+
+        .builder-section-heading {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 18px;
+            margin-bottom: 12px;
+        }
+
+        .builder-section-heading > div:first-child {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .builder-section-heading h3 {
+            margin: 0 0 4px;
+            color: #172033;
+        }
+
+        .builder-section-heading p {
+            margin: 0;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .builder-step {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex: 0 0 32px;
+            width: 32px;
+            height: 32px;
+            border-radius: 10px;
+            background: #eef2ff;
+            color: #4f46e5;
+            font-size: 11px;
+            font-weight: 900;
+        }
+
+        .builder-hint,
+        .template-selector-hint {
+            color: #64748b;
+            font-size: 12px;
+            font-weight: 700;
+            white-space: nowrap;
+        }
+
+        .builder-entry-grid {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 12px;
+        }
+
+        .builder-entry-field {
+            display: grid;
+            gap: 6px;
+            min-width: 0;
+        }
+
+        .builder-entry-field label {
+            color: #334155;
+            font-size: 12px;
+            font-weight: 800;
+        }
+
+        .builder-entry-field input,
+        .builder-entry-field textarea {
+            width: 100%;
+            min-width: 0;
+            padding: 11px 12px;
+            border: 1px solid #dfe3ef;
+            border-radius: 11px;
+            background: #ffffff;
+            color: #172033;
+            font: inherit;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        .builder-entry-field textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .builder-entry-full {
+            margin-top: 12px;
+        }
+
+        .builder-entry-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .builder-entry-card {
+            padding: 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 14px;
+            background: #f8fafc;
+        }
+
+        .builder-entry-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            margin-bottom: 13px;
+        }
+
+        .builder-entry-header h4 {
+            margin: 0;
+            color: #1e293b;
+            font-size: 14px;
+        }
+
+        .builder-remove-button {
+            border: 1px solid #fecaca;
+            border-radius: 9px;
+            padding: 7px 10px;
+            background: #ffffff;
+            color: #b91c1c;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .builder-remove-button:hover {
+            background: #fff5f5;
+        }
+
+        .builder-add-button {
+            flex: 0 0 auto;
+            border: 1px solid #c7d2fe;
+            border-radius: 10px;
+            padding: 9px 12px;
+            background: #eef2ff;
+            color: #4338ca;
+            font: inherit;
+            font-size: 12px;
+            font-weight: 800;
+            cursor: pointer;
+        }
+
+        .builder-add-button:hover {
+            background: #e0e7ff;
+        }
+
+        .builder-empty-state {
+            padding: 18px;
+            border: 1px dashed #cbd5e1;
+            border-radius: 12px;
+            background: #f8fafc;
+            color: #64748b;
+            font-size: 13px;
+            line-height: 1.5;
+        }
+
+        .builder-data-tools {
+            padding-top: 4px;
+        }
+
+        .builder-print-actions {
+            align-items: center;
+            padding-top: 4px;
+        }
+
+        .builder-print-hint {
+            color: #64748b;
+            font-size: 12px;
+            line-height: 1.5;
+        }
+
+        .builder-field-error {
+            color: #dc2626;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .builder-entry-field input.invalid,
+        .builder-entry-field textarea.invalid,
+        .builder-group > input.invalid,
+        .builder-group > textarea.invalid {
+            border-color: #dc2626;
+            background: #fff7f7;
+        }
+
+        .builder-toast {
+            position: fixed;
+            left: 50%;
+            bottom: 28px;
+            z-index: 10000;
+            max-width: min(420px, calc(100vw - 32px));
+            padding: 12px 16px;
+            border: 1px solid #c7d2fe;
+            border-radius: 12px;
+            background: #ffffff;
+            color: #312e81;
+            box-shadow: 0 14px 35px rgba(15, 23, 42, 0.16);
+            font-size: 13px;
+            font-weight: 800;
+            opacity: 0;
+            pointer-events: none;
+            transform: translate(-50%, 12px);
+            transition: opacity 0.2s ease, transform 0.2s ease;
+        }
+
+        .builder-toast.visible {
+            opacity: 1;
+            transform: translate(-50%, 0);
+        }
+
+        .builder-toast.error {
+            border-color: #fecaca;
+            color: #991b1b;
+        }
+
+        .template-selector {
+            padding: 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 16px;
+            background: #ffffff;
+        }
+
+        .template-selector-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 15px;
+            margin-bottom: 12px;
+        }
+
+        .template-selector-title {
+            color: #172033;
+            font-size: 16px;
+            font-weight: 850;
+        }
+
+        .resume-header {
+            padding-bottom: 16px;
+        }
+
+        .resume-contact-separator {
+            margin: 0 7px;
+            color: #94a3b8;
+        }
+
+        .resume-preview .contact {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            gap: 0;
+        }
+
+        .resume-preview .contact a {
+            color: inherit;
+            text-decoration: none;
+        }
+
+        .resume-preview .contact a:hover {
+            text-decoration: underline;
+        }
+
+        .resume-skills {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 7px;
+        }
+
+        .resume-skill {
+            display: inline-flex;
+            padding: 5px 9px;
+            border: 1px solid #dbe3f0;
+            border-radius: 999px;
+            background: #f8fafc;
+            font-size: 12px;
+            font-weight: 700;
+        }
+
+        .resume-entry {
+            margin-top: 14px;
+            break-inside: avoid;
+            page-break-inside: avoid;
+        }
+
+        .resume-entry-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 16px;
+        }
+
+        .resume-entry-title {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .resume-entry-title strong {
+            font-size: 14px;
+        }
+
+        .resume-entry-title span {
+            color: #475569;
+            font-size: 13px;
+        }
+
+        .resume-entry-meta {
+            margin: 0 !important;
+            color: #64748b;
+            font-size: 12px;
+            text-align: right;
+            white-space: nowrap;
+        }
+
+        .resume-project-link {
+            margin-left: 8px;
+            color: #4f46e5 !important;
+            font-size: 11px;
+            text-decoration: none;
+        }
+
+        .resume-preview section[hidden] {
+            display: none !important;
+        }
+
+        html[data-theme="dark"] .builder-editor-toolbar,
+        html[data-theme="dark"] .template-selector {
+            border-color: #334155;
+        }
+
+        html[data-theme="dark"] .builder-section-heading h3,
+        html[data-theme="dark"] .template-selector-title,
+        html[data-theme="dark"] .builder-entry-header h4,
+        html[data-theme="dark"] .builder-entry-field label {
+            color: #e5e7eb;
+        }
+
+        html[data-theme="dark"] .builder-section-heading p,
+        html[data-theme="dark"] .builder-save-status,
+        html[data-theme="dark"] .builder-hint,
+        html[data-theme="dark"] .template-selector-hint,
+        html[data-theme="dark"] .builder-print-hint {
+            color: #94a3b8;
+        }
+
+        html[data-theme="dark"] .builder-entry-card,
+        html[data-theme="dark"] .builder-empty-state {
+            border-color: #334155;
+            background: #111827;
+        }
+
+        html[data-theme="dark"] .builder-entry-field input,
+        html[data-theme="dark"] .builder-entry-field textarea,
+        html[data-theme="dark"] .builder-remove-button,
+        html[data-theme="dark"] .builder-toast {
+            border-color: #475569;
+            background: #0f172a;
+            color: #e5e7eb;
+        }
+
+        html[data-theme="dark"] .builder-empty-state {
+            color: #94a3b8;
+        }
+
+        html[data-theme="dark"] .resume-skill {
+            border-color: #475569;
+            background: #1e293b;
+            color: #e2e8f0;
+        }
+
+        html[data-theme="dark"] .builder-step {
+            background: #312e81;
+            color: #c7d2fe;
+        }
+
+        @media (max-width: 700px) {
+            .builder-editor-toolbar,
+            .builder-section-heading,
+            .template-selector-header {
+                align-items: stretch;
+                flex-direction: column;
+            }
+
+            .builder-entry-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .builder-add-button {
+                width: 100%;
+            }
+
+            .resume-entry-top {
+                flex-direction: column;
+                gap: 4px;
+            }
+
+            .resume-entry-meta {
+                text-align: left;
+                white-space: normal;
+            }
+        }
+
         /* =====================================================
            PRINT / SAVE PDF
            ===================================================== */
@@ -992,195 +1432,301 @@
              EDITOR
              ================================================= -->
 
-        <section class="card">
+        <section class="card builder-editor-card">
 
-            <div class="builder-actions">
+            <div class="builder-editor-toolbar">
+                <div>
+                    <span class="builder-toolbar-label">Draft</span>
+                    <span id="builderSaveStatus" class="builder-save-status">
+                        Not saved
+                    </span>
+                </div>
 
-                <button
-                    type="button"
-                    class="builder-button builder-secondary"
-                    id="loadDemo"
-                >
-                    Load Demo
-                </button>
+                <div class="builder-actions">
+                    <button
+                        type="button"
+                        class="builder-button builder-secondary"
+                        id="loadDemo"
+                    >
+                        Load Demo
+                    </button>
 
+                    <button
+                        type="button"
+                        class="builder-button builder-secondary"
+                        id="saveBuilder"
+                    >
+                        Save Draft
+                    </button>
 
-                <button
-                    type="button"
-                    class="builder-button builder-secondary"
-                    id="clearBuilder"
-                >
-                    Clear
-                </button>
-
+                    <button
+                        type="button"
+                        class="builder-button builder-secondary"
+                        id="clearBuilder"
+                    >
+                        Clear
+                    </button>
+                </div>
             </div>
-
-
-            <br>
 
 
             <div class="builder-form">
 
-
                 <div class="builder-group">
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">01</span>
+                            <div>
+                                <h3>Personal Information</h3>
+                                <p>Use the contact details you want recruiters to see.</p>
+                            </div>
+                        </div>
+                    </div>
 
-                    <h3>
-                        Personal Information
-                    </h3>
+                    <div class="builder-entry-grid">
+                        <div class="builder-entry-field">
+                            <label for="name">Full name</label>
+                            <input
+                                id="name"
+                                placeholder="e.g. Alex Johnson"
+                                autocomplete="name"
+                            >
+                        </div>
 
+                        <div class="builder-entry-field">
+                            <label for="email">Email</label>
+                            <input
+                                id="email"
+                                type="email"
+                                placeholder="e.g. you@example.com"
+                                autocomplete="email"
+                            >
+                        </div>
 
-                    <input
-                        id="name"
-                        placeholder="Full name"
-                        autocomplete="name"
-                    >
+                        <div class="builder-entry-field">
+                            <label for="phone">Phone</label>
+                            <input
+                                id="phone"
+                                placeholder="e.g. +91 98765 43210"
+                                autocomplete="tel"
+                            >
+                        </div>
 
+                        <div class="builder-entry-field">
+                            <label for="location">Location</label>
+                            <input
+                                id="location"
+                                placeholder="e.g. Delhi, India"
+                                autocomplete="address-level2"
+                            >
+                        </div>
 
-                    <input
-                        id="email"
-                        type="email"
-                        placeholder="Email"
-                        autocomplete="email"
-                    >
+                        <div class="builder-entry-field">
+                            <label for="linkedin">LinkedIn</label>
+                            <input
+                                id="linkedin"
+                                placeholder="linkedin.com/in/username"
+                                autocomplete="url"
+                            >
+                        </div>
 
-
-                    <input
-                        id="phone"
-                        placeholder="Phone"
-                        autocomplete="tel"
-                    >
-
-
-                    <input
-                        id="location"
-                        placeholder="Location"
-                        autocomplete="address-level2"
-                    >
-
-
-                    <input
-                        id="linkedin"
-                        placeholder="LinkedIn URL"
-                        autocomplete="url"
-                    >
-
-
-                    <input
-                        id="github"
-                        placeholder="GitHub URL"
-                        autocomplete="url"
-                    >
-
+                        <div class="builder-entry-field">
+                            <label for="github">GitHub</label>
+                            <input
+                                id="github"
+                                placeholder="github.com/username"
+                                autocomplete="url"
+                            >
+                        </div>
+                    </div>
                 </div>
 
 
                 <div class="builder-group">
-
-                    <h3>
-                        Professional Summary
-                    </h3>
-
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">02</span>
+                            <div>
+                                <h3>Professional Summary</h3>
+                                <p>Keep it focused on your strengths, experience, and target role.</p>
+                            </div>
+                        </div>
+                        <span class="builder-hint">Up to 3000 characters</span>
+                    </div>
 
                     <textarea
                         id="summary"
-                        placeholder="Write a concise professional summary..."
+                        rows="6"
+                        maxlength="3000"
+                        placeholder="Example: Software developer focused on Python, Flask, backend systems, and practical application engineering."
                     ></textarea>
-
                 </div>
 
 
                 <div class="builder-group">
-
-                    <h3>
-                        Skills
-                    </h3>
-
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">03</span>
+                            <div>
+                                <h3>Skills</h3>
+                                <p>Separate skills with commas. Keep the most relevant skills first.</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <input
                         id="skills"
-                        placeholder="Python, Flask, SQL, Git, Docker"
+                        placeholder="Python, Flask, SQL, Git, REST APIs, JavaScript"
                     >
-
                 </div>
 
 
                 <div class="builder-group">
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">04</span>
+                            <div>
+                                <h3>Experience</h3>
+                                <p>Add roles separately so dates, companies, and achievements stay structured.</p>
+                            </div>
+                        </div>
 
-                    <h3>
-                        Experience
-                    </h3>
+                        <button
+                            type="button"
+                            class="builder-add-button"
+                            id="addExperience"
+                        >
+                            + Add Experience
+                        </button>
+                    </div>
 
-
-                    <textarea
-                        id="experience"
-                        placeholder="Role | Company | Dates&#10;Bullet 1&#10;Bullet 2"
-                    ></textarea>
-
+                    <div id="experienceEntries" class="builder-entry-list"></div>
                 </div>
 
 
                 <div class="builder-group">
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">05</span>
+                            <div>
+                                <h3>Projects</h3>
+                                <p>Highlight projects that demonstrate practical skills and measurable impact.</p>
+                            </div>
+                        </div>
 
-                    <h3>
-                        Projects
-                    </h3>
+                        <button
+                            type="button"
+                            class="builder-add-button"
+                            id="addProject"
+                        >
+                            + Add Project
+                        </button>
+                    </div>
 
-
-                    <textarea
-                        id="projects"
-                        placeholder="Project Name | Technologies&#10;Description&#10;Achievement"
-                    ></textarea>
-
+                    <div id="projectEntries" class="builder-entry-list"></div>
                 </div>
 
 
                 <div class="builder-group">
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">06</span>
+                            <div>
+                                <h3>Education</h3>
+                                <p>Add your latest and most relevant qualifications.</p>
+                            </div>
+                        </div>
 
-                    <h3>
-                        Education
-                    </h3>
+                        <button
+                            type="button"
+                            class="builder-add-button"
+                            id="addEducation"
+                        >
+                            + Add Education
+                        </button>
+                    </div>
 
-
-                    <textarea
-                        id="education"
-                        placeholder="Degree | Institution | Year"
-                    ></textarea>
-
+                    <div id="educationEntries" class="builder-entry-list"></div>
                 </div>
 
 
                 <div class="builder-group">
-
-                    <h3>
-                        Certifications
-                    </h3>
-
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">07</span>
+                            <div>
+                                <h3>Certifications</h3>
+                                <p>One certification per line.</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <textarea
                         id="certifications"
-                        placeholder="Certification 1&#10;Certification 2"
+                        rows="4"
+                        placeholder="Python Programming&#10;AWS Cloud Practitioner"
                     ></textarea>
-
                 </div>
 
 
                 <div class="builder-group">
-
-                    <h3>
-                        Achievements
-                    </h3>
-
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">08</span>
+                            <div>
+                                <h3>Achievements</h3>
+                                <p>Use concise, evidence-based accomplishments.</p>
+                            </div>
+                        </div>
+                    </div>
 
                     <textarea
                         id="achievements"
-                        placeholder="Achievement 1&#10;Achievement 2"
+                        rows="4"
+                        placeholder="Solved 700+ coding problems&#10;Won a university hackathon"
                     ></textarea>
-
                 </div>
 
 
-                <div class="builder-actions">
+                <div class="builder-group builder-data-tools">
+                    <div class="builder-section-heading">
+                        <div>
+                            <span class="builder-step">09</span>
+                            <div>
+                                <h3>Backup &amp; Export</h3>
+                                <p>Keep a portable JSON copy of your resume data.</p>
+                            </div>
+                        </div>
+                    </div>
 
+                    <div class="builder-actions">
+                        <button
+                            type="button"
+                            class="builder-button builder-secondary"
+                            id="exportBuilder"
+                        >
+                            Export JSON
+                        </button>
+
+                        <button
+                            type="button"
+                            class="builder-button builder-secondary"
+                            id="importBuilder"
+                        >
+                            Import JSON
+                        </button>
+
+                        <input
+                            id="importFile"
+                            type="file"
+                            accept=".json,application/json"
+                            hidden
+                        >
+                    </div>
+                </div>
+
+
+                <div class="builder-actions builder-print-actions">
                     <button
                         type="button"
                         class="builder-button builder-primary"
@@ -1189,6 +1735,9 @@
                         Print / Save PDF
                     </button>
 
+                    <span class="builder-print-hint">
+                        Choose a template, then use your browser's PDF printer.
+                    </span>
                 </div>
 
             </div>
@@ -1202,11 +1751,19 @@
 
         <div class="builder-preview-wrap">
 
-
             <div class="template-selector">
 
-                <div class="template-selector-title">
-                    Resume Template
+                <div class="template-selector-header">
+                    <div>
+                        <span class="builder-toolbar-label">Preview</span>
+                        <div class="template-selector-title">
+                            Choose your resume template
+                        </div>
+                    </div>
+
+                    <span class="template-selector-hint">
+                        Changes update instantly
+                    </span>
                 </div>
 
 
@@ -1216,42 +1773,43 @@
                         type="button"
                         class="template-button active"
                         data-template="classic"
+                        aria-pressed="true"
                     >
                         Classic ATS
                     </button>
-
 
                     <button
                         type="button"
                         class="template-button"
                         data-template="modern"
+                        aria-pressed="false"
                     >
                         Modern
                     </button>
-
 
                     <button
                         type="button"
                         class="template-button"
                         data-template="minimal"
+                        aria-pressed="false"
                     >
                         Minimal
                     </button>
-
 
                     <button
                         type="button"
                         class="template-button"
                         data-template="executive"
+                        aria-pressed="false"
                     >
                         Executive
                     </button>
-
 
                     <button
                         type="button"
                         class="template-button"
                         data-template="developer"
+                        aria-pressed="false"
                     >
                         Developer
                     </button>
@@ -1264,27 +1822,28 @@
             <section
                 class="resume-preview template-classic"
                 id="resumePreview"
+                aria-label="Resume preview"
             >
 
-                <h1 id="previewName">
-                    Your Name
-                </h1>
+                <header class="resume-header">
 
+                    <h1 id="previewName">
+                        Your Name
+                    </h1>
 
-                <div
-                    class="contact"
-                    id="previewContact"
-                >
-                    Email · Phone · Location
-                </div>
+                    <div
+                        class="contact"
+                        id="previewContact"
+                    >
+                        Email · Phone · Location
+                    </div>
+
+                </header>
 
 
                 <section id="previewSummarySection">
 
-                    <h2>
-                        Professional Summary
-                    </h2>
-
+                    <h2>Professional Summary</h2>
 
                     <p id="previewSummary">
                         Your professional summary will appear here.
@@ -1295,66 +1854,46 @@
 
                 <section id="previewSkillsSection">
 
-                    <h2>
-                        Skills
-                    </h2>
+                    <h2>Skills</h2>
 
-
-                    <p id="previewSkills">
-                        Add your skills.
-                    </p>
+                    <div
+                        id="previewSkills"
+                        class="resume-skills"
+                    ></div>
 
                 </section>
 
 
                 <section id="previewExperienceSection">
 
-                    <h2>
-                        Experience
-                    </h2>
+                    <h2>Experience</h2>
 
-
-                    <div id="previewExperience">
-                        Add your experience.
-                    </div>
+                    <div id="previewExperience"></div>
 
                 </section>
 
 
                 <section id="previewProjectsSection">
 
-                    <h2>
-                        Projects
-                    </h2>
+                    <h2>Projects</h2>
 
-
-                    <div id="previewProjects">
-                        Add your projects.
-                    </div>
+                    <div id="previewProjects"></div>
 
                 </section>
 
 
                 <section id="previewEducationSection">
 
-                    <h2>
-                        Education
-                    </h2>
+                    <h2>Education</h2>
 
-
-                    <div id="previewEducation">
-                        Add your education.
-                    </div>
+                    <div id="previewEducation"></div>
 
                 </section>
 
 
                 <section id="previewCertificationsSection">
 
-                    <h2>
-                        Certifications
-                    </h2>
-
+                    <h2>Certifications</h2>
 
                     <ul id="previewCertifications"></ul>
 
@@ -1363,10 +1902,7 @@
 
                 <section id="previewAchievementsSection">
 
-                    <h2>
-                        Achievements
-                    </h2>
-
+                    <h2>Achievements</h2>
 
                     <ul id="previewAchievements"></ul>
 
@@ -1513,1066 +2049,25 @@
 </button>
 
 
-<script>
+<div
+    id="builderToast"
+    class="builder-toast"
+    role="status"
+    aria-live="polite"
+></div>
 
-    document.addEventListener(
-        "DOMContentLoaded",
-        function () {
 
+<script
+    id="builderInitialData"
+    type="application/json"
+>{{ resume|tojson }}</script>
 
-            /* =================================================
-               FIELD DEFINITIONS
-               ================================================= */
+<script
+    src="{{ url_for('static', filename='builder.js') }}"
+    defer
+></script>
 
-            const fieldIds = [
-                "name",
-                "email",
-                "phone",
-                "location",
-                "linkedin",
-                "github",
-                "summary",
-                "skills",
-                "experience",
-                "projects",
-                "education",
-                "certifications",
-                "achievements",
-            ];
 
-
-            /* =================================================
-               HELPERS
-               ================================================= */
-
-            function value(id) {
-
-                const element =
-                    document.getElementById(id);
-
-                return element
-                    ? element.value.trim()
-                    : "";
-
-            }
-
-
-            function escapeHtml(text) {
-
-                return String(text)
-                    .replaceAll("&", "&amp;")
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll('"', "&quot;")
-                    .replaceAll("'", "&#039;");
-
-            }
-
-
-            function splitLines(text) {
-
-                return text
-                    .split("\n")
-                    .map(
-                        function (line) {
-                            return line.trim();
-                        }
-                    )
-                    .filter(Boolean);
-
-            }
-
-
-            /* =================================================
-               VALIDATION
-               ================================================= */
-
-            function clearValidation(element) {
-
-                if (!element) {
-                    return;
-                }
-
-
-                element.classList.remove("invalid");
-
-
-                const message =
-                    element.parentElement
-                        ? element.parentElement.querySelector(
-                            ".builder-validation-message"
-                        )
-                        : null;
-
-
-                if (message) {
-
-                    message.textContent = "";
-
-                    message.classList.remove(
-                        "visible"
-                    );
-
-                }
-
-            }
-
-
-            function showValidation(
-                element,
-                messageText
-            ) {
-
-                if (!element) {
-                    return false;
-                }
-
-
-                element.classList.add("invalid");
-
-
-                let message =
-                    element.parentElement
-                        ? element.parentElement.querySelector(
-                            ".builder-validation-message"
-                        )
-                        : null;
-
-
-                if (!message) {
-
-                    message =
-                        document.createElement("div");
-
-                    message.className =
-                        "builder-validation-message";
-
-                    message.setAttribute(
-                        "role",
-                        "alert"
-                    );
-
-
-                    element.parentElement.appendChild(
-                        message
-                    );
-
-                }
-
-
-                message.textContent =
-                    messageText;
-
-
-                message.classList.add(
-                    "visible"
-                );
-
-
-                return false;
-
-            }
-
-
-            function isValidEmail(email) {
-
-                return /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-                    .test(email);
-
-            }
-
-
-            function isValidUrl(url) {
-
-                try {
-
-                    const normalizedUrl =
-                        /^https?:\/\//i.test(url)
-                            ? url
-                            : "https://" + url;
-
-
-                    new URL(normalizedUrl);
-
-
-                    return true;
-
-                } catch (error) {
-
-                    return false;
-
-                }
-
-            }
-
-
-            function validateBuilder() {
-
-                let valid = true;
-
-
-                const name =
-                    document.getElementById("name");
-
-                const email =
-                    document.getElementById("email");
-
-                const phone =
-                    document.getElementById("phone");
-
-                const linkedin =
-                    document.getElementById("linkedin");
-
-                const github =
-                    document.getElementById("github");
-
-                const skills =
-                    document.getElementById("skills");
-
-                const summary =
-                    document.getElementById("summary");
-
-
-                /* Clear previous validation */
-
-                [
-                    name,
-                    email,
-                    phone,
-                    linkedin,
-                    github,
-                    skills,
-                    summary
-                ].forEach(clearValidation);
-
-
-                /* Name */
-
-                if (!value("name")) {
-
-                    showValidation(
-                        name,
-                        "Please enter your full name."
-                    );
-
-                    valid = false;
-
-                }
-
-
-                /* Email */
-
-                if (!value("email")) {
-
-                    showValidation(
-                        email,
-                        "Please enter your email address."
-                    );
-
-                    valid = false;
-
-                } else if (
-                    !isValidEmail(value("email"))
-                ) {
-
-                    showValidation(
-                        email,
-                        "Please enter a valid email address."
-                    );
-
-                    valid = false;
-
-                }
-
-
-                /* Phone */
-
-                if (value("phone")) {
-
-                    const digits =
-                        value("phone")
-                            .replace(/\D/g, "");
-
-
-                    if (
-                        digits.length < 7 ||
-                        digits.length > 15
-                    ) {
-
-                        showValidation(
-                            phone,
-                            "Please enter a valid phone number."
-                        );
-
-                        valid = false;
-
-                    }
-
-                }
-
-
-                /* LinkedIn */
-
-                if (
-                    value("linkedin") &&
-                    !isValidUrl(value("linkedin"))
-                ) {
-
-                    showValidation(
-                        linkedin,
-                        "Please enter a valid LinkedIn URL."
-                    );
-
-                    valid = false;
-
-                }
-
-
-                /* GitHub */
-
-                if (
-                    value("github") &&
-                    !isValidUrl(value("github"))
-                ) {
-
-                    showValidation(
-                        github,
-                        "Please enter a valid GitHub URL."
-                    );
-
-                    valid = false;
-
-                }
-
-
-                /* Professional Summary */
-
-                if (
-                    value("summary").length > 1000
-                ) {
-
-                    showValidation(
-                        summary,
-                        "Professional summary must be 1000 characters or less."
-                    );
-
-                    valid = false;
-
-                }
-
-
-                /* Skills */
-
-                if (!value("skills")) {
-
-                    showValidation(
-                        skills,
-                        "Please add at least one skill."
-                    );
-
-                    valid = false;
-
-                }
-
-
-                return valid;
-
-            }
-
-
-            /* =================================================
-               RENDER LIST
-               ================================================= */
-
-            function renderList(
-                element,
-                items
-            ) {
-
-                if (!items.length) {
-
-                    element.innerHTML = "";
-
-                    return;
-                }
-
-
-                element.innerHTML =
-                    items
-                        .map(
-                            function (item) {
-
-                                return (
-                                    "<li>" +
-                                    escapeHtml(item) +
-                                    "</li>"
-                                );
-
-                            }
-                        )
-                        .join("");
-
-            }
-
-
-            /* =================================================
-               RENDER BLOCKS
-               ================================================= */
-
-            function renderBlocks(
-                element,
-                text
-            ) {
-
-                const lines =
-                    splitLines(text);
-
-
-                if (!lines.length) {
-
-                    element.innerHTML =
-                        "<p>Add content.</p>";
-
-                    return;
-                }
-
-
-                element.innerHTML =
-                    lines
-                        .map(
-                            function (line) {
-
-                                return (
-                                    "<p>" +
-                                    escapeHtml(line) +
-                                    "</p>"
-                                );
-
-                            }
-                        )
-                        .join("");
-
-            }
-
-
-            /* =================================================
-               RENDER RESUME
-               ================================================= */
-
-            function render() {
-
-                const name =
-                    value("name");
-
-
-                const email =
-                    value("email");
-
-
-                const phone =
-                    value("phone");
-
-
-                const location =
-                    value("location");
-
-
-                const linkedin =
-                    value("linkedin");
-
-
-                const github =
-                    value("github");
-
-
-                const summary =
-                    value("summary");
-
-
-                const skills =
-                    value("skills");
-
-
-                const experience =
-                    value("experience");
-
-
-                const projects =
-                    value("projects");
-
-
-                const education =
-                    value("education");
-
-
-                const certifications =
-                    splitLines(
-                        value("certifications")
-                    );
-
-
-                const achievements =
-                    splitLines(
-                        value("achievements")
-                    );
-
-
-                document.getElementById(
-                    "previewName"
-                ).textContent =
-                    name ||
-                    "Your Name";
-
-
-                const contactParts = [
-                    email,
-                    phone,
-                    location,
-                    linkedin,
-                    github,
-                ].filter(Boolean);
-
-
-                document.getElementById(
-                    "previewContact"
-                ).textContent =
-                    contactParts.length
-                        ? contactParts.join(" · ")
-                        : "Email · Phone · Location";
-
-
-                document.getElementById(
-                    "previewSummary"
-                ).textContent =
-                    summary ||
-                    "Your professional summary will appear here.";
-
-
-                document.getElementById(
-                    "previewSkills"
-                ).textContent =
-                    skills ||
-                    "Add your skills.";
-
-
-                renderBlocks(
-                    document.getElementById(
-                        "previewExperience"
-                    ),
-                    experience
-                );
-
-
-                renderBlocks(
-                    document.getElementById(
-                        "previewProjects"
-                    ),
-                    projects
-                );
-
-
-                renderBlocks(
-                    document.getElementById(
-                        "previewEducation"
-                    ),
-                    education
-                );
-
-
-                renderList(
-                    document.getElementById(
-                        "previewCertifications"
-                    ),
-                    certifications
-                );
-
-
-                renderList(
-                    document.getElementById(
-                        "previewAchievements"
-                    ),
-                    achievements
-                );
-
-            }
-
-
-            /* =================================================
-               TEMPLATE SWITCHING
-               ================================================= */
-
-            const resumePreview =
-                document.getElementById(
-                    "resumePreview"
-                );
-
-
-            const templateButtons =
-                document.querySelectorAll(
-                    ".template-button"
-                );
-
-
-            function setTemplate(template) {
-
-                resumePreview.classList.remove(
-                    "template-classic",
-                    "template-modern",
-                    "template-minimal",
-                    "template-executive",
-                    "template-developer"
-                );
-
-
-                resumePreview.classList.add(
-                    "template-" + template
-                );
-
-
-                templateButtons.forEach(
-                    function (button) {
-
-                        button.classList.toggle(
-                            "active",
-                            button.dataset.template ===
-                                template
-                        );
-
-                    }
-                );
-
-
-                localStorage.setItem(
-                    "resumeBuilderTemplate",
-                    template
-                );
-
-            }
-
-
-            templateButtons.forEach(
-                function (button) {
-
-                    button.addEventListener(
-                        "click",
-                        function () {
-
-                            setTemplate(
-                                button.dataset.template
-                            );
-
-                        }
-                    );
-
-                }
-            );
-
-
-            const savedTemplate =
-                localStorage.getItem(
-                    "resumeBuilderTemplate"
-                );
-
-
-            if (
-                savedTemplate &&
-                [
-                    "classic",
-                    "modern",
-                    "minimal",
-                    "executive",
-                    "developer",
-                ].includes(savedTemplate)
-            ) {
-
-                setTemplate(savedTemplate);
-
-            } else {
-
-                setTemplate("classic");
-
-            }
-
-
-            /* =================================================
-               LIVE INPUT
-               ================================================= */
-
-            fieldIds.forEach(
-                function (id) {
-
-                    const element =
-                        document.getElementById(id);
-
-
-                    if (!element) {
-                        return;
-                    }
-
-
-                    element.addEventListener(
-                        "input",
-                        function () {
-
-                            clearValidation(element);
-
-                            render();
-
-                        }
-                    );
-
-                }
-            );
-
-
-            /* =================================================
-               CLEAR BUILDER
-               ================================================= */
-
-            document.getElementById(
-                "clearBuilder"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    fieldIds.forEach(
-                        function (id) {
-
-                            const element =
-                                document.getElementById(id);
-
-
-                            if (element) {
-
-                                element.value = "";
-
-                                clearValidation(
-                                    element
-                                );
-
-                            }
-
-                        }
-                    );
-
-
-                    render();
-
-                }
-            );
-
-
-            /* =================================================
-               LOAD DEMO
-               ================================================= */
-
-            document.getElementById(
-                "loadDemo"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    document.getElementById(
-                        "name"
-                    ).value =
-                        "Alex Johnson";
-
-
-                    document.getElementById(
-                        "email"
-                    ).value =
-                        "alex@example.com";
-
-
-                    document.getElementById(
-                        "phone"
-                    ).value =
-                        "+91 98765 43210";
-
-
-                    document.getElementById(
-                        "location"
-                    ).value =
-                        "India";
-
-
-                    document.getElementById(
-                        "linkedin"
-                    ).value =
-                        "linkedin.com/in/alex";
-
-
-                    document.getElementById(
-                        "github"
-                    ).value =
-                        "github.com/alex";
-
-
-                    document.getElementById(
-                        "summary"
-                    ).value =
-                        "Software developer focused on Python, Flask, backend development, and practical application engineering.";
-
-
-                    document.getElementById(
-                        "skills"
-                    ).value =
-                        "Python, Flask, SQL, Git, REST APIs, JavaScript";
-
-
-                    document.getElementById(
-                        "experience"
-                    ).value =
-                        "Software Developer | Example Company | 2025–Present\nDeveloped backend applications using Python and Flask.\nImproved application reliability through testing and debugging.";
-
-
-                    document.getElementById(
-                        "projects"
-                    ).value =
-                        "AI Resume Analyzer | Python, Flask, SQLite\nBuilt a resume analysis platform with ATS scoring, job matching, analytics, and AI-powered tailoring.";
-
-
-                    document.getElementById(
-                        "education"
-                    ).value =
-                        "Bachelor of Computer Science | University | 2026";
-
-
-                    document.getElementById(
-                        "certifications"
-                    ).value =
-                        "Python Programming\nCloud Fundamentals";
-
-
-                    document.getElementById(
-                        "achievements"
-                    ).value =
-                        "Solved 700+ coding problems.\nCompleted a structured problem-solving challenge.";
-
-
-                    fieldIds.forEach(
-                        function (id) {
-
-                            const element =
-                                document.getElementById(id);
-
-                            clearValidation(element);
-
-                        }
-                    );
-
-
-                    render();
-
-                }
-            );
-
-
-            /* =================================================
-               PRINT / SAVE PDF
-               ================================================= */
-
-            document.getElementById(
-                "printResume"
-            ).addEventListener(
-                "click",
-                function () {
-
-                    if (!validateBuilder()) {
-                        return;
-                    }
-
-
-                    window.print();
-
-                }
-            );
-
-
-            /* =================================================
-               INITIAL RENDER
-               ================================================= */
-
-            render();
-
-
-            /* =================================================
-               DARK MODE
-               ================================================= */
-
-            const themeToggle =
-                document.getElementById(
-                    "themeToggle"
-                );
-
-
-            const themeIcon =
-                document.getElementById(
-                    "themeIcon"
-                );
-
-
-            function updateThemeIcon() {
-
-                const isDark =
-                    document.documentElement
-                        .getAttribute(
-                            "data-theme"
-                        ) === "dark";
-
-
-                if (themeIcon) {
-
-                    themeIcon.textContent =
-                        isDark
-                            ? "🌙"
-                            : "☀️";
-
-                }
-
-
-                if (themeToggle) {
-
-                    themeToggle.setAttribute(
-                        "aria-label",
-                        isDark
-                            ? "Switch to light mode"
-                            : "Switch to dark mode"
-                    );
-
-
-                    themeToggle.setAttribute(
-                        "title",
-                        isDark
-                            ? "Switch to light mode"
-                            : "Switch to dark mode"
-                    );
-
-                }
-
-            }
-
-
-            updateThemeIcon();
-
-
-            if (themeToggle) {
-
-                themeToggle.addEventListener(
-                    "click",
-                    function () {
-
-                        const isDark =
-                            document.documentElement
-                                .getAttribute(
-                                    "data-theme"
-                                ) === "dark";
-
-
-                        if (isDark) {
-
-                            document.documentElement
-                                .removeAttribute(
-                                    "data-theme"
-                                );
-
-
-                            localStorage.setItem(
-                                "resume-analyzer-theme",
-                                "light"
-                            );
-
-                        } else {
-
-                            document.documentElement
-                                .setAttribute(
-                                    "data-theme",
-                                    "dark"
-                                );
-
-
-                            localStorage.setItem(
-                                "resume-analyzer-theme",
-                                "dark"
-                            );
-
-                        }
-
-
-                        updateThemeIcon();
-
-                    }
-                );
-
-            }
-
-
-            /* =================================================
-               BACK TO TOP
-               ================================================= */
-
-            const backToTop =
-                document.getElementById(
-                    "backToTop"
-                );
-
-
-            function updateBackToTop() {
-
-                if (!backToTop) {
-                    return;
-                }
-
-
-                if (window.scrollY > 500) {
-
-                    backToTop.classList.add(
-                        "visible"
-                    );
-
-                } else {
-
-                    backToTop.classList.remove(
-                        "visible"
-                    );
-
-                }
-
-            }
-
-
-            window.addEventListener(
-                "scroll",
-                updateBackToTop,
-                {
-                    passive: true
-                }
-            );
-
-
-            updateBackToTop();
-
-
-            if (backToTop) {
-
-                backToTop.addEventListener(
-                    "click",
-                    function () {
-
-                        window.scrollTo({
-                            top: 0,
-                            behavior: "smooth"
-                        });
-
-                    }
-                );
-
-            }
-
-        }
-    );
-
-</script>
 
 
 </body>

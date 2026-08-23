@@ -3655,6 +3655,193 @@
 
             {% endif %}
 
+<!-- ============================================================
+     V3.3 AI WRITING ASSISTANT
+     ============================================================ -->
+
+<section class="card full-width ai-writing-card">
+
+    <span class="dashboard-badge">
+        V3.3 AI WRITING ASSISTANT
+    </span>
+
+    <h2 class="section-title">
+        AI Writing Assistant
+    </h2>
+
+    <p class="dashboard-description">
+        Improve resume content with AI-powered rewriting while
+        keeping your original meaning and experience intact.
+    </p>
+
+    <input
+        type="hidden"
+        id="aiWritingCsrfToken"
+        value="{{ csrf_token() }}"
+    >
+
+    <div
+        id="aiWritingStatus"
+        class="ai-writing-status"
+        role="status"
+        aria-live="polite"
+    >
+        Checking AI availability...
+    </div>
+
+    <div class="ai-writing-grid">
+
+        <!-- SUMMARY -->
+
+        <article class="ai-writing-tool">
+
+            <h3>
+                ✨ Improve Professional Summary
+            </h3>
+
+            <p>
+                Make your summary clearer, stronger, and more
+                ATS-friendly.
+            </p>
+
+            <textarea
+                id="aiSummaryInput"
+                class="ai-writing-input"
+                rows="6"
+                placeholder="Paste your professional summary here..."
+            ></textarea>
+
+            <button
+                type="button"
+                class="history-primary-button ai-writing-button"
+                data-ai-type="summary"
+            >
+                Improve Summary
+            </button>
+
+            <div
+                id="aiSummaryResult"
+                class="ai-writing-result"
+                hidden
+            ></div>
+
+        </article>
+
+
+        <!-- EXPERIENCE BULLET -->
+
+        <article class="ai-writing-tool">
+
+            <h3>
+                ✨ Rewrite Experience Bullet
+            </h3>
+
+            <p>
+                Turn a weak responsibility into a stronger,
+                achievement-oriented bullet.
+            </p>
+
+            <textarea
+                id="aiExperienceInput"
+                class="ai-writing-input"
+                rows="6"
+                placeholder="Example: Worked on Python applications..."
+            ></textarea>
+
+            <button
+                type="button"
+                class="history-primary-button ai-writing-button"
+                data-ai-type="experience"
+            >
+                Rewrite Experience
+            </button>
+
+            <div
+                id="aiExperienceResult"
+                class="ai-writing-result"
+                hidden
+            ></div>
+
+        </article>
+
+
+        <!-- PROJECT -->
+
+        <article class="ai-writing-tool">
+
+            <h3>
+                ✨ Improve Project Description
+            </h3>
+
+            <p>
+                Make your project description clearer, more
+                technical, and ATS-friendly.
+            </p>
+
+            <textarea
+                id="aiProjectInput"
+                class="ai-writing-input"
+                rows="6"
+                placeholder="Paste your project description here..."
+            ></textarea>
+
+            <button
+                type="button"
+                class="history-primary-button ai-writing-button"
+                data-ai-type="project"
+            >
+                Improve Project
+            </button>
+
+            <div
+                id="aiProjectResult"
+                class="ai-writing-result"
+                hidden
+            ></div>
+
+        </article>
+
+
+        <!-- BULLET -->
+
+        <article class="ai-writing-tool">
+
+            <h3>
+                ✨ Rewrite Resume Bullet
+            </h3>
+
+            <p>
+                Improve wording, action verbs, clarity, and
+                measurable impact.
+            </p>
+
+            <textarea
+                id="aiBulletInput"
+                class="ai-writing-input"
+                rows="6"
+                placeholder="Paste one resume bullet here..."
+            ></textarea>
+
+            <button
+                type="button"
+                class="history-primary-button ai-writing-button"
+                data-ai-type="bullet"
+            >
+                Rewrite Bullet
+            </button>
+
+            <div
+                id="aiBulletResult"
+                class="ai-writing-result"
+                hidden
+            ></div>
+
+        </article>
+
+    </div>
+
+</section>
+
             <!-- ============================================================
      V3.4 AI JOB TAILORING
      ============================================================ -->
@@ -4498,6 +4685,426 @@ document.addEventListener(
                 }
             );
         }
+
+    }
+);
+</script>
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const csrfElement =
+            document.getElementById(
+                "aiWritingCsrfToken"
+            );
+
+        const statusElement =
+            document.getElementById(
+                "aiWritingStatus"
+            );
+
+        const buttons =
+            document.querySelectorAll(
+                ".ai-writing-button"
+            );
+
+
+        const endpoints = {
+            bullet:
+                "{{ url_for('ai_rewrite_bullet') }}",
+
+            summary:
+                "{{ url_for('ai_rewrite_summary') }}",
+
+            project:
+                "{{ url_for('ai_rewrite_project') }}",
+
+            experience:
+                "{{ url_for('ai_rewrite_experience') }}",
+        };
+
+
+        const inputIds = {
+            bullet:
+                "aiBulletInput",
+
+            summary:
+                "aiSummaryInput",
+
+            project:
+                "aiProjectInput",
+
+            experience:
+                "aiExperienceInput",
+        };
+
+
+        const resultIds = {
+            bullet:
+                "aiBulletResult",
+
+            summary:
+                "aiSummaryResult",
+
+            project:
+                "aiProjectResult",
+
+            experience:
+                "aiExperienceResult",
+        };
+
+
+        function getCsrfToken() {
+
+            return csrfElement
+                ? csrfElement.value
+                : "";
+
+        }
+
+
+        function setStatus(
+            message,
+            type = "info"
+        ) {
+
+            if (!statusElement) {
+                return;
+            }
+
+            statusElement.textContent =
+                message;
+
+            statusElement.dataset.status =
+                type;
+
+        }
+
+
+        function setResult(
+            type,
+            message,
+            isError = false
+        ) {
+
+            const result =
+                document.getElementById(
+                    resultIds[type]
+                );
+
+            if (!result) {
+                return;
+            }
+
+            result.hidden = false;
+
+            result.classList.toggle(
+                "error-result",
+                isError
+            );
+
+            result.textContent =
+                message;
+
+        }
+
+
+        function clearResult(type) {
+
+            const result =
+                document.getElementById(
+                    resultIds[type]
+                );
+
+            if (!result) {
+                return;
+            }
+
+            result.hidden = true;
+            result.textContent = "";
+            result.classList.remove(
+                "error-result"
+            );
+
+        }
+
+
+        async function checkAiStatus() {
+
+            try {
+
+                const response =
+                    await fetch(
+                        "{{ url_for('ai_status') }}",
+                        {
+                            method: "GET",
+                            headers: {
+                                "Accept":
+                                    "application/json"
+                            }
+                        }
+                    );
+
+
+                const data =
+                    await response.json();
+
+
+                if (
+                    response.ok &&
+                    data.success &&
+                    data.configured
+                ) {
+
+                    setStatus(
+                        "AI writing is available.",
+                        "success"
+                    );
+
+                    return true;
+
+                }
+
+
+                setStatus(
+                    "AI writing is currently unavailable. "
+                    + "Configure the AI provider to enable rewriting.",
+                    "warning"
+                );
+
+                return false;
+
+            }
+            catch (error) {
+
+                console.error(
+                    "AI status check failed:",
+                    error
+                );
+
+                setStatus(
+                    "AI writing availability could not be checked.",
+                    "warning"
+                );
+
+                return false;
+
+            }
+
+        }
+
+
+        async function rewrite(
+            type,
+            button
+        ) {
+
+            const input =
+                document.getElementById(
+                    inputIds[type]
+                );
+
+
+            if (!input) {
+                return;
+            }
+
+
+            const text =
+                input.value.trim();
+
+
+            if (!text) {
+
+                setResult(
+                    type,
+                    "Please enter some resume content first.",
+                    true
+                );
+
+                return;
+            }
+
+
+            clearResult(type);
+
+            button.disabled = true;
+
+            const originalText =
+                button.textContent;
+
+            button.textContent =
+                "Improving...";
+
+
+            try {
+
+                const endpoint =
+                    endpoints[type];
+
+
+                const formData =
+                    new FormData();
+
+
+                const fieldName =
+                    type === "summary"
+                        ? "summary"
+                        : type === "project"
+                            ? "project"
+                            : "bullet";
+
+
+                formData.append(
+                    fieldName,
+                    text
+                );
+
+
+                const csrfToken =
+                    getCsrfToken();
+
+
+                const headers = {
+                    "Accept":
+                        "application/json"
+                };
+
+
+                if (csrfToken) {
+
+                    headers[
+                        "X-CSRFToken"
+                    ] =
+                        csrfToken;
+
+                }
+
+
+                const response =
+                    await fetch(
+                        endpoint,
+                        {
+                            method: "POST",
+                            body: formData,
+                            headers: headers
+                        }
+                    );
+
+
+                let data;
+
+
+                try {
+
+                    data =
+                        await response.json();
+
+                }
+                catch {
+
+                    throw new Error(
+                        "The server returned an invalid response."
+                    );
+
+                }
+
+
+                if (!response.ok) {
+
+                    throw new Error(
+                        data.error ||
+                        "AI rewriting failed."
+                    );
+
+                }
+
+
+                if (!data.success) {
+
+                    throw new Error(
+                        data.error ||
+                        "AI rewriting failed."
+                    );
+
+                }
+
+
+                setResult(
+                    type,
+                    data.rewritten ||
+                    "No rewritten content was returned."
+                );
+
+
+            }
+            catch (error) {
+
+                console.error(
+                    "AI Writing Assistant:",
+                    error
+                );
+
+
+                const message =
+                    error &&
+                    error.message
+                        ? error.message
+                        : "Unable to rewrite the content.";
+
+
+                setResult(
+                    type,
+                    message,
+                    true
+                );
+
+            }
+            finally {
+
+                button.disabled = false;
+
+                button.textContent =
+                    originalText;
+
+            }
+
+        }
+
+
+        buttons.forEach(
+            function (button) {
+
+                button.addEventListener(
+                    "click",
+                    async function () {
+
+                        const type =
+                            button.dataset.aiType;
+
+
+                        if (
+                            !endpoints[type]
+                        ) {
+                            return;
+                        }
+
+
+                        await rewrite(
+                            type,
+                            button
+                        );
+
+                    }
+                );
+
+            }
+        );
+
+
+        checkAiStatus();
 
     }
 );
