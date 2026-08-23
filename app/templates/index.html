@@ -311,6 +311,38 @@
                             Resume Analysis Report
                         </h2>
 
+                        <div class="builder-import-action">
+
+    <form
+        method="POST"
+        action="{{ url_for('builder') }}?source=analysis"
+        id="openBuilderForm"
+    >
+
+        <input
+            type="hidden"
+            name="csrf_token"
+            value="{{ csrf_token() }}"
+        >
+
+        <input
+            type="hidden"
+            name="builder_json"
+            id="builderImportPayload"
+        >
+
+        <button
+            type="submit"
+            class="history-primary-button"
+            id="openBuilderButton"
+        >
+            ✨ Open in Resume Builder
+        </button>
+
+    </form>
+
+</div>
+
                         <p class="dashboard-description">
                             Download a professional PDF containing
                             your complete resume analysis, scores,
@@ -5106,6 +5138,227 @@ document.addEventListener(
 
         checkAiStatus();
 
+    }
+);
+</script>
+
+<script type="application/json" id="builderResumeImportData">
+{{ resume|default({}, true)|tojson }}
+</script>
+
+<script>
+document.addEventListener(
+    "DOMContentLoaded",
+    function () {
+
+        const builderForm =
+            document.getElementById(
+                "openBuilderForm"
+            );
+
+        const payloadInput =
+            document.getElementById(
+                "builderImportPayload"
+            );
+
+        const dataElement =
+            document.getElementById(
+                "builderResumeImportData"
+            );
+
+        if (
+            !builderForm ||
+            !payloadInput ||
+            !dataElement
+        ) {
+            return;
+        }
+
+        let analyzerResumeData = {};
+
+        try {
+            analyzerResumeData =
+                JSON.parse(
+                    dataElement.textContent ||
+                    "{}"
+                );
+        }
+        catch (error) {
+            console.error(
+                "Unable to read analyzer resume data:",
+                error
+            );
+            analyzerResumeData = {};
+        }
+
+        function cleanImportedText(value) {
+            if (typeof value !== "string") {
+                return "";
+            }
+
+            return value
+                .replace(/\r\n/g, "\n")
+                .replace(/\r/g, "\n")
+                .trim();
+        }
+
+        function splitImportedLines(value) {
+            if (Array.isArray(value)) {
+                return value
+                    .map(cleanImportedText)
+                    .filter(Boolean);
+            }
+
+            const cleaned =
+                cleanImportedText(value);
+
+            if (!cleaned) {
+                return [];
+            }
+
+            return cleaned
+                .split("\n")
+                .map(cleanImportedText)
+                .filter(Boolean);
+        }
+
+        function splitImportedSkills(value) {
+            if (Array.isArray(value)) {
+                return value
+                    .map(cleanImportedText)
+                    .filter(Boolean);
+            }
+
+            const cleaned =
+                cleanImportedText(value);
+
+            if (!cleaned) {
+                return [];
+            }
+
+            return cleaned
+                .split(/[,|;\n]+/)
+                .map(cleanImportedText)
+                .filter(Boolean);
+        }
+
+        function buildImportedExperience(value) {
+            const lines =
+                splitImportedLines(value);
+
+            if (!lines.length) {
+                return [];
+            }
+
+            return [
+                {
+                    job_title: lines[0] || "",
+                    company: "",
+                    location: "",
+                    start_date: "",
+                    end_date: "",
+                    bullets: lines.slice(1),
+                }
+            ];
+        }
+
+        function buildImportedProjects(value) {
+            const lines =
+                splitImportedLines(value);
+
+            if (!lines.length) {
+                return [];
+            }
+
+            return [
+                {
+                    name: lines[0] || "",
+                    technologies: "",
+                    description: lines.slice(1).join(" "),
+                    bullets: [],
+                    url: "",
+                }
+            ];
+        }
+
+        function buildImportedEducation(value) {
+            const lines =
+                splitImportedLines(value);
+
+            if (!lines.length) {
+                return [];
+            }
+
+            return [
+                {
+                    degree: lines[0] || "",
+                    institution: "",
+                    location: "",
+                    start_date: "",
+                    end_date: "",
+                    year: "",
+                    details: lines.slice(1).join(" "),
+                }
+            ];
+        }
+
+        function buildImportedPayload() {
+            return {
+                name: cleanImportedText(
+                    analyzerResumeData.name
+                ),
+
+                email: cleanImportedText(
+                    analyzerResumeData.email
+                ),
+
+                phone: cleanImportedText(
+                    analyzerResumeData.phone
+                ),
+
+                location: "",
+                linkedin: "",
+                github: "",
+
+                summary: cleanImportedText(
+                    analyzerResumeData.summary
+                ),
+
+                skills: splitImportedSkills(
+                    analyzerResumeData.skills
+                ),
+
+                experience: buildImportedExperience(
+                    analyzerResumeData.experience
+                ),
+
+                projects: buildImportedProjects(
+                    analyzerResumeData.projects
+                ),
+
+                education: buildImportedEducation(
+                    analyzerResumeData.education
+                ),
+
+                certifications: splitImportedLines(
+                    analyzerResumeData.certifications
+                ),
+
+                achievements: splitImportedLines(
+                    analyzerResumeData.achievements
+                ),
+            };
+        }
+
+        builderForm.addEventListener(
+            "submit",
+            function () {
+                payloadInput.value =
+                    JSON.stringify(
+                        buildImportedPayload()
+                    );
+            }
+        );
     }
 );
 </script>

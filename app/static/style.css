@@ -5071,3 +5071,26 @@ html[data-theme="dark"] .site-footer .footer-links a:hover {
     color: #fecaca;
     border-color: #991b1b;
 }
+
+/* ============================================================
+   ANALYZER → BUILDER IMPORT
+   ============================================================ */
+
+.builder-import-action {
+    margin-top: 18px;
+    display: flex;
+    justify-content: flex-start;
+}
+
+
+.builder-import-action form {
+    margin: 0;
+}
+
+
+.builder-import-action button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
