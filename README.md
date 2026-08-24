@@ -21,14 +21,14 @@ Resume Parsing
     ├── Achievement Analysis
     ├── Improvement Analysis
     └── Job Matching
-             │
-             ▼
-       AI Job Tailoring
-             │
-             ▼
-       Resume Builder
-             │
-             ▼
+            │
+            ▼
+      AI Job Tailoring
+            │
+            ▼
+      Resume Builder
+            │
+            ▼
       Professional PDF
 ```
 
@@ -100,7 +100,7 @@ The system is designed to avoid recommending false claims or invented skills, ex
 
 ### PDF Reports
 
-Generate downloadable PDF analysis reports containing the resume analysis results, scores, recommendations, and analytics.
+Generate downloadable PDF analysis reports containing resume analysis results, scores, recommendations, and analytics.
 
 ### V4.0 Resume Builder
 
@@ -285,7 +285,30 @@ AI-Resume-Analyzer/
 
 ## Local Setup
 
+### Prerequisites
+
+Make sure Python 3 and Git are installed.
+
+Check Python:
+
+```powershell
+python --version
+```
+
+Check Git:
+
+```powershell
+git --version
+```
+
 ### Windows
+
+Clone the repository:
+
+```powershell
+git clone https://github.com/Prashant7525/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
+```
 
 Create a virtual environment:
 
@@ -294,6 +317,18 @@ python -m venv .venv
 ```
 
 Activate it:
+
+```powershell
+.venv\Scripts\Activate.ps1
+```
+
+If PowerShell blocks script execution, run:
+
+```powershell
+Set-ExecutionPolicy -Scope Process -ExecutionPolicy RemoteSigned
+```
+
+Then activate the environment again:
 
 ```powershell
 .venv\Scripts\Activate.ps1
@@ -311,13 +346,20 @@ Run the application:
 python -m app.main
 ```
 
-Open:
+Open the application at:
 
 ```text
 http://127.0.0.1:5000
 ```
 
 ### Linux / WSL2
+
+Clone the repository:
+
+```bash
+git clone https://github.com/Prashant7525/AI-Resume-Analyzer.git
+cd AI-Resume-Analyzer
+```
 
 Create a virtual environment:
 
@@ -337,7 +379,7 @@ Install dependencies:
 pip install -r requirements.txt
 ```
 
-Run Flask:
+Run the application:
 
 ```bash
 python -m app.main
@@ -369,11 +411,15 @@ Example `.env` file:
 
 ```text
 APP_ENV=development
+
 SECRET_KEY=your-development-secret
+
 OPENAI_API_KEY=your-key
 OPENAI_MODEL=your-configured-model
 OPENAI_TIMEOUT=30
 ```
+
+> Keep `.env` local. Use `.env.example` as the safe configuration template for repository sharing.
 
 ## Resume Builder
 
@@ -597,9 +643,13 @@ Examples:
 
 ```text
 feat: add V4.0 resume builder
+
 feat: connect resume analyzer to builder
+
 fix: refine resume builder PDF print layout
+
 test: expand resume builder validation coverage
+
 docs: update project documentation
 ```
 
