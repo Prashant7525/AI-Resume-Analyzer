@@ -30,3 +30,6 @@ dist/
 # Flask runtime files
 app/instance/
 instance/
+
+# Linux / WSL virtual environment
+.venv-linux/
