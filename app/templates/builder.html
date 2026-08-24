@@ -1128,198 +1128,347 @@
             }
         }
 
-        /* =====================================================
-           PRINT / SAVE PDF
-           ===================================================== */
-
         @media print {
 
-            /* =================================================
-               A4 PDF
-               ================================================= */
+    /* =====================================================
+       A4 PAGE SETUP
+       ===================================================== */
 
-            @page {
-                size: A4;
-                margin: 12mm;
-            }
-
-
-            /* =================================================
-               RESET PRINT DOCUMENT
-               ================================================= */
-
-            html,
-            body {
-                margin: 0 !important;
-                padding: 0 !important;
-
-                width: auto !important;
-                height: auto !important;
-
-                min-height: 0 !important;
-
-                background: #ffffff !important;
-
-                overflow: visible !important;
-            }
+    @page {
+        size: A4;
+        margin: 6mm;
+    }
 
 
-            /* =================================================
-               HIDE WEBSITE UI
-               ================================================= */
+    /* =====================================================
+       DOCUMENT RESET
+       ===================================================== */
 
-            header,
-            footer,
-            .builder-form,
-            .builder-actions,
-            .builder-page > .builder-grid > section.card,
-            #backToTop {
-                display: none !important;
-            }
+    html,
+    body {
+        margin: 0 !important;
+        padding: 0 !important;
 
+        width: 100% !important;
+        min-width: 0 !important;
 
-            /* =================================================
-               REMOVE BUILDER LAYOUT
-               ================================================= */
+        background: #ffffff !important;
 
-            .builder-page,
-            .builder-grid,
-            .builder-preview-wrap {
-                display: block !important;
-
-                width: auto !important;
-                max-width: none !important;
-
-                height: auto !important;
-                min-height: 0 !important;
-
-                margin: 0 !important;
-                padding: 0 !important;
-
-                position: static !important;
-
-                overflow: visible !important;
-            }
+        overflow: visible !important;
+    }
 
 
-            /* Hide resume template selector from PDF */
+    /* =====================================================
+       HIDE WEBSITE UI
+       ===================================================== */
 
-            .builder-preview-wrap > *:not(.resume-preview) {
-                display: none !important;
-            }
-
-
-            /* =================================================
-               RESUME
-               ================================================= */
-
-            .resume-preview {
-                display: block !important;
-
-                width: auto !important;
-                height: auto !important;
-
-                min-height: 0 !important;
-
-                margin: 0 !important;
-                padding: 0 !important;
-
-                background: #ffffff !important;
-                color: #1f2937 !important;
-
-                border: 0 !important;
-                border-radius: 0 !important;
-
-                box-shadow: none !important;
-
-                overflow: visible !important;
-
-                break-before: auto !important;
-                break-after: auto !important;
-
-                page-break-before: auto !important;
-                page-break-after: auto !important;
-            }
+    body > * {
+        display: none !important;
+    }
 
 
-            /* =================================================
-               RESUME TYPOGRAPHY
-               ================================================= */
+    /* Keep only the builder main content */
+    body > main {
+        display: block !important;
 
-            .resume-preview h1 {
-                margin-top: 0 !important;
+        width: 100% !important;
+        max-width: none !important;
 
-                color: #111827 !important;
-            }
+        margin: 0 !important;
+        padding: 0 !important;
 
-
-            .resume-preview .contact {
-                color: #475569 !important;
-            }
+        background: #ffffff !important;
+    }
 
 
-            .resume-preview section {
-                break-before: auto !important;
-                break-after: auto !important;
+    /* =====================================================
+       BUILDER LAYOUT RESET
+       ===================================================== */
 
-                page-break-before: auto !important;
-                page-break-after: auto !important;
+    .builder-page {
+        display: block !important;
 
-                break-inside: avoid !important;
-                page-break-inside: avoid !important;
-            }
+        width: 100% !important;
+        max-width: none !important;
 
+        margin: 0 !important;
+        padding: 0 !important;
 
-            .resume-preview section h2 {
-                color: #111827 !important;
-
-                border-bottom-color:
-                    #d1d5db !important;
-
-                break-after: avoid !important;
-                page-break-after: avoid !important;
-            }
+        background: #ffffff !important;
+    }
 
 
-            .resume-preview p,
-            .resume-preview li,
-            .resume-preview div {
-                color: #1f2937 !important;
-            }
+    .builder-grid {
+        display: block !important;
+
+        width: 100% !important;
+        max-width: none !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+    }
 
 
-            /* =================================================
-               PREVENT UNNECESSARY PAGE BREAKS
-               ================================================= */
+    /* =====================================================
+       HIDE EDITOR
+       ===================================================== */
 
-            h1,
-            h2,
-            h3 {
-                break-before: auto !important;
-                break-after: avoid !important;
-
-                page-break-before: auto !important;
-                page-break-after: avoid !important;
-            }
+    .builder-grid > section.card {
+        display: none !important;
+    }
 
 
-            p,
-            li {
-                orphans: 2;
-                widows: 2;
-            }
+    .builder-form,
+    .builder-actions,
+    .builder-button {
+        display: none !important;
+    }
 
 
-            /* =================================================
-               REMOVE VISUAL EFFECTS
-               ================================================= */
+    /* =====================================================
+       PREVIEW WRAPPER
+       ===================================================== */
 
-            * {
-                box-shadow: none !important;
-                text-shadow: none !important;
-            }
+    .builder-preview-wrap {
+        display: block !important;
 
-        }
+        position: static !important;
+
+        width: 100% !important;
+        max-width: none !important;
+
+        margin: 0 !important;
+        padding: 0 !important;
+
+        background: #ffffff !important;
+    }
+
+
+    /* Hide template selector */
+    .template-selector {
+        display: none !important;
+    }
+
+
+    /* =====================================================
+       RESUME PAGE
+       ===================================================== */
+
+    .resume-preview {
+        display: block !important;
+
+        position: static !important;
+
+        width: 100% !important;
+        max-width: none !important;
+
+        min-height: 0 !important;
+        height: auto !important;
+
+        margin: 0 !important;
+
+        /*
+         * Slightly more generous internal margins so the
+         * printed resume resembles the previous version.
+         */
+        padding: 9mm 10mm !important;
+
+        box-sizing: border-box !important;
+
+        background: #ffffff !important;
+
+        color: #1f2937 !important;
+
+        border: 0 !important;
+        border-radius: 0 !important;
+
+        box-shadow: none !important;
+
+        overflow: visible !important;
+    }
+
+
+    /* =====================================================
+       HEADER
+       ===================================================== */
+
+    .resume-preview h1 {
+        margin-top: 0 !important;
+        margin-bottom: 6px !important;
+
+        font-size: 31px !important;
+
+        line-height: 1.05 !important;
+    }
+
+
+    .resume-preview .contact {
+        margin-top: 4px !important;
+        margin-bottom: 0 !important;
+
+        padding-bottom: 10px !important;
+
+        font-size: 12px !important;
+
+        line-height: 1.4 !important;
+    }
+
+
+    /* =====================================================
+       SECTION SPACING
+       ===================================================== */
+
+    .resume-preview section {
+        margin-top: 24px !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+
+    .resume-preview section h2 {
+        margin-top: 0 !important;
+        margin-bottom: 9px !important;
+
+        padding-bottom: 6px !important;
+
+        font-size: 13px !important;
+
+        line-height: 1.2 !important;
+    }
+
+
+    /* =====================================================
+       BODY TEXT
+       ===================================================== */
+
+    .resume-preview p {
+        margin: 5px 0 !important;
+
+        line-height: 1.5 !important;
+
+        font-size: 11pt !important;
+    }
+
+
+    /* =====================================================
+       LISTS / BULLETS
+       ===================================================== */
+
+    .resume-preview ul {
+        margin-top: 5px !important;
+        margin-bottom: 5px !important;
+
+        padding-left: 18px !important;
+    }
+
+
+    .resume-preview li {
+        margin-bottom: 5px !important;
+
+        line-height: 1.48 !important;
+
+        font-size: 11pt !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+
+    /* =====================================================
+       RESUME ENTRIES
+       ===================================================== */
+
+    .resume-entry {
+        margin-top: 11px !important;
+
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+
+    .resume-entry-title {
+        line-height: 1.25 !important;
+    }
+
+
+    .resume-entry-meta {
+        line-height: 1.25 !important;
+    }
+
+
+    /* =====================================================
+       SKILLS
+       ===================================================== */
+
+    .resume-skill {
+        display: inline-block !important;
+
+        margin-right: 4px !important;
+        margin-bottom: 3px !important;
+
+        padding: 3px 7px !important;
+
+        font-size: 9.5px !important;
+    }
+
+
+    /* =====================================================
+       PROJECT / CONTACT LINKS
+       ===================================================== */
+
+    .resume-preview a {
+        color: inherit !important;
+
+        text-decoration: none !important;
+    }
+
+
+    /* =====================================================
+       PAGE BREAK CONTROL
+       ===================================================== */
+
+    .resume-preview section,
+    .resume-entry,
+    ul {
+        break-inside: avoid !important;
+        page-break-inside: avoid !important;
+    }
+
+
+    h1,
+    h2,
+    h3 {
+        break-after: avoid !important;
+        page-break-after: avoid !important;
+    }
+
+
+    p {
+        orphans: 2;
+        widows: 2;
+    }
+
+
+    li {
+        orphans: 2;
+        widows: 2;
+    }
+
+
+    /* =====================================================
+       PRINT COLORS / EFFECTS
+       ===================================================== */
+
+    .resume-preview,
+    .resume-preview * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+
+        box-shadow: none !important;
+        text-shadow: none !important;
+    }
+}
 
     </style>
 
